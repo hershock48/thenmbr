@@ -3,6 +3,11 @@ import { stripe } from '@/lib/stripe'
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if Stripe is configured
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe is not configured' }, { status: 503 })
+    }
+
     const { searchParams } = new URL(request.url)
     const accountId = searchParams.get('account_id')
 

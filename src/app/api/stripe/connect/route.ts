@@ -4,6 +4,11 @@ import { supabaseAdmin } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Stripe is configured
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe is not configured' }, { status: 503 })
+    }
+
     const { org_id, return_url } = await request.json()
 
     if (!org_id) {
