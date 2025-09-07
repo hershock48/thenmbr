@@ -287,3 +287,60 @@ export default function DemoPage() {
     </div>
   )
 }
+
+          {/* Backend Management System */}
+          <Card className="mb-16">
+            <CardHeader>
+              <CardTitle className="text-2xl">Nonprofit Management Dashboard</CardTitle>
+              <CardDescription className="text-lg">
+                See how nonprofits manage their stories, branding, and analytics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-xl font-semibold mb-4">Dashboard Features</h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                      <span>Story Management - Create and edit NMBR stories</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                      <span>Branding Customization - Upload logos and colors</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                      <span>Stripe Integration - Connect payment processing</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                      <span>Analytics Dashboard - Track engagement and donations</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                      <span>Subscriber Management - View and export email lists</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <h4 className="font-semibold mb-4">Try the Dashboard</h4>
+                  <p className="text-gray-600 mb-4">
+                    Sign up for a free account to access the full nonprofit management system.
+                  </p>
+                  <div className="space-y-3">
+                    <Link href="/signup">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                        Create Account
+                      </Button>
+                    </Link>
+                    <Link href="/login">
+                      <Button variant="outline" className="w-full">
+                        Sign In
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>

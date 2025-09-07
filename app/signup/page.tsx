@@ -40,7 +40,7 @@ export default function SignupPage() {
     }
 
     try {
-      await signUp(formData.email, formData.password, formData.organizationName)
+      await signUp(formData.email, formData.password, formData.organizationName, formData.organizationWebsite)
       router.push('/dashboard')
     } catch (err) {
       setError('Failed to create account. Please try again.')
@@ -50,8 +50,8 @@ export default function SignupPage() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
+        setFormData(prev => ({
+            ...prev,
       [e.target.name]: e.target.value
     }))
   }
@@ -143,7 +143,7 @@ export default function SignupPage() {
                 <Input 
                   id="organizationWebsite" 
                   name="organizationWebsite"
-                  type="url" 
+                  type="text" 
                   placeholder="https://yourorganization.org" 
                   value={formData.organizationWebsite}
                   onChange={handleChange}

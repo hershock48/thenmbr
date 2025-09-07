@@ -10,7 +10,7 @@ interface AuthContextType {
   org: Nonprofit | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, orgName: string) => Promise<void>
+  signUp: (email: string, password: string, orgName: string, website?: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -80,13 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
-  const signUp = async (email: string, password: string, orgName: string) => {
+  const signUp = async (email: string, password: string, orgName: string, website?: string) => {
     try {
       // First create the organization
       const { data: org, error: orgError } = await supabase
         .from('nonprofits')
         .insert({
           name: orgName,
+          website: website || null,
           brand_color: '#3B82F6'
         })
         .select()
