@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,28 +30,43 @@ interface Org {
 }
 
 function WidgetContent() {
-  const searchParams = useSearchParams()
   const [org, setOrg] = useState<Org | null>(null)
   const [stories, setStories] = useState<Story[]>([])
   const [searchCode, setSearchCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [orgId, setOrgId] = useState<string | null>(null)
+  const [widgetType, setWidgetType] = useState('story-search')
+  const [nmbrCode, setNmbrCode] = useState<string | null>(null)
 
-  const orgId = searchParams.get('org')
-  const widgetType = searchParams.get('type') || 'story-search'
-  const nmbrCode = searchParams.get('nmbr')
+  // Get search params on client side
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const org = urlParams.get('org')
+    const type = urlParams.get('type') || 'story-search'
+    const nmbr = urlParams.get('nmbr')
+    
+    setOrgId(org)
+    setWidgetType(type)
+    setNmbrCode(nmbr)
+    
+    if (nmbr) {
+      setSearchCode(nmbr)
+    }
+  }, [])
 
   useEffect(() => {
     if (orgId) {
       fetchOrg()
       if (nmbrCode) {
-        setSearchCode(nmbrCode)
         searchStory(nmbrCode)
       }
     }
   }, [orgId, nmbrCode])
 
   const fetchOrg = async () => {
+    if (!orgId) return
+    
     try {
       const response = await fetch(`/api/org/${orgId}`)
       const data = await response.json()
@@ -63,13 +77,13 @@ function WidgetContent() {
   }
 
   const searchStory = async (code: string) => {
-    if (!code.trim()) return
+    if (!code.trim() || !orgId) return
     
     setLoading(true)
     setError('')
     
     try {
-      const response = await fetch(`/api/stories?org_id=${orgId}&nmbr=${code}`)
+      const response = await fetch(`/api/stories?org=${orgId}&nmbr=${code}`)
       const data = await response.json()
       
       if (data.stories && data.stories.length > 0) {
