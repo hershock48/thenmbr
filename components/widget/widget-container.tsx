@@ -11,6 +11,8 @@ import { ProgressSteps } from "@/components/ui/progress-steps"
 import { Search, Heart, Mail, CheckCircle, Play, X, Users, Clock, TrendingUp, Zap, Star, Gift } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { EnhancedDonationFlow } from "./enhanced-donation-flow"
+import { ValidatedInput, useFormValidation } from "@/components/ui/validated-input"
+import { VALIDATION_SCHEMAS } from "@/lib/validation"
 
 interface Organization {
   id: string
@@ -40,6 +42,10 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
   const [currentStep, setCurrentStep] = useState<"search" | "story" | "donate" | "success">("search")
   const [selectedNmbr, setSelectedNmbr] = useState<any>(null)
   const [subscriberData, setSubscriberData] = useState({ email: "", firstName: "", lastName: "" })
+  
+  // Form validation
+  const subscriptionForm = useFormValidation(VALIDATION_SCHEMAS.subscription)
+  const searchForm = useFormValidation(VALIDATION_SCHEMAS.nmbrSearch)
   const [donationAmount, setDonationAmount] = useState("")
   const [showVideo, setShowVideo] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -93,10 +99,10 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
         description: "Find your NMBR",
         status:
           currentStep === "search"
-            ? "current"
+            ? "current" as const
             : ["story", "subscribe", "donate", "success"].includes(currentStep)
-              ? "completed"
-              : "upcoming",
+              ? "completed" as const
+              : "upcoming" as const,
       },
       {
         id: "story",
@@ -104,16 +110,16 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
         description: "Read the story",
         status:
           currentStep === "story"
-            ? "current"
+            ? "current" as const
             : ["subscribe", "donate", "success"].includes(currentStep)
-              ? "completed"
-              : "upcoming",
+              ? "completed" as const
+              : "upcoming" as const,
       },
       {
         id: "connect",
         title: "Connect",
         description: "Subscribe or donate",
-        status: currentStep === "donate" ? "current" : currentStep === "success" ? "completed" : "upcoming",
+        status: currentStep === "donate" ? "current" as const : currentStep === "success" ? "completed" as const : "upcoming" as const,
       },
       {
         id: "success",
@@ -142,8 +148,9 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
   }, [organization.id])
 
   const handleSearch = async () => {
-    if (!searchCode.trim()) {
-      alert("Please enter a NMBR code")
+    // Validate search form before searching
+    const isValid = await searchForm.validateForm()
+    if (!isValid) {
       return
     }
 
@@ -179,6 +186,13 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
   }
 
   const handleSubscribe = async () => {
+    // Validate form before submitting
+    const isValid = await subscriptionForm.validateForm()
+    if (!isValid) {
+      return
+    }
+
+    setLoading(true)
     try {
       // Subscribe the user to the story
       const subscriptionResponse = await fetch("/api/subscribers", {
@@ -206,6 +220,8 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
     } catch (error) {
       console.error("Subscription error:", error)
       alert("There was an error subscribing you. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -325,7 +341,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
 
         {currentStep !== "search" && (
           <div className="px-6 pb-6">
-            <ProgressSteps steps={getProgressSteps()} className="mb-2" />
+            <ProgressSteps steps={getProgressSteps() as any} className="mb-2" />
           </div>
         )}
 
@@ -359,21 +375,22 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                     NMBR Code
                   </Label>
                   <div className="flex space-x-3">
-                    <Input
-                      id="nmbr-code"
-                      placeholder="e.g., HOPE001"
+                    <ValidatedInput
+                      name="code"
                       value={searchCode}
-                      onChange={(e) => setSearchCode(e.target.value)}
-                      className="uppercase font-mono text-center text-lg h-12 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
-                      style={{
-                        borderColor: organization.secondaryColor || "#e2e8f0",
-                        "--tw-ring-color": `${organization.primaryColor}20`,
+                      onChange={(value) => {
+                        setSearchCode(value)
+                        searchForm.setValue('code', value)
                       }}
-                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      onBlur={() => searchForm.setTouchedField('code')}
+                      rules={VALIDATION_SCHEMAS.nmbrSearch.code}
+                      placeholder="e.g., HOPE001"
+                      className="uppercase font-mono text-center text-lg h-12 border-2 focus:ring-2 transition-all duration-200 focus:scale-105 flex-1"
+                      showValidation={searchForm.isFieldTouched('code')}
                     />
                     <Button
                       onClick={handleSearch}
-                      disabled={loading}
+                      disabled={loading || searchForm.hasErrors() || !searchCode.trim()}
                       className="h-12 px-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
                       style={{ backgroundColor: organization.primaryColor }}
                     >
@@ -482,56 +499,50 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
 
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">
-                        First Name
-                      </Label>
-                      <Input
-                        id="firstName"
-                        value={subscriberData.firstName}
-                        onChange={(e) => setSubscriberData({ ...subscriberData, firstName: e.target.value })}
-                        placeholder="Your name"
-                        className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
-                        style={{
-                          borderColor: organization.secondaryColor || "#e2e8f0",
-                          "--tw-ring-color": `${organization.primaryColor}20`,
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName" className="text-sm font-medium text-slate-700">
-                        Last Name
-                      </Label>
-                      <Input
-                        id="lastName"
-                        value={subscriberData.lastName}
-                        onChange={(e) => setSubscriberData({ ...subscriberData, lastName: e.target.value })}
-                        placeholder="Last name"
-                        className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
-                        style={{
-                          borderColor: organization.secondaryColor || "#e2e8f0",
-                          "--tw-ring-color": `${organization.primaryColor}20`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={subscriberData.email}
-                      onChange={(e) => setSubscriberData({ ...subscriberData, email: e.target.value })}
-                      placeholder="your@email.com"
-                      className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
-                      style={{
-                        borderColor: organization.secondaryColor || "#e2e8f0",
-                        "--tw-ring-color": `${organization.primaryColor}20`,
+                    <ValidatedInput
+                      name="firstName"
+                      label="First Name"
+                      value={subscriberData.firstName}
+                      onChange={(value) => {
+                        setSubscriberData({ ...subscriberData, firstName: value })
+                        subscriptionForm.setValue('firstName', value)
                       }}
+                      onBlur={() => subscriptionForm.setTouchedField('firstName')}
+                      rules={VALIDATION_SCHEMAS.subscription.firstName}
+                      placeholder="Your name"
+                      className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
+                      showValidation={subscriptionForm.isFieldTouched('firstName')}
+                    />
+                    <ValidatedInput
+                      name="lastName"
+                      label="Last Name"
+                      value={subscriberData.lastName}
+                      onChange={(value) => {
+                        setSubscriberData({ ...subscriberData, lastName: value })
+                        subscriptionForm.setValue('lastName', value)
+                      }}
+                      onBlur={() => subscriptionForm.setTouchedField('lastName')}
+                      rules={VALIDATION_SCHEMAS.subscription.lastName}
+                      placeholder="Last name"
+                      className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
+                      showValidation={subscriptionForm.isFieldTouched('lastName')}
                     />
                   </div>
+                  <ValidatedInput
+                    name="email"
+                    label="Email Address"
+                    type="email"
+                    value={subscriberData.email}
+                    onChange={(value) => {
+                      setSubscriberData({ ...subscriberData, email: value })
+                      subscriptionForm.setValue('email', value)
+                    }}
+                    onBlur={() => subscriptionForm.setTouchedField('email')}
+                    rules={VALIDATION_SCHEMAS.subscription.email}
+                    placeholder="your@email.com"
+                    className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
+                    showValidation={subscriptionForm.isFieldTouched('email')}
+                  />
                 </div>
 
                 <div className="flex space-x-3">
@@ -539,11 +550,11 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                     onClick={handleSubscribe}
                     variant="outline"
                     className="flex-1 h-10 border-2 hover:bg-slate-50 transition-all duration-200 hover:scale-105 active:scale-95 bg-transparent"
-                    disabled={!subscriberData.email || !subscriberData.firstName}
+                    disabled={loading || subscriptionForm.hasErrors() || !subscriberData.email || !subscriberData.firstName}
                     style={{ borderColor: organization.primaryColor, color: organization.primaryColor }}
                   >
                     <Mail className="w-4 h-4 mr-2" />
-                    Follow Story (Free)
+                    {loading ? "Subscribing..." : "Follow Story (Free)"}
                   </Button>
                   {selectedNmbr.status === "active" && (
                     <Button

@@ -45,18 +45,11 @@ export async function POST(request: NextRequest, { params }: { params: { orgSlug
       amount,
       "usd",
       mockOrganization.stripeAccountId,
-      platformFeeAmount,
-      {
-        nmbrId: nmbrId,
-        nmbrCode: mockNmbr.code,
-        organizationId: mockOrganization.id,
-        donorEmail: donorEmail || "",
-        donorName: donorName || "",
-      },
+      platformFeeAmount
     )
 
     // Confirm payment intent with payment method
-    const confirmedPayment = await stripe.paymentIntents.confirm(paymentIntent.id, {
+    const confirmedPayment = await stripe!.paymentIntents.confirm(paymentIntent.id, {
       payment_method: paymentMethodId,
       return_url: `${request.nextUrl.origin}/widget/${orgSlug}/success`,
     })

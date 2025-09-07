@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { 
   generateStoryUpdateEmail, 
   generateMilestoneEmail, 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const supabase = createClient()
+    // Using the supabase client from lib/supabase.ts
 
     // Get story details
     const { data: story, error: storyError } = await supabase
@@ -241,7 +241,7 @@ async function sendEmailsToSubscribers(
           subscriber_id: subscriber.id,
           event_type: 'bounced',
           event_data: {
-            error: error.message,
+            error: error instanceof Error ? error.message : 'Unknown error',
             failed_at: new Date().toISOString()
           }
         })

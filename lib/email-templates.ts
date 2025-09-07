@@ -120,7 +120,7 @@ export function generateStoryUpdateEmail(data: StoryUpdateData) {
 
           <div class="footer">
             <p>This email was sent because you're following <strong>${data.storyTitle}</strong> (NMBR #${data.storyCode})</p>
-            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${data.organizationWebsite}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
+            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${(data as any).organizationWebsite || '#'}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
           </div>
         </div>
       </body>
@@ -198,7 +198,7 @@ export function generateMilestoneEmail(data: MilestoneData) {
 
           <div class="footer">
             <p>This email was sent because you're following <strong>${data.storyTitle}</strong> (NMBR #${data.storyCode})</p>
-            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${data.organizationWebsite}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
+            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${(data as any).organizationWebsite || '#'}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
           </div>
         </div>
       </body>
@@ -279,7 +279,7 @@ export function generateCompletionEmail(data: CompletionData) {
 
           <div class="footer">
             <p>This email was sent because you followed <strong>${data.storyTitle}</strong> (NMBR #${data.storyCode})</p>
-            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${data.organizationWebsite}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
+            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${(data as any).organizationWebsite || '#'}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
           </div>
         </div>
       </body>
@@ -363,7 +363,7 @@ export function generateWelcomeEmail(data: StoryUpdateData) {
 
           <div class="footer">
             <p>This email was sent because you subscribed to <strong>${data.storyTitle}</strong> (NMBR #${data.storyCode})</p>
-            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${data.organizationWebsite}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
+            <p><a href="${data.unsubscribeUrl}" style="color: #6b7280;">Unsubscribe from this story</a> | <a href="${(data as any).organizationWebsite || '#'}" style="color: #6b7280;">Visit ${data.organizationName}</a></p>
           </div>
         </div>
       </body>

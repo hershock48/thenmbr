@@ -70,7 +70,7 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
       Math.abs(Number(curr) - amount) < Math.abs(Number(prev) - amount) ? curr : prev,
     )
 
-    return impactMap[closestAmount as keyof typeof impactMap] || "Makes a meaningful impact on lives"
+    return impactMap[closestAmount as unknown as keyof typeof impactMap] || "Makes a meaningful impact on lives"
   }
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         body: JSON.stringify({
           email: subscriberData.email,
           firstName: subscriberData.firstName,
-          lastName: subscriberData.lastName || '',
+          lastName: (subscriberData as any).lastName || '',
           storyId: selectedNmbr.id,
           orgId: organization.id,
           source: 'widget'
@@ -124,7 +124,7 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         body: JSON.stringify({
           email: subscriberData.email,
           firstName: subscriberData.firstName,
-          lastName: subscriberData.lastName || '',
+          lastName: (subscriberData as any).lastName || '',
           storyId: selectedNmbr.id,
           orgId: organization.id,
           source: 'widget'

@@ -52,7 +52,9 @@ export function Confetti({ active, onComplete }: ConfettiProps) {
     let animationId: number
 
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (ctx && canvas) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+      }
 
       confettiPieces.forEach((piece, index) => {
         // Update position
@@ -64,15 +66,17 @@ export function Confetti({ active, onComplete }: ConfettiProps) {
         piece.vy += 0.1
 
         // Draw confetti piece
-        ctx.save()
-        ctx.translate(piece.x, piece.y)
-        ctx.rotate((piece.rotation * Math.PI) / 180)
-        ctx.fillStyle = piece.color
-        ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size)
-        ctx.restore()
+        if (ctx) {
+          ctx.save()
+          ctx.translate(piece.x, piece.y)
+          ctx.rotate((piece.rotation * Math.PI) / 180)
+          ctx.fillStyle = piece.color
+          ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size)
+          ctx.restore()
+        }
 
         // Remove pieces that are off screen
-        if (piece.y > canvas.height + 10) {
+        if (canvas && piece.y > canvas.height + 10) {
           confettiPieces.splice(index, 1)
         }
       })

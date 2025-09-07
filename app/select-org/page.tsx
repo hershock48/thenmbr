@@ -138,7 +138,7 @@ export default function SelectOrgPage() {
       console.log('User metadata updated successfully:', data)
 
       // Set the organization in AuthContext
-      setOrg(selectedOrg)
+      setOrg(selectedOrg as any)
       
       // Trigger multi-org achievement if this is not the first org
       try {
@@ -153,7 +153,7 @@ export default function SelectOrgPage() {
       router.push('/dashboard')
     } catch (err) {
       console.error('Error selecting organization:', err)
-      setError(`Failed to select organization: ${err.message || 'Unknown error'}`)
+      setError(`Failed to select organization: ${err instanceof Error ? err.message : 'Unknown error'}`)
       setLoading(false)
     }
   }

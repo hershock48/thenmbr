@@ -29,12 +29,15 @@ import {
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense, lazy } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { NewsletterBuilder } from "@/components/dashboard/newsletter-builder"
-import { MediaUpload } from "@/components/dashboard/media-upload"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { newsletterTemplates, newsletterThemes } from "@/lib/newsletter-templates"
+
+// Lazy load heavy components
+const NewsletterBuilder = lazy(() => import("@/components/dashboard/newsletter-builder").then(module => ({ default: module.NewsletterBuilder })))
+const MediaUpload = lazy(() => import("@/components/dashboard/media-upload").then(module => ({ default: module.MediaUpload })))
 
 interface Newsletter {
   id: string
@@ -275,13 +278,15 @@ export default function NewslettersPage() {
                 <DialogHeader>
                   <DialogTitle>Media Library</DialogTitle>
                 </DialogHeader>
-                <MediaUpload 
-                  organizationId={org?.id || ''}
-                  onSelect={(file) => {
-                    console.log('Selected file:', file)
-                    // Handle file selection
-                  }}
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <MediaUpload 
+                    organizationId={org?.id || ''}
+                    onSelect={(file) => {
+                      console.log('Selected file:', file)
+                      // Handle file selection
+                    }}
+                  />
+                </Suspense>
               </DialogContent>
             </Dialog>
             <Dialog>
@@ -296,18 +301,20 @@ export default function NewslettersPage() {
                 <DialogHeader>
                   <DialogTitle>Newsletter Builder</DialogTitle>
                 </DialogHeader>
-                <NewsletterBuilder 
-                  storyId={selectedStory || stories[0]?.id || ''}
-                  organizationId={org?.id || ''}
-                  onSave={(newsletter) => {
-                    console.log('Newsletter saved:', newsletter)
-                    fetchNewsletters()
-                  }}
-                  onSend={(newsletter) => {
-                    console.log('Newsletter sent:', newsletter)
-                    fetchNewsletters()
-                  }}
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <NewsletterBuilder 
+                    storyId={selectedStory || stories[0]?.id || ''}
+                    organizationId={org?.id || ''}
+                    onSave={(newsletter) => {
+                      console.log('Newsletter saved:', newsletter)
+                      fetchNewsletters()
+                    }}
+                    onSend={(newsletter) => {
+                      console.log('Newsletter sent:', newsletter)
+                      fetchNewsletters()
+                    }}
+                  />
+                </Suspense>
               </DialogContent>
             </Dialog>
           </div>

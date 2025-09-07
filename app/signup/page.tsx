@@ -114,7 +114,7 @@ export default function SignupPage() {
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center">
           <CardContent className="p-8">
-            <Confetti />
+            <Confetti active={true} />
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-8 h-8 text-white" />
             </div>
