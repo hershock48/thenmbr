@@ -38,6 +38,7 @@ function WidgetContent() {
   const [orgId, setOrgId] = useState<string | null>(null)
   const [widgetType, setWidgetType] = useState('story-search')
   const [nmbrCode, setNmbrCode] = useState<string | null>(null)
+  const [debug, setDebug] = useState('')
 
   // Get search params on client side
   useEffect(() => {
@@ -45,6 +46,8 @@ function WidgetContent() {
     const org = urlParams.get('org')
     const type = urlParams.get('type') || 'story-search'
     const nmbr = urlParams.get('nmbr')
+    
+    setDebug(`URL: ${window.location.href}, org: ${org}, type: ${type}, nmbr: ${nmbr}`)
     
     setOrgId(org)
     setWidgetType(type)
@@ -153,6 +156,7 @@ function WidgetContent() {
           <CardContent className="p-6 text-center">
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Invalid Widget</h2>
             <p className="text-gray-600">This widget requires an organization ID.</p>
+            <p className="text-xs text-gray-500 mt-2">Debug: {debug}</p>
           </CardContent>
         </Card>
       </div>
