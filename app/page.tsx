@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Search, Heart, Users, BarChart3, ArrowRight, CheckCircle, Star } from "lucide-react"
+import Link from "next/link"
 
 export default function HomePage() {
   return (
@@ -21,14 +22,18 @@ export default function HomePage() {
               <span className="text-lg sm:text-2xl font-bold text-foreground hidden xs:block">NMBR Platform</span>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <Button variant="ghost" className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
-                Sign In
-              </Button>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg text-sm sm:text-base px-3 sm:px-4">
-                <span className="hidden sm:inline">Get Started</span>
-                <span className="sm:hidden">Start</span>
-                <ArrowRight className="ml-1 sm:ml-2 w-3 h-3 sm:w-4 sm:h-4" />
-              </Button>
+              <Link href="/login">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg text-sm sm:text-base px-3 sm:px-4">
+                  <span className="hidden sm:inline">Get Started</span>
+                  <span className="sm:hidden">Start</span>
+                  <ArrowRight className="ml-1 sm:ml-2 w-3 h-3 sm:w-4 sm:h-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -52,206 +57,125 @@ export default function HomePage() {
               Numbered Stories
             </span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-8 sm:mb-12 text-pretty max-w-3xl mx-auto leading-relaxed">
-            Connect physical bracelets to digital stories. Donors search NMBR codes to discover compelling narratives
-            and make meaningful contributions to your cause.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-3 sm:py-4 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl"
-            >
-              Start Your Campaign
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-3 sm:py-4 border-2 hover:bg-card bg-transparent"
-            >
-              View Demo
-            </Button>
-          </div>
 
-          <div className="mt-12 sm:mt-16 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-6 h-6 sm:w-8 sm:h-8 bg-primary/20 rounded-full border-2 border-background"
-                  ></div>
-                ))}
-              </div>
-              <span className="text-xs sm:text-sm">Join 2,000+ active users</span>
-            </div>
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 fill-accent text-accent" />
-              ))}
-              <span className="text-xs sm:text-sm ml-2">4.9/5 rating</span>
-            </div>
+          <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
+            Connect donors directly to the impact they create. Our platform lets nonprofits create numbered stories that donors can follow, subscribe to, and support with one-click donations.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+            <Link href="/demo">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-8 py-4 text-base sm:text-lg">
+                <Search className="mr-2 w-5 h-5" />
+                Try Demo
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button size="lg" variant="outline" className="border-2 px-8 py-4 text-base sm:text-lg">
+                Start Free Trial
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-card/30">
+      {/* Features Section */}
+      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6 text-balance">
-              Everything You Need to Succeed
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+              Everything You Need to Tell Your Story
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
-              Powerful tools designed to maximize your fundraising impact and build lasting donor relationships.
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              From creating numbered stories to processing donations, our platform handles it all with beautiful, customizable widgets.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Main feature card */}
-            <Card className="md:col-span-2 lg:col-span-2 border-0 shadow-xl bg-gradient-to-br from-primary/5 to-primary/10 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group">
-              <CardHeader className="pb-4 sm:pb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
-                  <Search className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
+            {/* Story Creation */}
+            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Search className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-3">Embeddable Widget</CardTitle>
-                <CardDescription className="text-base sm:text-lg text-muted-foreground">
-                  Branded, customizable widget that integrates seamlessly into your website
+                <CardTitle className="text-xl sm:text-2xl">Story Search</CardTitle>
+                <CardDescription className="text-base">
+                  Donors search by NMBR code to discover personalized impact stories
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  <div className="space-y-2 sm:space-y-3">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-foreground">NMBR code search functionality</span>
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-foreground">Story display with media</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2 sm:space-y-3">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-foreground">Subscription management</span>
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-foreground">Integrated donation flow</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 bg-card group">
-              <CardHeader>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-accent/20 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Heart className="w-6 h-6 sm:w-7 sm:h-7 text-accent" />
-                </div>
-                <CardTitle className="text-lg sm:text-xl">Story Management</CardTitle>
-                <CardDescription className="text-sm sm:text-base">
-                  Create compelling narratives that connect donors to your mission
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 sm:space-y-3">
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Rich text story editor</span>
+                <ul className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Instant story lookup
                   </li>
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Image and video uploads</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Rich media support
                   </li>
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Goal tracking</span>
-                  </li>
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Progress updates</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Progress tracking
                   </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-card">
-              <CardHeader>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-3 sm:mb-4">
-                  <Users className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+            {/* Donation Processing */}
+            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Heart className="w-8 h-8 text-accent" />
                 </div>
-                <CardTitle className="text-lg sm:text-xl">Subscriber Insights</CardTitle>
-                <CardDescription className="text-sm sm:text-base">
-                  Understand your audience and build lasting relationships
+                <CardTitle className="text-xl sm:text-2xl">Easy Donations</CardTitle>
+                <CardDescription className="text-base">
+                  One-click donations with Stripe Connect and platform fee collection
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 sm:space-y-3">
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Subscriber segmentation by NMBR</span>
+                <ul className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Stripe integration
                   </li>
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Email campaign tools</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Platform fees
                   </li>
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Engagement analytics</span>
-                  </li>
-                  <li className="flex items-center gap-2 sm:gap-3">
-                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Donor journey tracking</span>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Secure payments
                   </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="md:col-span-2 lg:col-span-2 border-0 shadow-xl bg-gradient-to-br from-accent/5 to-accent/10 hover:shadow-2xl transition-all duration-300">
-              <CardHeader className="pb-4 sm:pb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
-                  <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-accent" />
+            {/* Email Marketing */}
+            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <CardHeader className="text-center pb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-3">Payment Processing & Analytics</CardTitle>
-                <CardDescription className="text-base sm:text-lg text-muted-foreground">
-                  Secure donations with comprehensive insights and automated fee collection
+                <CardTitle className="text-xl sm:text-2xl">Smart Subscriptions</CardTitle>
+                <CardDescription className="text-base">
+                  NMBR-specific email lists for targeted donor engagement
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-2 sm:mb-3 text-sm sm:text-base">
-                      Payment Features
-                    </h4>
-                    <ul className="space-y-1 sm:space-y-2">
-                      <li className="flex items-center gap-2 sm:gap-3">
-                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-accent flex-shrink-0" />
-                        <span className="text-xs sm:text-sm text-muted-foreground">Stripe Connect integration</span>
-                      </li>
-                      <li className="flex items-center gap-2 sm:gap-3">
-                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-accent flex-shrink-0" />
-                        <span className="text-xs sm:text-sm text-muted-foreground">Multiple payment methods</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-2 sm:mb-3 text-sm sm:text-base">
-                      Analytics & Reporting
-                    </h4>
-                    <ul className="space-y-1 sm:space-y-2">
-                      <li className="flex items-center gap-2 sm:gap-3">
-                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-accent flex-shrink-0" />
-                        <span className="text-xs sm:text-sm text-muted-foreground">Automated fee collection</span>
-                      </li>
-                      <li className="flex items-center gap-2 sm:gap-3">
-                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-accent flex-shrink-0" />
-                        <span className="text-xs sm:text-sm text-muted-foreground">Financial reporting</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <ul className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Segmented lists
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Auto-tagging
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Analytics
+                  </li>
+                </ul>
               </CardContent>
             </Card>
           </div>
@@ -259,134 +183,53 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary to-primary/90 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,255,255,0.1),transparent_50%)]"></div>
-        <div className="relative max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-6 sm:mb-8 text-balance">
+      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Ready to Transform Your Fundraising?
           </h2>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-primary-foreground/90 mb-8 sm:mb-12 max-w-3xl mx-auto text-pretty leading-relaxed">
-            Join nonprofits already using NMBR Platform to create meaningful connections between donors and their
-            mission. Start your first campaign in minutes.
+          <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12">
+            Join hundreds of nonprofits already using NMBR to create deeper donor connections and increase giving.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-3 sm:py-4 bg-accent hover:bg-accent/90 text-accent-foreground shadow-xl"
-            >
-              Get Started Today
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto text-base sm:text-lg px-8 sm:px-10 py-3 sm:py-4 border-2 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 bg-transparent"
-            >
-              Schedule Demo
-            </Button>
+            <Link href="/signup">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-8 py-4 text-base sm:text-lg">
+                Get Started Today
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/demo">
+              <Button size="lg" variant="outline" className="border-2 px-8 py-4 text-base sm:text-lg">
+                View Demo
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
-            <div className="sm:col-span-2">
-              <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-                <div className="relative">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="text-primary-foreground font-bold text-base sm:text-lg">N</span>
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-accent rounded-full flex items-center justify-center">
-                    <span className="text-accent-foreground font-bold text-xs">#</span>
-                  </div>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <div className="relative">
+                <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-primary-foreground font-bold text-lg">N</span>
                 </div>
-                <span className="text-xl sm:text-2xl font-bold text-foreground">NMBR Platform</span>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full flex items-center justify-center">
+                  <span className="text-accent-foreground font-bold text-xs">#</span>
+                </div>
               </div>
-              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-md">
-                Connecting stories to support through numbered bracelets and digital experiences. Empowering nonprofits
-                to build meaningful donor relationships.
-              </p>
+              <span className="text-xl font-bold text-foreground">NMBR Platform</span>
             </div>
-            <div>
-              <h3 className="font-semibold text-foreground mb-4 sm:mb-6 text-base sm:text-lg">Product</h3>
-              <ul className="space-y-3 sm:space-y-4">
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Demo
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    API
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground mb-4 sm:mb-6 text-base sm:text-lg">Support</h3>
-              <ul className="space-y-3 sm:space-y-4">
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Contact
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm sm:text-base text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    Status
-                  </a>
-                </li>
-              </ul>
+            <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+              <Link href="/demo" className="hover:text-foreground transition-colors">Demo</Link>
+              <Link href="/login" className="hover:text-foreground transition-colors">Login</Link>
+              <Link href="/signup" className="hover:text-foreground transition-colors">Sign Up</Link>
             </div>
           </div>
-          <div className="border-t border-border mt-8 sm:mt-12 pt-6 sm:pt-8 text-center">
-            <p className="text-sm sm:text-base text-muted-foreground">© 2025 NMBR Platform. All rights reserved.</p>
+          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+            <p>&copy; 2024 NMBR Platform. All rights reserved.</p>
           </div>
         </div>
       </footer>
