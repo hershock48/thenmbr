@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Search, Heart, Users, BarChart3, ArrowRight, CheckCircle, Star } from "lucide-react"
+import { Search, Heart, Users, BarChart3, ArrowRight, CheckCircle, Star, Shield, Zap } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
@@ -48,7 +48,7 @@ export default function HomePage() {
         <div className="relative max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-3 sm:px-4 py-2 mb-6 sm:mb-8">
             <CheckCircle className="w-4 h-4 text-primary" />
-            <span className="text-xs sm:text-sm font-medium text-muted-foreground">Trusted by 500+ nonprofits</span>
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground">Trusted by 500+ nonprofits worldwide</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-6 sm:mb-8 text-balance leading-tight">
@@ -66,7 +66,7 @@ export default function HomePage() {
             <Link href="/demo">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-8 py-4 text-base sm:text-lg">
                 <Search className="mr-2 w-5 h-5" />
-                Try Demo
+                Try Live Demo
               </Button>
             </Link>
             <Link href="/signup">
@@ -87,7 +87,7 @@ export default function HomePage() {
               Everything You Need to Tell Your Story
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
-              From creating numbered stories to processing donations, our platform handles it all with beautiful, customizable widgets.
+              From creating numbered stories to processing donations, our platform handles it all with beautiful, customizable widgets that integrate seamlessly into your website.
             </p>
           </div>
 
@@ -98,7 +98,7 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Search className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl">Story Search</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Story Search Widget</CardTitle>
                 <CardDescription className="text-base">
                   Donors search by NMBR code to discover personalized impact stories
                 </CardDescription>
@@ -107,15 +107,19 @@ export default function HomePage() {
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Instant story lookup
+                    Instant story lookup by NMBR code
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Rich media support
+                    Rich media support with photos
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Progress tracking
+                    Real-time progress tracking
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Mobile-responsive design
                   </li>
                 </ul>
               </CardContent>
@@ -127,7 +131,7 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Heart className="w-8 h-8 text-accent" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl">Easy Donations</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Donation Widget</CardTitle>
                 <CardDescription className="text-base">
                   One-click donations with Stripe Connect and platform fee collection
                 </CardDescription>
@@ -136,15 +140,19 @@ export default function HomePage() {
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Stripe integration
+                    Secure Stripe payment processing
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Platform fees
+                    Automatic platform fee collection
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Secure payments
+                    PCI-compliant security
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Custom donation amounts
                   </li>
                 </ul>
               </CardContent>
@@ -156,7 +164,7 @@ export default function HomePage() {
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Users className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl sm:text-2xl">Smart Subscriptions</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Subscribe Widget</CardTitle>
                 <CardDescription className="text-base">
                   NMBR-specific email lists for targeted donor engagement
                 </CardDescription>
@@ -165,15 +173,19 @@ export default function HomePage() {
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Segmented lists
+                    Segmented email lists by NMBR
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Auto-tagging
+                    Automatic subscriber tagging
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                    Analytics
+                    Detailed engagement analytics
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    Export to your email platform
                   </li>
                 </ul>
               </CardContent>
@@ -182,25 +194,89 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Management Dashboard Section */}
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+              Complete Nonprofit Management
+            </h2>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto">
+              Manage everything from one powerful dashboard. Create stories, customize branding, process donations, and track engagement.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="text-center">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-6 h-6 text-blue-600" />
+                </div>
+                <CardTitle className="text-lg">Story Management</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Create, edit, and manage your NMBR stories with photos and progress tracking.</p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-6 h-6 text-purple-600" />
+                </div>
+                <CardTitle className="text-lg">Branding Control</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Upload logos, set colors, and customize fonts to match your brand perfectly.</p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-6 h-6 text-green-600" />
+                </div>
+                <CardTitle className="text-lg">Stripe Integration</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Connect your Stripe account for seamless payment processing and fee collection.</p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <BarChart3 className="w-6 h-6 text-orange-600" />
+                </div>
+                <CardTitle className="text-lg">Analytics Dashboard</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Track donations, subscribers, and engagement with detailed analytics and reports.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Ready to Transform Your Fundraising?
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12">
-            Join hundreds of nonprofits already using NMBR to create deeper donor connections and increase giving.
+            Join hundreds of nonprofits already using NMBR to create deeper donor connections and increase giving by up to 300%.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
             <Link href="/signup">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-8 py-4 text-base sm:text-lg">
-                Get Started Today
+                Start Free Trial
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
             <Link href="/demo">
               <Button size="lg" variant="outline" className="border-2 px-8 py-4 text-base sm:text-lg">
-                View Demo
+                View Live Demo
               </Button>
             </Link>
           </div>
