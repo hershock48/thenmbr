@@ -15,7 +15,7 @@ interface WidgetPageProps {
 export default function WidgetPage({ params, searchParams }: WidgetPageProps) {
   // In a real app, this would fetch organization data from database
   const mockOrganization = {
-    id: "1",
+    id: "b4599b27-2070-475c-a210-ecb9dcf0b46a", // Real org ID from your database
     name: "Hope Foundation",
     slug: "hope-foundation",
     primaryColor: searchParams.primaryColor || "#2563eb",

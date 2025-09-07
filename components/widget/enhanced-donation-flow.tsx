@@ -84,18 +84,79 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
     return () => document.removeEventListener("mouseleave", handleMouseLeave)
   }, [showExitIntent])
 
-  const handleDonate = async () => {
-    // Process donation with selected payment method
-    console.log("Processing donation:", {
-      amount: donationAmount,
-      paymentMethod,
-      subscriber: subscriberData,
-      nmbrId: selectedNmbr.id,
-    })
+  const handleSubscribe = async () => {
+    try {
+      // Subscribe the user to the story
+      const subscriptionResponse = await fetch('/api/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: subscriberData.email,
+          firstName: subscriberData.firstName,
+          lastName: subscriberData.lastName || '',
+          storyId: selectedNmbr.id,
+          orgId: organization.id,
+          source: 'widget'
+        })
+      })
 
-    // Simulate processing
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    onSuccess()
+      const subscriptionResult = await subscriptionResponse.json()
+      
+      if (!subscriptionResult.success) {
+        throw new Error(subscriptionResult.error || 'Failed to subscribe to story updates')
+      }
+
+      // Show success message
+      alert('Successfully subscribed! You\'ll receive updates about this story.')
+      onSuccess()
+    } catch (error) {
+      console.error('Subscription error:', error)
+      alert('There was an error subscribing you. Please try again.')
+    }
+  }
+
+  const handleDonate = async () => {
+    try {
+      // First, subscribe the user to the story
+      const subscriptionResponse = await fetch('/api/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: subscriberData.email,
+          firstName: subscriberData.firstName,
+          lastName: subscriberData.lastName || '',
+          storyId: selectedNmbr.id,
+          orgId: organization.id,
+          source: 'widget'
+        })
+      })
+
+      const subscriptionResult = await subscriptionResponse.json()
+      
+      if (!subscriptionResult.success) {
+        throw new Error(subscriptionResult.error || 'Failed to subscribe to story updates')
+      }
+
+      // Then process the donation
+      console.log("Processing donation:", {
+        amount: donationAmount,
+        paymentMethod,
+        subscriber: subscriberData,
+        nmbrId: selectedNmbr.id,
+        subscriptionId: subscriptionResult.subscriber.id
+      })
+
+      // Simulate donation processing
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      
+      // In a real implementation, this would integrate with Stripe
+      // and update the subscriber's donation stats
+      
+      onSuccess()
+    } catch (error) {
+      console.error('Donation error:', error)
+      alert('There was an error processing your donation. Please try again.')
+    }
   }
 
   const smartAmounts = getSmartAmounts()
@@ -140,37 +201,70 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         </div>
       </div>
 
-      {/* Combined Subscribe + Donate Form */}
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h3 className="text-xl font-bold text-slate-900">Support {selectedNmbr.title}</h3>
-          <p className="text-sm text-slate-600">Get updates and make a donation in one step</p>
+        {/* Combined Subscribe + Donate Form */}
+        <div className="space-y-6">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-100 to-purple-100 rounded-2xl flex items-center justify-center mb-4">
+              <Heart className="w-8 h-8 text-cyan-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900">Stay Connected to Your Story</h3>
+            <p className="text-base text-slate-600 max-w-md mx-auto">
+              Get exclusive updates on <strong>{selectedNmbr.title}</strong> - see how your support is making a real difference in someone's life.
+            </p>
+            <div className="bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-xl p-4">
+              <div className="flex items-center justify-center gap-2 text-sm text-cyan-700 font-medium">
+                <Users className="w-4 h-4" />
+                <span>{selectedNmbr.subscribers} people are already following this story</span>
+              </div>
+            </div>
+          </div>
+
+        {/* Subscription Benefits */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+          <h4 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+            <Gift className="w-4 h-4" />
+            What you'll get as a subscriber:
+          </h4>
+          <ul className="text-sm text-green-700 space-y-1">
+            <li>• Exclusive updates on this specific story's progress</li>
+            <li>• Photos and videos showing your impact in action</li>
+            <li>• Milestone celebrations when goals are reached</li>
+            <li>• Direct connection to the person you're helping</li>
+          </ul>
         </div>
 
         {/* Contact Info */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">
-              First Name
-            </Label>
-            <Input
-              id="firstName"
-              value={subscriberData.firstName}
-              onChange={(e) => setSubscriberData({ ...subscriberData, firstName: e.target.value })}
-              className="h-11 border-2 focus:ring-2 transition-all duration-200"
-            />
+        <div className="space-y-4">
+          <div className="text-center">
+            <h4 className="font-semibold text-slate-900 mb-1">Join the Story</h4>
+            <p className="text-sm text-slate-600">We'll send you updates about this specific story, not general newsletters</p>
           </div>
-          <div>
-            <Label htmlFor="email" className="text-sm font-medium text-slate-700">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={subscriberData.email}
-              onChange={(e) => setSubscriberData({ ...subscriberData, email: e.target.value })}
-              className="h-11 border-2 focus:ring-2 transition-all duration-200"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">
+                Your First Name
+              </Label>
+              <Input
+                id="firstName"
+                value={subscriberData.firstName}
+                onChange={(e) => setSubscriberData({ ...subscriberData, firstName: e.target.value })}
+                placeholder="Enter your name"
+                className="h-11 border-2 focus:ring-2 transition-all duration-200"
+              />
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={subscriberData.email}
+                onChange={(e) => setSubscriberData({ ...subscriberData, email: e.target.value })}
+                placeholder="your@email.com"
+                className="h-11 border-2 focus:ring-2 transition-all duration-200"
+              />
+            </div>
           </div>
         </div>
 
@@ -284,19 +378,47 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-3">
-          <Button variant="outline" onClick={onBack} className="flex-1 h-12 border-2 bg-transparent">
-            Back
+        <div className="space-y-4">
+          <div className="text-center">
+            <p className="text-sm text-slate-600">
+              Choose how you'd like to support this story
+            </p>
+          </div>
+          
+          {/* Subscribe Only Button */}
+          <Button
+            onClick={handleSubscribe}
+            variant="outline"
+            className="w-full h-12 border-2 hover:bg-slate-50 transition-all duration-200"
+            disabled={!subscriberData.email || !subscriberData.firstName}
+            style={{ borderColor: organization.primaryColor, color: organization.primaryColor }}
+          >
+            <Heart className="w-4 h-4 mr-2" />
+            Follow Story (Free Updates)
           </Button>
+
+          {/* Donate Button */}
           <Button
             onClick={handleDonate}
-            className="flex-1 h-12 shadow-lg hover:shadow-xl transition-all duration-200"
-            disabled={!donationAmount || !subscriberData.email}
+            className="w-full h-12 shadow-lg hover:shadow-xl transition-all duration-200"
+            disabled={!donationAmount || !subscriberData.email || !subscriberData.firstName}
             style={{ backgroundColor: organization.primaryColor }}
           >
-            <Zap className="w-4 h-4 mr-2" />
-            Donate ${donationAmount}
+            <DollarSign className="w-4 h-4 mr-2" />
+            Donate ${donationAmount} & Follow Story
           </Button>
+
+          <div className="flex space-x-3">
+            <Button variant="outline" onClick={onBack} className="flex-1 h-10 border-2 bg-transparent">
+              Back
+            </Button>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-xs text-slate-500">
+              You can unsubscribe anytime. We only send updates about stories you're following.
+            </p>
+          </div>
         </div>
       </div>
 

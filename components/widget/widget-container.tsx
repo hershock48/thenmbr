@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -37,7 +37,7 @@ interface WidgetContainerProps {
 
 export function WidgetContainer({ organization }: WidgetContainerProps) {
   const [searchCode, setSearchCode] = useState("")
-  const [currentStep, setCurrentStep] = useState<"search" | "story" | "subscribe" | "donate" | "success">("search")
+  const [currentStep, setCurrentStep] = useState<"search" | "story" | "donate" | "success">("search")
   const [selectedNmbr, setSelectedNmbr] = useState<any>(null)
   const [subscriberData, setSubscriberData] = useState({ email: "", firstName: "", lastName: "" })
   const [donationAmount, setDonationAmount] = useState("")
@@ -71,7 +71,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
         id: "connect",
         title: "Connect",
         description: "Subscribe or donate",
-        status: ["subscribe", "donate"].includes(currentStep)
+        status: currentStep === "donate"
           ? "current"
           : currentStep === "success"
             ? "completed"
@@ -87,49 +87,90 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
     return steps
   }
 
-  // Mock NMBR data - in real app this would come from API
-  const mockNmbrs = {
-    HOPE001: {
-      id: "1",
-      code: "HOPE001",
-      title: "Clean Water for Village",
-      story:
-        "This bracelet represents our mission to bring clean water to a remote village in Kenya. Every donation helps us get closer to installing a sustainable water system that will serve 500 families. The community has been walking 3 miles daily to fetch water from an unsafe source. With your help, we can change their lives forever.",
-      image: "/water-well-village.jpg",
-      video: "https://example.com/water-project-video.mp4",
-      goal: 5000,
-      raised: 3250,
-      subscribers: 89,
-      status: "active",
-    },
-    HOPE002: {
-      id: "2",
-      code: "HOPE002",
-      title: "School Supplies Drive",
-      story:
-        "Education is the key to breaking the cycle of poverty. This NMBR supports our school supplies drive, providing books, pencils, and learning materials to children in underserved communities. Over 200 children are waiting for basic school supplies to continue their education.",
-      image: "/school-children-books.jpg",
-      goal: 3000,
-      raised: 4800,
-      subscribers: 156,
-      status: "completed",
-    },
-  }
+  const [stories, setStories] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
 
-  const handleSearch = () => {
-    const nmbr = mockNmbrs[searchCode.toUpperCase() as keyof typeof mockNmbrs]
-    if (nmbr) {
-      setSelectedNmbr(nmbr)
-      setCurrentStep("story")
-    } else {
-      alert("NMBR code not found. Please check the code and try again.")
+  // Fetch stories from API
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const response = await fetch(`/api/stories?org=${organization.id}`)
+        const data = await response.json()
+        if (data.stories) {
+          setStories(data.stories)
+        }
+      } catch (error) {
+        console.error('Error fetching stories:', error)
+      }
+    }
+    fetchStories()
+  }, [organization.id])
+
+  const handleSearch = async () => {
+    if (!searchCode.trim()) {
+      alert("Please enter a NMBR code")
+      return
+    }
+
+    setLoading(true)
+    try {
+      // Find story by NMBR code
+      const story = stories.find(s => s.nmbr_code === searchCode.trim())
+      if (story) {
+        // Transform the story data to match the expected format
+        const transformedStory = {
+          id: story.id,
+          code: story.nmbr_code,
+          title: story.title,
+          story: story.description,
+          image: story.photo_url,
+          goal: story.goal_amount,
+          raised: story.current_amount,
+          subscribers: 0, // This would come from subscribers count
+          status: story.status,
+        }
+        setSelectedNmbr(transformedStory)
+        setCurrentStep("story")
+      } else {
+        alert("NMBR code not found. Please check the code and try again.")
+      }
+    } catch (error) {
+      console.error('Error searching for NMBR:', error)
+      alert("Error searching for NMBR. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleSubscribe = () => {
-    // In real app, this would call API to subscribe user
-    console.log("Subscribing:", subscriberData, "to NMBR:", selectedNmbr?.code)
-    setCurrentStep("donate")
+  const handleSubscribe = async () => {
+    try {
+      // Subscribe the user to the story
+      const subscriptionResponse = await fetch('/api/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: subscriberData.email,
+          firstName: subscriberData.firstName,
+          lastName: subscriberData.lastName || '',
+          storyId: selectedNmbr.id,
+          orgId: organization.id,
+          source: 'widget'
+        })
+      })
+
+      const subscriptionResult = await subscriptionResponse.json()
+      
+      if (!subscriptionResult.success) {
+        throw new Error(subscriptionResult.error || 'Failed to subscribe to story updates')
+      }
+
+      // Show success message
+      alert('Successfully subscribed! You\'ll receive updates about this story.')
+      setCurrentStep("success")
+    } catch (error) {
+      console.error('Subscription error:', error)
+      alert('There was an error subscribing you. Please try again.')
+    }
   }
 
   const handleDonate = () => {
@@ -236,6 +277,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                   />
                   <Button
                     onClick={handleSearch}
+                    disabled={loading}
                     className="h-12 px-6 shadow-lg hover:shadow-xl transition-all duration-200"
                     style={{ backgroundColor: organization.primaryColor }}
                   >
@@ -307,29 +349,91 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                 </div>
               )}
 
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentStep("subscribe")}
-                  className="flex-1 h-12 border-2 hover:shadow-md transition-all duration-200"
-                  style={{
-                    borderColor: organization.primaryColor,
-                    color: organization.primaryColor,
-                  }}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Get Updates
-                </Button>
-                {selectedNmbr.status === "active" && (
+              {/* Subscription Form */}
+              <div className="space-y-4 p-4 bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-xl">
+                <div className="text-center space-y-2">
+                  <h4 className="font-semibold text-slate-900">Stay Connected to Your Story</h4>
+                  <p className="text-sm text-slate-600">
+                    Get exclusive updates on <strong>{selectedNmbr.title}</strong> - see how your support is making a real difference.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">
+                        First Name
+                      </Label>
+                      <Input
+                        id="firstName"
+                        value={subscriberData.firstName}
+                        onChange={(e) => setSubscriberData({ ...subscriberData, firstName: e.target.value })}
+                        placeholder="Your name"
+                        className="h-10 border-2 focus:ring-2 transition-all duration-200"
+                        style={{
+                          borderColor: organization.secondaryColor || "#e2e8f0",
+                          "--tw-ring-color": `${organization.primaryColor}20`,
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName" className="text-sm font-medium text-slate-700">
+                        Last Name
+                      </Label>
+                      <Input
+                        id="lastName"
+                        value={subscriberData.lastName}
+                        onChange={(e) => setSubscriberData({ ...subscriberData, lastName: e.target.value })}
+                        placeholder="Last name"
+                        className="h-10 border-2 focus:ring-2 transition-all duration-200"
+                        style={{
+                          borderColor: organization.secondaryColor || "#e2e8f0",
+                          "--tw-ring-color": `${organization.primaryColor}20`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">
+                      Email Address
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={subscriberData.email}
+                      onChange={(e) => setSubscriberData({ ...subscriberData, email: e.target.value })}
+                      placeholder="your@email.com"
+                      className="h-10 border-2 focus:ring-2 transition-all duration-200"
+                      style={{
+                        borderColor: organization.secondaryColor || "#e2e8f0",
+                        "--tw-ring-color": `${organization.primaryColor}20`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
                   <Button
-                    onClick={() => setCurrentStep("donate")}
-                    className="flex-1 h-12 shadow-lg hover:shadow-xl transition-all duration-200"
-                    style={{ backgroundColor: organization.primaryColor }}
+                    onClick={handleSubscribe}
+                    variant="outline"
+                    className="flex-1 h-10 border-2 hover:bg-slate-50 transition-all duration-200"
+                    disabled={!subscriberData.email || !subscriberData.firstName}
+                    style={{ borderColor: organization.primaryColor, color: organization.primaryColor }}
                   >
-                    <Heart className="w-4 h-4 mr-2" />
-                    Donate
+                    <Mail className="w-4 h-4 mr-2" />
+                    Follow Story (Free)
                   </Button>
-                )}
+                  {selectedNmbr.status === "active" && (
+                    <Button
+                      onClick={() => setCurrentStep("donate")}
+                      className="flex-1 h-10 shadow-lg hover:shadow-xl transition-all duration-200"
+                      style={{ backgroundColor: organization.primaryColor }}
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      Donate & Follow
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <Button
@@ -343,93 +447,6 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
             </div>
           )}
 
-          {/* Subscribe Step */}
-          {currentStep === "subscribe" && (
-            <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <h3 className="text-xl font-bold" style={getHeadingStyles()}>
-                  Stay Connected
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: organization.textColor || "#64748b" }}>
-                  Get updates about <strong>{selectedNmbr?.title}</strong> and see the impact of your support
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label
-                      htmlFor="firstName"
-                      className="text-sm font-medium"
-                      style={{ color: organization.textColor }}
-                    >
-                      First Name
-                    </Label>
-                    <Input
-                      id="firstName"
-                      value={subscriberData.firstName}
-                      onChange={(e) => setSubscriberData({ ...subscriberData, firstName: e.target.value })}
-                      className="h-11 border-2 focus:ring-2 transition-all duration-200"
-                      style={{
-                        borderColor: organization.secondaryColor || "#e2e8f0",
-                        "--tw-ring-color": `${organization.primaryColor}20`,
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName" className="text-sm font-medium" style={{ color: organization.textColor }}>
-                      Last Name
-                    </Label>
-                    <Input
-                      id="lastName"
-                      value={subscriberData.lastName}
-                      onChange={(e) => setSubscriberData({ ...subscriberData, lastName: e.target.value })}
-                      className="h-11 border-2 focus:ring-2 transition-all duration-200"
-                      style={{
-                        borderColor: organization.secondaryColor || "#e2e8f0",
-                        "--tw-ring-color": `${organization.primaryColor}20`,
-                      }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="email" className="text-sm font-medium" style={{ color: organization.textColor }}>
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={subscriberData.email}
-                    onChange={(e) => setSubscriberData({ ...subscriberData, email: e.target.value })}
-                    className="h-11 border-2 focus:ring-2 transition-all duration-200"
-                    style={{
-                      borderColor: organization.secondaryColor || "#e2e8f0",
-                      "--tw-ring-color": `${organization.primaryColor}20`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentStep("story")}
-                  className="flex-1 h-12 border-2 hover:bg-slate-50 transition-all duration-200"
-                  style={{ borderColor: organization.secondaryColor, color: organization.textColor }}
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={handleSubscribe}
-                  className="flex-1 h-12 shadow-lg hover:shadow-xl transition-all duration-200"
-                  style={{ backgroundColor: organization.primaryColor }}
-                >
-                  Subscribe
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          )}
 
           {/* Enhanced Donate Step */}
           {currentStep === "donate" && (

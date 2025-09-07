@@ -1,109 +1,197 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase'
 
-// Mock data - would integrate with actual database
-const mockSubscribers = [
-  {
-    id: 1,
-    email: "sarah.johnson@email.com",
-    name: "Sarah Johnson",
-    nmbrs: ["W001", "E003"],
-    subscribedAt: "2024-01-15T10:30:00Z",
-    lastActivity: "2024-01-20T14:22:00Z",
-    status: "active",
-    location: "New York, NY",
-  },
-  // ... more subscribers
-]
+export async function POST(request: NextRequest) {
+  try {
+    const { email, firstName, lastName, storyId, orgId, source = 'widget' } = await request.json()
+
+    if (!email || !storyId || !orgId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    // Using the supabase client from lib/supabase.ts
+
+    // Check if subscriber already exists
+    const { data: existingSubscriber } = await supabase
+      .from('subscribers')
+      .select('*')
+      .eq('email', email)
+      .eq('org_id', orgId)
+      .single()
+
+    if (existingSubscriber) {
+      // Update existing subscriber with new NMBR
+      const { data: updatedSubscriber, error: updateError } = await supabase
+        .from('subscribers')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          updated_at: new Date().toISOString(),
+          source: source
+        })
+        .eq('id', existingSubscriber.id)
+        .select()
+        .single()
+
+      if (updateError) {
+        throw updateError
+      }
+
+      // Add story subscription if not already subscribed
+      const { error: subscriptionError } = await supabase
+        .from('nmbr_subscriptions')
+        .upsert({
+          subscriber_id: existingSubscriber.id,
+          story_id: storyId,
+          subscribed_at: new Date().toISOString()
+        })
+
+      if (subscriptionError) {
+        throw subscriptionError
+      }
+
+      return NextResponse.json({ 
+        success: true, 
+        subscriber: updatedSubscriber,
+        message: 'Subscription updated successfully' 
+      })
+    }
+
+    // Create new subscriber
+    const { data: newSubscriber, error: subscriberError } = await supabase
+      .from('subscribers')
+      .insert({
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        org_id: orgId,
+        source: source,
+        subscribed_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (subscriberError) {
+      throw subscriberError
+    }
+
+    // Create story subscription
+    const { error: subscriptionError } = await supabase
+      .from('nmbr_subscriptions')
+      .insert({
+        subscriber_id: newSubscriber.id,
+        story_id: storyId,
+        subscribed_at: new Date().toISOString()
+      })
+
+    if (subscriptionError) {
+      throw subscriptionError
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      subscriber: newSubscriber,
+      message: 'Successfully subscribed to story updates' 
+    })
+
+  } catch (error) {
+    console.error('Subscription error:', error)
+    return NextResponse.json({ 
+      error: 'Failed to subscribe to story updates' 
+    }, { status: 500 })
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const segment = searchParams.get("segment") || "all"
-    const search = searchParams.get("search") || ""
+    const orgId = searchParams.get('org')
+    const storyId = searchParams.get('story')
 
-    // Filter subscribers based on segment and search
-    let filteredSubscribers = mockSubscribers
-
-    if (segment !== "all") {
-      // Apply segment filtering logic
-      filteredSubscribers = mockSubscribers.filter((subscriber) => {
-        switch (segment) {
-          case "water":
-            return subscriber.nmbrs.some((nmbr) => nmbr.startsWith("W"))
-          case "education":
-            return subscriber.nmbrs.some((nmbr) => nmbr.startsWith("E"))
-          case "healthcare":
-            return subscriber.nmbrs.some((nmbr) => nmbr.startsWith("H"))
-          case "recent":
-            const thirtyDaysAgo = new Date()
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-            return new Date(subscriber.subscribedAt) > thirtyDaysAgo
-          case "inactive":
-            return subscriber.status === "inactive"
-          default:
-            return true
-        }
-      })
+    if (!orgId) {
+      return NextResponse.json({ error: 'Organization ID required' }, { status: 400 })
     }
 
-    if (search) {
-      filteredSubscribers = filteredSubscribers.filter(
-        (subscriber) =>
-          subscriber.name.toLowerCase().includes(search.toLowerCase()) ||
-          subscriber.email.toLowerCase().includes(search.toLowerCase()),
-      )
+    // Using the supabase client from lib/supabase.ts
+
+    let query = supabase
+      .from('subscribers')
+      .select(`
+        *,
+        nmbr_subscriptions (
+          story_id,
+          subscribed_at
+        )
+      `)
+      .eq('org_id', orgId)
+
+    if (storyId) {
+      query = query.eq('nmbr_subscriptions.story_id', storyId)
     }
 
-    return NextResponse.json({
-      subscribers: filteredSubscribers,
-      total: filteredSubscribers.length,
-    })
+    const { data: subscribers, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    return NextResponse.json({ subscribers: subscribers || [] })
+
   } catch (error) {
-    console.error("Error fetching subscribers:", error)
-    return NextResponse.json({ error: "Failed to fetch subscribers" }, { status: 500 })
+    console.error('Get subscribers error:', error)
+    return NextResponse.json({ 
+      error: 'Failed to fetch subscribers' 
+    }, { status: 500 })
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { action, subscriberIds, data } = body
+    const { subscriberId, storyId } = await request.json()
 
-    switch (action) {
-      case "send_update":
-        // Send update to selected subscribers
-        console.log("Sending update to subscribers:", subscriberIds)
-        console.log("Update data:", data)
-
-        // Here you would integrate with email service (SendGrid, etc.)
-        return NextResponse.json({
-          success: true,
-          message: `Update sent to ${subscriberIds.length} subscribers`,
-        })
-
-      case "unsubscribe":
-        // Unsubscribe selected subscribers
-        console.log("Unsubscribing subscribers:", subscriberIds)
-
-        return NextResponse.json({
-          success: true,
-          message: `${subscriberIds.length} subscribers unsubscribed`,
-        })
-
-      case "export":
-        // Export subscriber data
-        console.log("Exporting subscribers:", subscriberIds)
-
-        return NextResponse.json({
-          success: true,
-          downloadUrl: "/api/subscribers/export?ids=" + subscriberIds.join(","),
-        })
-
-      default:
-        return NextResponse.json({ error: "Invalid action" }, { status: 400 })
+    if (!subscriberId || !storyId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
+
+    // Using the supabase client from lib/supabase.ts
+
+    // Remove specific story subscription
+    const { error: subscriptionError } = await supabase
+      .from('nmbr_subscriptions')
+      .delete()
+      .eq('subscriber_id', subscriberId)
+      .eq('story_id', storyId)
+
+    if (subscriptionError) {
+      throw subscriptionError
+    }
+
+    // Check if subscriber has any remaining subscriptions
+    const { data: remainingSubscriptions } = await supabase
+      .from('nmbr_subscriptions')
+      .select('id')
+      .eq('subscriber_id', subscriberId)
+
+    // If no remaining subscriptions, mark subscriber as unsubscribed
+    if (!remainingSubscriptions || remainingSubscriptions.length === 0) {
+      await supabase
+        .from('subscribers')
+        .update({ 
+          unsubscribed_at: new Date().toISOString(),
+          status: 'unsubscribed'
+        })
+        .eq('id', subscriberId)
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      message: 'Successfully unsubscribed from story updates' 
+    })
+
   } catch (error) {
-    console.error("Error processing subscriber action:", error)
-    return NextResponse.json({ error: "Failed to process action" }, { status: 500 })
+    console.error('Unsubscribe error:', error)
+    return NextResponse.json({ 
+      error: 'Failed to unsubscribe' 
+    }, { status: 500 })
   }
 }
