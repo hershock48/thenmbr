@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { ProgressSteps } from "@/components/ui/progress-steps"
-import { Search, Heart, Mail, CheckCircle, ArrowRight, Play, X } from "lucide-react"
+import { Search, Heart, Mail, CheckCircle, Play, X, Users, Clock, TrendingUp, Zap, Star, Gift } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { EnhancedDonationFlow } from "./enhanced-donation-flow"
 
@@ -42,6 +42,48 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
   const [subscriberData, setSubscriberData] = useState({ email: "", firstName: "", lastName: "" })
   const [donationAmount, setDonationAmount] = useState("")
   const [showVideo, setShowVideo] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [stories, setStories] = useState<any[]>([])
+
+  const [recentActivity, setRecentActivity] = useState([
+    { name: "Sarah M.", action: "donated $50", time: "2 min ago", avatar: "SM" },
+    { name: "Michael R.", action: "subscribed", time: "5 min ago", avatar: "MR" },
+    { name: "Jennifer L.", action: "donated $100", time: "8 min ago", avatar: "JL" },
+  ])
+  const [totalSupporters, setTotalSupporters] = useState(1247)
+  const [urgencyTimer, setUrgencyTimer] = useState(86400) // 24 hours in seconds
+  const [showUrgencyBanner, setShowUrgencyBanner] = useState(true)
+  const [animateProgress, setAnimateProgress] = useState(false)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setUrgencyTimer((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    const activityTimer = setInterval(() => {
+      const activities = [
+        { name: "Alex K.", action: "donated $25", time: "just now", avatar: "AK" },
+        { name: "Maria S.", action: "subscribed", time: "1 min ago", avatar: "MS" },
+        { name: "David L.", action: "donated $75", time: "2 min ago", avatar: "DL" },
+        { name: "Emma W.", action: "donated $50", time: "3 min ago", avatar: "EW" },
+      ]
+      const randomActivity = activities[Math.floor(Math.random() * activities.length)]
+      setRecentActivity((prev) => [randomActivity, ...prev.slice(0, 2)])
+      setTotalSupporters((prev) => prev + 1)
+    }, 15000) // New activity every 15 seconds
+
+    return () => clearInterval(activityTimer)
+  }, [])
+
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const secs = seconds % 60
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
+  }
 
   const getProgressSteps = () => {
     const steps = [
@@ -71,11 +113,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
         id: "connect",
         title: "Connect",
         description: "Subscribe or donate",
-        status: currentStep === "donate"
-          ? "current"
-          : currentStep === "success"
-            ? "completed"
-            : "upcoming",
+        status: currentStep === "donate" ? "current" : currentStep === "success" ? "completed" : "upcoming",
       },
       {
         id: "success",
@@ -87,9 +125,6 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
     return steps
   }
 
-  const [stories, setStories] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-
   // Fetch stories from API
   useEffect(() => {
     const fetchStories = async () => {
@@ -100,7 +135,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
           setStories(data.stories)
         }
       } catch (error) {
-        console.error('Error fetching stories:', error)
+        console.error("Error fetching stories:", error)
       }
     }
     fetchStories()
@@ -115,7 +150,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
     setLoading(true)
     try {
       // Find story by NMBR code
-      const story = stories.find(s => s.nmbr_code === searchCode.trim())
+      const story = stories.find((s) => s.nmbr_code === searchCode.trim())
       if (story) {
         // Transform the story data to match the expected format
         const transformedStory = {
@@ -131,11 +166,12 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
         }
         setSelectedNmbr(transformedStory)
         setCurrentStep("story")
+        setTimeout(() => setAnimateProgress(true), 500)
       } else {
         alert("NMBR code not found. Please check the code and try again.")
       }
     } catch (error) {
-      console.error('Error searching for NMBR:', error)
+      console.error("Error searching for NMBR:", error)
       alert("Error searching for NMBR. Please try again.")
     } finally {
       setLoading(false)
@@ -145,31 +181,31 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
   const handleSubscribe = async () => {
     try {
       // Subscribe the user to the story
-      const subscriptionResponse = await fetch('/api/subscribers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const subscriptionResponse = await fetch("/api/subscribers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: subscriberData.email,
           firstName: subscriberData.firstName,
-          lastName: subscriberData.lastName || '',
+          lastName: subscriberData.lastName || "",
           storyId: selectedNmbr.id,
           orgId: organization.id,
-          source: 'widget'
-        })
+          source: "widget",
+        }),
       })
 
       const subscriptionResult = await subscriptionResponse.json()
-      
+
       if (!subscriptionResult.success) {
-        throw new Error(subscriptionResult.error || 'Failed to subscribe to story updates')
+        throw new Error(subscriptionResult.error || "Failed to subscribe to story updates")
       }
 
       // Show success message
-      alert('Successfully subscribed! You\'ll receive updates about this story.')
+      alert("Successfully subscribed! You'll receive updates about this story.")
       setCurrentStep("success")
     } catch (error) {
-      console.error('Subscription error:', error)
-      alert('There was an error subscribing you. Please try again.')
+      console.error("Subscription error:", error)
+      alert("There was an error subscribing you. Please try again.")
     }
   }
 
@@ -185,6 +221,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
     setSearchCode("")
     setSubscriberData({ email: "", firstName: "", lastName: "" })
     setDonationAmount("")
+    setAnimateProgress(false)
   }
 
   const getWidgetStyles = () => {
@@ -219,17 +256,44 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
     <div className="max-w-md mx-auto">
       {organization.customCSS && <style dangerouslySetInnerHTML={{ __html: organization.customCSS }} />}
 
+      {showUrgencyBanner && urgencyTimer > 0 && (
+        <div className="mb-4 bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-lg shadow-lg animate-pulse">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              <span className="text-sm font-semibold">Limited Time: Double Impact!</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 h-6 w-6 p-0"
+              onClick={() => setShowUrgencyBanner(false)}
+            >
+              <X className="w-3 h-3" />
+            </Button>
+          </div>
+          <div className="text-xs mt-1">All donations matched for the next {formatTime(urgencyTimer)}</div>
+        </div>
+      )}
+
       <Card
-        className="border-0 bg-white/95 backdrop-blur-sm"
+        className="border-0 bg-white/95 backdrop-blur-sm overflow-hidden"
         style={{
           borderTop: `4px solid ${organization.primaryColor}`,
           ...getWidgetStyles(),
         }}
       >
         {/* Header */}
-        <CardHeader className="text-center pb-4">
+        <CardHeader className="text-center pb-4 relative">
+          <div className="absolute top-4 right-4">
+            <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 animate-bounce">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>{totalSupporters} supporters</span>
+            </div>
+          </div>
+
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm">
+            <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg ring-2 ring-white">
               <img
                 src={organization.logo || "/placeholder.svg"}
                 alt={organization.name}
@@ -246,6 +310,17 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
           <CardDescription className="text-base leading-relaxed" style={{ color: organization.textColor || "#64748b" }}>
             Enter your bracelet code to discover the story behind it
           </CardDescription>
+
+          <div className="flex items-center justify-center gap-4 mt-4 text-xs text-slate-500">
+            <div className="flex items-center gap-1">
+              <Star className="w-3 h-3 text-yellow-500" />
+              <span>4.9/5 rating</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span>Trusted by {totalSupporters}+</span>
+            </div>
+          </div>
         </CardHeader>
 
         {currentStep !== "search" && (
@@ -255,42 +330,68 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
         )}
 
         <CardContent className="space-y-6">
-          {/* Search Step */}
           {currentStep === "search" && (
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="nmbr-code" className="text-sm font-medium" style={{ color: organization.textColor }}>
-                  NMBR Code
-                </Label>
-                <div className="flex space-x-3">
-                  <Input
-                    id="nmbr-code"
-                    placeholder="e.g., HOPE001"
-                    value={searchCode}
-                    onChange={(e) => setSearchCode(e.target.value)}
-                    className="uppercase font-mono text-center text-lg h-12 border-2 focus:ring-2 transition-all duration-200"
-                    style={{
-                      borderColor: organization.secondaryColor || "#e2e8f0",
-                      "--tw-ring-color": `${organization.primaryColor}20`,
-                    }}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                  />
-                  <Button
-                    onClick={handleSearch}
-                    disabled={loading}
-                    className="h-12 px-6 shadow-lg hover:shadow-xl transition-all duration-200"
-                    style={{ backgroundColor: organization.primaryColor }}
-                  >
-                    <Search className="w-5 h-5" />
-                  </Button>
+            <>
+              {/* Recent Activity Feed */}
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="w-4 h-4 text-blue-600" />
+                  <span className="font-medium text-blue-900 text-sm">Recent Activity</span>
+                </div>
+                <div className="space-y-2">
+                  {recentActivity.map((activity, index) => (
+                    <div key={index} className="flex items-center gap-3 text-sm animate-fade-in">
+                      <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs font-medium text-blue-700">
+                        {activity.avatar}
+                      </div>
+                      <span className="text-blue-800 flex-1">
+                        <strong>{activity.name}</strong> {activity.action}
+                      </span>
+                      <span className="text-blue-600 text-xs">{activity.time}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <p className="text-sm leading-relaxed" style={{ color: organization.textColor || "#64748b" }}>
-                  Look for the code on your bracelet and enter it above to discover your story
-                </p>
+
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="nmbr-code" className="text-sm font-medium" style={{ color: organization.textColor }}>
+                    NMBR Code
+                  </Label>
+                  <div className="flex space-x-3">
+                    <Input
+                      id="nmbr-code"
+                      placeholder="e.g., HOPE001"
+                      value={searchCode}
+                      onChange={(e) => setSearchCode(e.target.value)}
+                      className="uppercase font-mono text-center text-lg h-12 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
+                      style={{
+                        borderColor: organization.secondaryColor || "#e2e8f0",
+                        "--tw-ring-color": `${organization.primaryColor}20`,
+                      }}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    />
+                    <Button
+                      onClick={handleSearch}
+                      disabled={loading}
+                      className="h-12 px-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+                      style={{ backgroundColor: organization.primaryColor }}
+                    >
+                      {loading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Search className="w-5 h-5" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <p className="text-sm leading-relaxed" style={{ color: organization.textColor || "#64748b" }}>
+                    Look for the code on your bracelet and enter it above to discover your story
+                  </p>
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           {/* Story Step */}
@@ -300,14 +401,14 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                 <img
                   src={selectedNmbr.image || "/placeholder.svg?height=200&width=400"}
                   alt={selectedNmbr.title}
-                  className="w-full h-52 object-cover"
+                  className="w-full h-52 object-cover transition-transform duration-300 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                 {selectedNmbr.video && (
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="absolute top-3 right-3 shadow-lg backdrop-blur-sm bg-white/90"
+                    className="absolute top-3 right-3 shadow-lg backdrop-blur-sm bg-white/90 hover:bg-white transition-all duration-200"
                     onClick={() => setShowVideo(true)}
                   >
                     <Play className="w-4 h-4 mr-1" />
@@ -315,7 +416,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                   </Button>
                 )}
                 <Badge
-                  className="absolute top-3 left-3 shadow-lg font-mono font-bold"
+                  className="absolute top-3 left-3 shadow-lg font-mono font-bold animate-pulse"
                   style={{ backgroundColor: organization.primaryColor }}
                 >
                   {selectedNmbr.code}
@@ -341,20 +442,41 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                       ${selectedNmbr.raised.toLocaleString()} / ${selectedNmbr.goal.toLocaleString()}
                     </span>
                   </div>
-                  <Progress value={(selectedNmbr.raised / selectedNmbr.goal) * 100} className="h-3" />
-                  <div className="text-xs font-medium" style={{ color: organization.textColor || "#94a3b8" }}>
-                    {Math.round((selectedNmbr.raised / selectedNmbr.goal) * 100)}% of goal reached •{" "}
-                    {selectedNmbr.subscribers} supporters
+                  <div className="relative">
+                    <Progress
+                      value={animateProgress ? (selectedNmbr.raised / selectedNmbr.goal) * 100 : 0}
+                      className="h-3 transition-all duration-1000 ease-out"
+                    />
+                    {animateProgress && (selectedNmbr.raised / selectedNmbr.goal) * 100 > 75 && (
+                      <div className="absolute -top-8 right-0 bg-green-500 text-white px-2 py-1 rounded text-xs font-bold animate-bounce">
+                        Almost there! 🎉
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="text-xs font-medium" style={{ color: organization.textColor || "#94a3b8" }}>
+                      {Math.round((selectedNmbr.raised / selectedNmbr.goal) * 100)}% of goal reached
+                    </div>
+                    <div
+                      className="flex items-center gap-1 text-xs font-medium"
+                      style={{ color: organization.textColor || "#94a3b8" }}
+                    >
+                      <Users className="w-3 h-3" />
+                      {selectedNmbr.subscribers} supporters
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* Subscription Form */}
               <div className="space-y-4 p-4 bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-xl">
                 <div className="text-center space-y-2">
+                  <div className="w-12 h-12 mx-auto bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mb-2">
+                    <Heart className="w-6 h-6 text-cyan-600" />
+                  </div>
                   <h4 className="font-semibold text-slate-900">Stay Connected to Your Story</h4>
                   <p className="text-sm text-slate-600">
-                    Get exclusive updates on <strong>{selectedNmbr.title}</strong> - see how your support is making a real difference.
+                    Get exclusive updates on <strong>{selectedNmbr.title}</strong> - see how your support is making a
+                    real difference.
                   </p>
                 </div>
 
@@ -369,7 +491,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                         value={subscriberData.firstName}
                         onChange={(e) => setSubscriberData({ ...subscriberData, firstName: e.target.value })}
                         placeholder="Your name"
-                        className="h-10 border-2 focus:ring-2 transition-all duration-200"
+                        className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
                         style={{
                           borderColor: organization.secondaryColor || "#e2e8f0",
                           "--tw-ring-color": `${organization.primaryColor}20`,
@@ -385,7 +507,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                         value={subscriberData.lastName}
                         onChange={(e) => setSubscriberData({ ...subscriberData, lastName: e.target.value })}
                         placeholder="Last name"
-                        className="h-10 border-2 focus:ring-2 transition-all duration-200"
+                        className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
                         style={{
                           borderColor: organization.secondaryColor || "#e2e8f0",
                           "--tw-ring-color": `${organization.primaryColor}20`,
@@ -403,7 +525,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                       value={subscriberData.email}
                       onChange={(e) => setSubscriberData({ ...subscriberData, email: e.target.value })}
                       placeholder="your@email.com"
-                      className="h-10 border-2 focus:ring-2 transition-all duration-200"
+                      className="h-10 border-2 focus:ring-2 transition-all duration-200 focus:scale-105"
                       style={{
                         borderColor: organization.secondaryColor || "#e2e8f0",
                         "--tw-ring-color": `${organization.primaryColor}20`,
@@ -416,7 +538,7 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                   <Button
                     onClick={handleSubscribe}
                     variant="outline"
-                    className="flex-1 h-10 border-2 hover:bg-slate-50 transition-all duration-200"
+                    className="flex-1 h-10 border-2 hover:bg-slate-50 transition-all duration-200 hover:scale-105 active:scale-95 bg-transparent"
                     disabled={!subscriberData.email || !subscriberData.firstName}
                     style={{ borderColor: organization.primaryColor, color: organization.primaryColor }}
                   >
@@ -426,27 +548,44 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
                   {selectedNmbr.status === "active" && (
                     <Button
                       onClick={() => setCurrentStep("donate")}
-                      className="flex-1 h-10 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="flex-1 h-10 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 relative overflow-hidden"
                       style={{ backgroundColor: organization.primaryColor }}
                     >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer"></div>
                       <Heart className="w-4 h-4 mr-2" />
                       Donate & Follow
                     </Button>
                   )}
+                </div>
+
+                <div className="bg-white/50 rounded-lg p-3 border border-cyan-200">
+                  <div className="text-xs text-slate-600 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Gift className="w-3 h-3 text-green-500" />
+                      <span>Exclusive story updates with photos & videos</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-3 h-3 text-blue-500" />
+                      <span>See your direct impact in real-time</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Star className="w-3 h-3 text-yellow-500" />
+                      <span>Join a community of {totalSupporters}+ supporters</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <Button
                 variant="ghost"
                 onClick={resetWidget}
-                className="w-full text-sm hover:bg-slate-50 transition-all duration-200"
+                className="w-full text-sm hover:bg-slate-50 transition-all duration-200 hover:scale-105"
                 style={{ color: organization.textColor || "#64748b" }}
               >
                 Search Another NMBR
               </Button>
             </div>
           )}
-
 
           {/* Enhanced Donate Step */}
           {currentStep === "donate" && (
@@ -458,24 +597,57 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
             />
           )}
 
-          {/* Success Step */}
           {currentStep === "success" && (
             <div className="space-y-6 text-center">
-              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center shadow-lg">
-                <CheckCircle className="w-10 h-10 text-emerald-600" />
+              <div className="relative">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center shadow-lg animate-bounce">
+                  <CheckCircle className="w-10 h-10 text-emerald-600" />
+                </div>
+                <div className="absolute inset-0 pointer-events-none">
+                  {[...Array(6)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-ping"
+                      style={{
+                        left: `${20 + i * 10}%`,
+                        top: `${10 + (i % 2) * 20}%`,
+                        animationDelay: `${i * 0.2}s`,
+                        animationDuration: "1s",
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
               <div className="space-y-3">
                 <h3 className="text-2xl font-bold" style={getHeadingStyles()}>
-                  Thank You!
+                  Thank You! 🎉
                 </h3>
                 <p className="text-sm leading-relaxed" style={{ color: organization.textColor || "#64748b" }}>
                   Your support means the world to us. You'll receive updates about the impact of your contribution to{" "}
                   <strong>{selectedNmbr?.title}</strong>.
                 </p>
+
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mt-4">
+                  <h4 className="font-semibold text-green-900 mb-2">What happens next?</h4>
+                  <div className="text-sm text-green-700 space-y-1 text-left">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span>You'll receive a welcome email within 24 hours</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span>Monthly updates with photos and progress reports</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span>Special milestone celebrations and achievements</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               <Button
                 onClick={resetWidget}
-                className="w-full h-12 shadow-lg hover:shadow-xl transition-all duration-200"
+                className="w-full h-12 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
                 style={{ backgroundColor: organization.primaryColor }}
               >
                 Search Another NMBR
@@ -512,6 +684,23 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) skewX(-12deg); }
+          100% { transform: translateX(200%) skewX(-12deg); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
     </div>
   )
 }
