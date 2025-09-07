@@ -12,6 +12,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string, orgName: string, website?: string) => Promise<void>
   signOut: () => Promise<void>
+  setOrg: (org: Nonprofit | null) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -37,7 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         setUser(session?.user ?? null)
         if (session?.user) {
-          await fetchOrg(session.user.id)
+          // Don't automatically fetch org - let user select
+          setLoading(false)
         } else {
           setOrg(null)
           setLoading(false)
@@ -54,6 +56,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { user } } = await supabase.auth.getUser()
       const orgId = user?.user_metadata?.org_id
 
+      console.log('Fetching org for user:', userId, 'orgId:', orgId)
+
       if (orgId) {
         const { data, error } = await supabase
           .from('nonprofits')
@@ -61,9 +65,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .eq('id', orgId)
           .single()
 
+        console.log('Org fetch result:', { data, error })
+
         if (!error && data) {
           setOrg(data)
+          console.log('Organization set:', data)
+        } else {
+          console.error('Organization not found or error:', error)
+          // Don't set org if it doesn't exist, but don't get stuck loading
         }
+      } else {
+        console.log('No org_id found in user metadata')
       }
     } catch (error) {
       console.error('Error fetching org:', error)
@@ -73,38 +85,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
     if (error) throw error
+    
+    // Trigger first login achievement
+    if (data.user) {
+      try {
+        const { useAchievements } = await import('@/components/ui/achievement-system')
+        const { updateAchievement } = useAchievements()
+        updateAchievement('first-login', 1)
+      } catch (err) {
+        console.log('Achievement system not available:', err)
+      }
+    }
   }
 
   const signUp = async (email: string, password: string, orgName: string, website?: string) => {
+    console.log('AuthContext signUp called with:', { email, orgName, website })
     try {
-      // First create the organization
-      const { data: org, error: orgError } = await supabase
-        .from('nonprofits')
-        .insert({
-          name: orgName,
-          website: website || null,
-          brand_color: '#3B82F6'
-        })
-        .select()
-        .single()
-
-      if (orgError) {
-        console.error('Org creation error:', orgError)
-        throw orgError
-      }
-
-      // Then create the user account
+      console.log('Starting signup process...')
+      
+      // First create the user account
+      console.log('Creating user account...')
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            org_id: org.id,
+            org_name: orgName,
+            website: website || null,
             role: 'admin'
           }
         }
@@ -116,6 +128,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Signup successful:', data)
+      
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        console.log('Email confirmation required. Please check your email.')
+        // Don't throw an error, just inform the user
+        return
+      }
+      
+      // If user is immediately authenticated, create the organization
+      if (data.user && data.session) {
+        console.log('User authenticated, creating organization...')
+        const { data: org, error: orgError } = await supabase
+          .from('nonprofits')
+          .insert({
+            name: orgName,
+            website: website || null,
+            brand_color: '#3B82F6'
+          })
+          .select()
+          .single()
+
+        if (orgError) {
+          console.error('Org creation error:', orgError)
+          throw orgError
+        }
+
+        console.log('Organization created:', org)
+      }
     } catch (error) {
       console.error('Signup error:', error)
       throw error
@@ -134,6 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn,
     signUp,
     signOut,
+    setOrg,
   }
 
   return (

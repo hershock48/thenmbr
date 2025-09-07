@@ -3,24 +3,18 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { 
   X, 
   ArrowRight, 
   ArrowLeft, 
   Sparkles, 
-  Target, 
-  Users, 
-  Heart, 
-  BarChart3,
-  Gift,
-  Share2,
-  Eye,
-  Edit,
-  Plus
+  Building2, 
+  Plus,
+  Users,
+  CheckCircle
 } from "lucide-react"
 
-interface TourStep {
+interface OrgTourStep {
   id: string
   title: string
   description: string
@@ -30,74 +24,50 @@ interface TourStep {
   highlight?: boolean
 }
 
-const tourSteps: TourStep[] = [
+const orgTourSteps: OrgTourStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to NMBR Platform! 🎉',
-    description: 'Let\'s take a quick tour of your dashboard to help you get started with creating impactful stories and raising funds.',
-    target: 'tour-welcome',
+    title: 'Organization Management 🏢',
+    description: 'You can manage multiple organizations with one account! This gives you flexibility to work with different causes and organizations.',
+    target: 'org-selection-welcome',
     position: 'bottom',
-    icon: <Sparkles className="w-6 h-6" />,
+    icon: <Building2 className="w-6 h-6" />,
     highlight: true
   },
   {
-    id: 'stats',
-    title: 'Your Impact Dashboard',
-    description: 'Track your organization\'s performance with real-time statistics. Monitor stories, subscribers, and funds raised.',
-    target: 'stats-cards',
-    position: 'bottom',
-    icon: <BarChart3 className="w-6 h-6" />
-  },
-  {
-    id: 'stories',
-    title: 'Manage Your Stories',
-    description: 'Create and manage compelling stories that inspire action. Each story can be shared to raise awareness and funds.',
-    target: 'stories-section',
+    id: 'org-grid',
+    title: 'Your Organizations',
+    description: 'Here are all the organizations you can manage. Click on any organization to select it and continue to the dashboard.',
+    target: 'organizations-grid',
     position: 'top',
-    icon: <Target className="w-6 h-6" />
-  },
-  {
-    id: 'actions',
-    title: 'Quick Actions',
-    description: 'Create new stories, view analytics, and manage your content with these quick action buttons.',
-    target: 'quick-actions',
-    position: 'left',
-    icon: <Plus className="w-6 h-6" />
-  },
-  {
-    id: 'story-card',
-    title: 'Story Management',
-    description: 'Each story card shows key metrics, status, and quick actions. Click to edit, view, or share your stories.',
-    target: 'story-card-example',
-    position: 'top',
-    icon: <Edit className="w-6 h-6" />
-  },
-  {
-    id: 'org-management',
-    title: 'Multi-Organization Management',
-    description: 'You can manage multiple organizations with one account! Click "Switch Org" to change organizations or add new ones.',
-    target: 'switch-org-button',
-    position: 'bottom',
     icon: <Users className="w-6 h-6" />
   },
   {
+    id: 'create-new',
+    title: 'Add New Organizations',
+    description: 'Need to manage another organization? Click "Create New Organization" to add a new one to your account.',
+    target: 'create-new-org',
+    position: 'top',
+    icon: <Plus className="w-6 h-6" />
+  },
+  {
     id: 'complete',
-    title: 'You\'re All Set! 🚀',
-    description: 'You now know your way around the dashboard. Start creating impactful stories and making a difference!',
-    target: 'tour-complete',
+    title: 'Ready to Go! 🚀',
+    description: 'Select an organization to continue to your dashboard, or create a new one to get started!',
+    target: 'org-selection-welcome',
     position: 'bottom',
-    icon: <Heart className="w-6 h-6" />,
+    icon: <CheckCircle className="w-6 h-6" />,
     highlight: true
   }
 ]
 
-interface OnboardingTourProps {
+interface OrgSelectionTourProps {
   isOpen: boolean
   onClose: () => void
   onComplete: () => void
 }
 
-export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourProps) {
+export function OrgSelectionTour({ isOpen, onClose, onComplete }: OrgSelectionTourProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -114,7 +84,7 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
   }, [isOpen, currentStep])
 
   const highlightCurrentStep = () => {
-    const step = tourSteps[currentStep]
+    const step = orgTourSteps[currentStep]
     if (step) {
       const element = document.querySelector(`[data-tour="${step.target}"]`)
       if (element) {
@@ -123,18 +93,10 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
     }
   }
 
-  const nextStep = async () => {
-    if (currentStep < tourSteps.length - 1) {
+  const nextStep = () => {
+    if (currentStep < orgTourSteps.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
-      // Mark tour as completed and trigger achievement
-      try {
-        const { useAchievements } = await import('@/components/ui/achievement-system')
-        const { updateAchievement } = useAchievements()
-        updateAchievement('tour-completed', 1)
-      } catch (err) {
-        console.log('Achievement system not available:', err)
-      }
       onComplete()
     }
   }
@@ -151,13 +113,13 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
 
   if (!isOpen || !isVisible) return null
 
-  const currentStepData = tourSteps[currentStep]
-  const progress = ((currentStep + 1) / tourSteps.length) * 100
+  const currentStepData = orgTourSteps[currentStep]
+  const progress = ((currentStep + 1) / orgTourSteps.length) * 100
 
   return (
     <>
-      {/* Overlay - Much lighter and less blurry */}
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40" />
+      {/* Overlay */}
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
       
       {/* Tour Content */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -168,7 +130,7 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
               <div className="flex items-center space-x-2">
                 {currentStepData.icon}
                 <span className="text-sm font-medium text-muted-foreground">
-                  Step {currentStep + 1} of {tourSteps.length}
+                  Step {currentStep + 1} of {orgTourSteps.length}
                 </span>
               </div>
               <Button
@@ -212,7 +174,7 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
               </Button>
 
               <div className="flex space-x-2">
-                {tourSteps.map((_, index) => (
+                {orgTourSteps.map((_, index) => (
                   <div
                     key={index}
                     className={`w-2 h-2 rounded-full transition-colors ${
@@ -230,7 +192,7 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
                 onClick={nextStep}
                 className="flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
               >
-                <span>{currentStep === tourSteps.length - 1 ? 'Get Started' : 'Next'}</span>
+                <span>{currentStep === orgTourSteps.length - 1 ? 'Got It!' : 'Next'}</span>
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
@@ -257,29 +219,16 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
             if (element) {
               const rect = element.getBoundingClientRect()
               return (
-                <>
-                  {/* Subtle highlight ring */}
-                  <div
-                    className="absolute border-2 border-cyan-400 rounded-lg shadow-xl bg-cyan-400/5"
-                    style={{
-                      left: rect.left - 12,
-                      top: rect.top - 12,
-                      width: rect.width + 24,
-                      height: rect.height + 24,
-                      animation: 'pulse 2s infinite'
-                    }}
-                  />
-                  {/* Bright spot to make element more visible */}
-                  <div
-                    className="absolute border border-cyan-300 rounded-lg bg-cyan-300/20"
-                    style={{
-                      left: rect.left - 4,
-                      top: rect.top - 4,
-                      width: rect.width + 8,
-                      height: rect.height + 8,
-                    }}
-                  />
-                </>
+                <div
+                  className="absolute border-2 border-cyan-500 rounded-lg shadow-lg bg-cyan-500/10 backdrop-blur-sm"
+                  style={{
+                    left: rect.left - 8,
+                    top: rect.top - 8,
+                    width: rect.width + 16,
+                    height: rect.height + 16,
+                    animation: 'pulse 2s infinite'
+                  }}
+                />
               )
             }
             return null
@@ -290,36 +239,3 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
   )
 }
 
-// Tour trigger component for dashboard
-export function TourTrigger() {
-  const [showTour, setShowTour] = useState(false)
-
-  const startTour = () => {
-    setShowTour(true)
-  }
-
-  const completeTour = () => {
-    setShowTour(false)
-    // Store in localStorage that user has completed tour
-    localStorage.setItem('nmbr-tour-completed', 'true')
-  }
-
-  return (
-    <>
-      <Button
-        onClick={startTour}
-        variant="outline"
-        className="flex items-center space-x-2 border-cyan-200 text-cyan-600 hover:bg-cyan-50"
-      >
-        <Sparkles className="w-4 h-4" />
-        <span>Take a Tour</span>
-      </Button>
-      
-      <OnboardingTour
-        isOpen={showTour}
-        onClose={() => setShowTour(false)}
-        onComplete={completeTour}
-      />
-    </>
-  )
-}

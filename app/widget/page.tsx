@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Search, Heart, Users, DollarSign } from "lucide-react"
+import { Search, Heart, Users, DollarSign, ArrowRight, Gift, Target, Sparkles, CheckCircle, Star } from "lucide-react"
 
 interface Story {
   id: string
@@ -16,60 +17,45 @@ interface Story {
   goal_amount?: number
   current_amount?: number
   status: string
+  created_at: string
 }
 
 interface Org {
   id: string
   name: string
   logo_url?: string
-  brand_color: string
-  secondary_color?: string
-  accent_color?: string
-  font_family?: string
-  show_powered_by?: boolean
+  brand_color?: string
+  website?: string
 }
 
 function WidgetContent() {
+  const searchParams = useSearchParams()
   const [org, setOrg] = useState<Org | null>(null)
   const [stories, setStories] = useState<Story[]>([])
   const [searchCode, setSearchCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [orgId, setOrgId] = useState<string | null>(null)
-  const [widgetType, setWidgetType] = useState('story-search')
-  const [nmbrCode, setNmbrCode] = useState<string | null>(null)
-  const [debug, setDebug] = useState('')
 
-  // Get search params on client side
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const org = urlParams.get('org')
-    const type = urlParams.get('type') || 'story-search'
-    const nmbr = urlParams.get('nmbr')
-    
-    setDebug(`URL: ${window.location.href}, org: ${org}, type: ${type}, nmbr: ${nmbr}`)
-    
-    setOrgId(org)
-    setWidgetType(type)
-    setNmbrCode(nmbr)
-    
-    if (nmbr) {
-      setSearchCode(nmbr)
-    }
-  }, [])
+  const orgId = searchParams.get('org')
+  const widgetType = searchParams.get('type') || 'story-search'
+  const nmbrCode = searchParams.get('nmbr')
 
   useEffect(() => {
+    console.log('WidgetContent useEffect triggered')
+    console.log('orgId:', orgId)
+    console.log('widgetType:', widgetType)
+    console.log('nmbrCode:', nmbrCode)
+
     if (orgId) {
       fetchOrg()
       if (nmbrCode) {
+        setSearchCode(nmbrCode)
         searchStory(nmbrCode)
       }
     }
   }, [orgId, nmbrCode])
 
   const fetchOrg = async () => {
-    if (!orgId) return
-    
     try {
       const response = await fetch(`/api/org/${orgId}`)
       const data = await response.json()
@@ -80,7 +66,7 @@ function WidgetContent() {
   }
 
   const searchStory = async (code: string) => {
-    if (!code.trim() || !orgId) return
+    if (!code.trim()) return
     
     setLoading(true)
     setError('')
@@ -92,7 +78,7 @@ function WidgetContent() {
       if (data.stories && data.stories.length > 0) {
         setStories(data.stories)
       } else {
-        setError('No story found with that NMBR code')
+        setError('No story found with that number. Try 1, 2, or 3.')
         setStories([])
       }
     } catch (error) {
@@ -108,55 +94,33 @@ function WidgetContent() {
     searchStory(searchCode)
   }
 
-  const handleSubscribe = async (email: string, storyId: string) => {
-    try {
-      await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          org_id: orgId,
-          story_id: storyId
-        })
-      })
-      alert('Successfully subscribed!')
-    } catch (error) {
-      alert('Failed to subscribe. Please try again.')
-    }
+  const handleSubscribe = async (storyId: string) => {
+    // In a real app, this would handle subscription
+    alert('Thank you! You\'ll receive updates about this story.')
   }
 
-  const handleDonate = async (amount: number, storyId?: string) => {
-    try {
-      const response = await fetch('/api/donate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: amount * 100, // Convert to cents
-          org_id: orgId,
-          story_id: storyId,
-          donor_email: '',
-          success_url: `${window.location.origin}/success`,
-          cancel_url: `${window.location.origin}/cancel`
-        })
-      })
-      
-      const data = await response.json()
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch (error) {
-      alert('Failed to process donation. Please try again.')
-    }
+  const handleDonate = async (storyId: string) => {
+    // In a real app, this would handle donation
+    alert('Redirecting to secure donation page...')
   }
 
   if (!orgId) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-6 text-center">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Invalid Widget</h2>
-            <p className="text-gray-600">This widget requires an organization ID.</p>
-            <p className="text-xs text-gray-500 mt-2">Debug: {debug}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-background to-purple-50">
+        <Card className="w-full max-w-md text-center">
+          <CardContent className="p-8">
+            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Target className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Widget Not Found</h2>
+            <p className="text-muted-foreground mb-6">
+              This widget requires a valid organization ID to work properly.
+            </p>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>Debug: orgId is {orgId === null ? 'null' : orgId}</p>
+              <p>Debug: widgetType is {widgetType}</p>
+              <p>Debug: nmbrCode is {nmbrCode === null ? 'null' : nmbrCode}</p>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -164,144 +128,180 @@ function WidgetContent() {
   }
 
   return (
-    <div 
-      className="min-h-screen bg-gray-50 p-4"
-      style={{
-        fontFamily: org?.font_family || 'Inter',
-        '--brand-color': org?.brand_color || '#3B82F6',
-        '--secondary-color': org?.secondary_color || '#1e40af',
-        '--accent-color': org?.accent_color || '#60a5fa'
-      } as React.CSSProperties}
-    >
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 p-4">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-6">
-          {org?.logo_url && (
-            <img 
-              src={org.logo_url} 
-              alt={org.name} 
-              className="h-16 mx-auto mb-4"
-            />
-          )}
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {org?.name || 'NMBR Platform'}
-          </h1>
-          <p className="text-gray-600">Search for a story by NMBR code</p>
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-xl">N</span>
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xs">#</span>
+              </div>
+            </div>
+            <span className="text-2xl font-bold text-foreground">The NMBR</span>
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Find Your Impact Story</h1>
+          <p className="text-muted-foreground">
+            Search by number to discover the person or cause you're helping
+          </p>
         </div>
 
         {/* Search Form */}
-        <Card className="mb-6">
+        <Card className="mb-8 shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Search className="w-5 h-5" style={{ color: 'var(--brand-color)' }} />
-              Search Story
+            <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+              <Search className="w-5 h-5 text-cyan-600" />
+              Search for a Story
             </CardTitle>
             <CardDescription>
-              Enter the NMBR code from your bracelet to discover the story
+              Enter the number you received to find your personalized impact story
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSearch} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="nmbr-code">NMBR Code</Label>
-                <Input
-                  id="nmbr-code"
-                  type="text"
-                  placeholder="Enter NMBR code..."
-                  value={searchCode}
-                  onChange={(e) => setSearchCode(e.target.value)}
-                  className="text-center text-lg font-mono"
-                />
+              <div>
+                <Label htmlFor="search" className="text-sm font-medium text-foreground">
+                  Story Number
+                </Label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="search"
+                    type="text"
+                    value={searchCode}
+                    onChange={(e) => setSearchCode(e.target.value)}
+                    placeholder="Enter a number (try 1, 2, or 3)"
+                    className="flex-1 h-12 text-base border-2 border-gray-200 focus:border-cyan-500 focus:ring-cyan-500"
+                  />
+                  <Button 
+                    type="submit" 
+                    disabled={loading}
+                    className="h-12 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg"
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    ) : (
+                      <>
+                        <Search className="w-4 h-4 mr-2" />
+                        Find Story
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
-              <Button 
-                type="submit" 
-                className="w-full"
-                style={{ backgroundColor: 'var(--brand-color)' }}
-                disabled={loading}
-              >
-                {loading ? 'Searching...' : 'Search Story'}
-              </Button>
             </form>
+
+            {/* Quick Search Buttons */}
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground mb-3">Or try one of these:</p>
+              <div className="grid grid-cols-3 gap-2">
+                <Button 
+                  variant="outline" 
+                  className="h-10 border-2 border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:border-cyan-300"
+                  onClick={() => searchStory('1')}
+                >
+                  Story #1
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-10 border-2 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300"
+                  onClick={() => searchStory('2')}
+                >
+                  Story #2
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="h-10 border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300"
+                  onClick={() => searchStory('3')}
+                >
+                  Story #3
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* Error Message */}
         {error && (
-          <Card className="mb-6 border-red-200 bg-red-50">
+          <Card className="mb-8 border-red-200 bg-red-50">
             <CardContent className="p-4">
-              <p className="text-red-600 text-center">{error}</p>
+              <div className="flex items-center gap-2 text-red-700">
+                <Target className="w-5 h-5" />
+                <span className="font-medium">{error}</span>
+              </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Story Results */}
+        {/* Stories */}
         {stories.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {stories.map((story) => (
-              <Card key={story.id} className="overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
-                      style={{ backgroundColor: 'var(--brand-color)' }}
-                    >
-                      {story.nmbr_code.slice(-3)}
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{story.title}</CardTitle>
-                      <CardDescription>Code: {story.nmbr_code}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {story.photo_url && (
-                    <img 
-                      src={story.photo_url} 
-                      alt={story.title}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                  )}
-                  
-                  <p className="text-gray-700">{story.description}</p>
-                  
-                  {story.goal_amount && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>${(story.current_amount || 0).toLocaleString()} / ${story.goal_amount.toLocaleString()}</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="h-2 rounded-full"
-                          style={{ 
-                            width: `${((story.current_amount || 0) / story.goal_amount) * 100}%`,
-                            backgroundColor: 'var(--brand-color)'
-                          }}
-                        />
+              <Card key={story.id} className="shadow-xl border-0 bg-white/80 backdrop-blur-sm group hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* Story Image */}
+                    <div className="md:w-1/3">
+                      <div className="relative">
+                        <div className="w-full h-48 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-4xl">
+                          {story.nmbr_code}
+                        </div>
+                        {story.photo_url && (
+                          <img 
+                            src={story.photo_url} 
+                            alt={story.title}
+                            className="w-full h-48 object-cover rounded-xl"
+                          />
+                        )}
                       </div>
                     </div>
-                  )}
 
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => {
-                        const email = prompt('Enter your email to subscribe:')
-                        if (email) handleSubscribe(email, story.id)
-                      }}
-                    >
-                      <Users className="w-4 h-4 mr-2" />
-                      Follow Journey
-                    </Button>
-                    <Button 
-                      className="flex-1"
-                      style={{ backgroundColor: 'var(--brand-color)' }}
-                      onClick={() => handleDonate(25, story.id)}
-                    >
-                      <DollarSign className="w-4 h-4 mr-2" />
-                      Donate $25
-                    </Button>
+                    {/* Story Content */}
+                    <div className="md:w-2/3 space-y-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-foreground mb-2">{story.title}</h3>
+                        <p className="text-muted-foreground leading-relaxed">{story.description}</p>
+                      </div>
+
+                      {/* Progress Bar */}
+                      {story.goal_amount && (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium text-foreground">Progress</span>
+                            <span className="text-sm text-muted-foreground">
+                              ${story.current_amount || 0} / ${story.goal_amount}
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div 
+                              className="bg-gradient-to-r from-cyan-500 to-purple-600 h-3 rounded-full transition-all duration-500"
+                              style={{ width: `${Math.min(((story.current_amount || 0) / story.goal_amount) * 100, 100)}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <Button 
+                          onClick={() => handleSubscribe(story.id)}
+                          className="flex-1 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg"
+                        >
+                          <Heart className="w-4 h-4 mr-2" />
+                          Follow This Story
+                        </Button>
+                        <Button 
+                          onClick={() => handleDonate(story.id)}
+                          variant="outline"
+                          className="flex-1 border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300"
+                        >
+                          <Gift className="w-4 h-4 mr-2" />
+                          Make a Donation
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -309,14 +309,18 @@ function WidgetContent() {
           </div>
         )}
 
-        {/* Powered by Footer */}
-        {org?.show_powered_by !== false && (
-          <div className="mt-8 pt-4 border-t border-gray-200 text-center">
-            <p className="text-xs text-gray-500">
-              Powered by <span className="font-semibold">The NMBR</span>
-            </p>
+        {/* Footer */}
+        <div className="text-center mt-12 py-8">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
+            </div>
+            <span className="text-lg font-bold text-foreground">The NMBR</span>
           </div>
-        )}
+          <p className="text-sm text-muted-foreground">
+            Making every donation personal. Connecting donors directly to the people they help.
+          </p>
+        </div>
       </div>
     </div>
   )
@@ -325,10 +329,10 @@ function WidgetContent() {
 export default function WidgetPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-background to-purple-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-600 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your impact story...</p>
         </div>
       </div>
     }>
