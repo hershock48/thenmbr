@@ -136,7 +136,7 @@ export default function SelectOrgPage() {
           name: newOrgName.trim(),
           website: newOrgWebsite.trim() || null,
           brand_color: newOrgColor,
-          org_type: newOrgType,
+          // org_type: newOrgType, // Temporarily commented out until database is updated
           is_active: true
         })
         .select()
