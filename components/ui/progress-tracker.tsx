@@ -10,12 +10,12 @@ interface UserProgress {
   level: number
   achievements: Array<{
     id: string
-    name: string
+    title: string
     unlocked: boolean
     points: number
   }>
-  pointsToNextLevel: number
-  points: number
+  nextLevelPoints: number
+  currentLevelPoints: number
 }
 
 export function ProgressTracker() {
@@ -74,7 +74,7 @@ export function ProgressTracker() {
           {/* Right side - Stats */}
           <div className="flex items-center space-x-6">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-foreground">{progress.points}</div>
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">{progress.totalPoints}</div>
               <div className="text-xs text-muted-foreground">Total Points</div>
             </div>
             <div className="text-center">
@@ -82,7 +82,7 @@ export function ProgressTracker() {
               <div className="text-xs text-muted-foreground">Achievements</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-foreground">{progress.pointsToNextLevel}</div>
+              <div className="text-2xl sm:text-3xl font-bold text-foreground">{progress.nextLevelPoints - progress.currentLevelPoints}</div>
               <div className="text-xs text-muted-foreground">To Next Level</div>
             </div>
           </div>
@@ -93,13 +93,13 @@ export function ProgressTracker() {
           <div className="flex justify-between text-sm">
             <span className="font-medium">Level Progress</span>
             <span className="text-muted-foreground">
-              {progress.points}/{progress.pointsToNextLevel + progress.points} points
+              {progress.currentLevelPoints}/{progress.nextLevelPoints} points
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${Math.min((progress.points / (progress.pointsToNextLevel + progress.points)) * 100, 100)}%` }}
+              style={{ width: `${Math.min((progress.currentLevelPoints / progress.nextLevelPoints) * 100, 100)}%` }}
             />
           </div>
         </div>
@@ -115,7 +115,7 @@ export function ProgressTracker() {
               {recentAchievements.map((achievement, index) => (
                 <div key={index} className="flex items-center space-x-2 bg-white/60 rounded-lg px-3 py-2 text-xs">
                   <span className="text-yellow-500">🏆</span>
-                  <span className="font-medium">{achievement.name}</span>
+                  <span className="font-medium">{achievement.title}</span>
                 </div>
               ))}
             </div>

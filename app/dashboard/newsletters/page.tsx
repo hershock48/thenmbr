@@ -25,7 +25,8 @@ import {
   Image,
   Settings,
   Download,
-  Upload
+  Upload,
+  Save
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
@@ -35,9 +36,48 @@ import { useRouter } from "next/navigation"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { newsletterTemplates, newsletterThemes } from "@/lib/newsletter-templates"
 
-// Lazy load heavy components
-const NewsletterBuilder = lazy(() => import("@/components/dashboard/newsletter-builder").then(module => ({ default: module.NewsletterBuilder })))
-const MediaUpload = lazy(() => import("@/components/dashboard/media-upload").then(module => ({ default: module.MediaUpload })))
+// Lazy load heavy components with error handling
+const NewsletterBuilder = lazy(() => 
+  import("@/components/dashboard/newsletter-builder")
+    .then(module => ({ default: module.NewsletterBuilder }))
+    .catch(() => ({ 
+      default: () => (
+        <div className="h-full flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Newsletter Builder Unavailable</h3>
+            <p className="text-muted-foreground mb-4">The newsletter builder component could not be loaded.</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      )
+    }))
+)
+
+const MediaUpload = lazy(() => 
+  import("@/components/dashboard/media-upload")
+    .then(module => ({ default: module.MediaUpload }))
+    .catch(() => ({ 
+      default: () => (
+        <div className="h-full flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Image className="w-8 h-8 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Media Library Unavailable</h3>
+            <p className="text-muted-foreground mb-4">The media library component could not be loaded.</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      )
+    }))
+)
 
 interface Newsletter {
   id: string
@@ -75,6 +115,15 @@ export default function NewslettersPage() {
   const [showBuilder, setShowBuilder] = useState(false)
   const [showMediaLibrary, setShowMediaLibrary] = useState(false)
   const [selectedStory, setSelectedStory] = useState<string>("")
+  const [builderMode, setBuilderMode] = useState(false)
+  const [editingNewsletter, setEditingNewsletter] = useState<Newsletter | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
+  const [previewNewsletter, setPreviewNewsletter] = useState<Newsletter | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [newsletterToDelete, setNewsletterToDelete] = useState<Newsletter | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
 
   useEffect(() => {
     if (org?.id) {
@@ -218,6 +267,114 @@ export default function NewslettersPage() {
     })
   }
 
+  // Newsletter action functions
+  const handleNewsletterAction = (action: string, newsletter: Newsletter) => {
+    switch (action) {
+      case 'preview':
+        setPreviewNewsletter(newsletter)
+        setShowPreview(true)
+        break
+      case 'edit':
+        setEditingNewsletter(newsletter)
+        setBuilderMode(true)
+        break
+      case 'duplicate':
+        handleDuplicateNewsletter(newsletter)
+        break
+      case 'analytics':
+        router.push(`/dashboard/analytics?newsletter=${newsletter.id}`)
+        break
+      case 'export':
+        handleExportNewsletter(newsletter)
+        break
+      case 'delete':
+        setNewsletterToDelete(newsletter)
+        setShowDeleteDialog(true)
+        break
+    }
+  }
+
+  const handleDuplicateNewsletter = async (newsletter: Newsletter) => {
+    try {
+      const duplicatedNewsletter: Newsletter = {
+        ...newsletter,
+        id: Date.now().toString(),
+        name: `${newsletter.name} (Copy)`,
+        status: 'draft',
+        recipients: 0,
+        sentAt: undefined,
+        openRate: undefined,
+        clickRate: undefined,
+        donationRate: undefined,
+        createdAt: new Date().toISOString()
+      }
+      
+      setNewsletters(prev => [duplicatedNewsletter, ...prev])
+      setSuccess(`Newsletter "${newsletter.name}" duplicated successfully`)
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(""), 3000)
+    } catch (error) {
+      setError("Failed to duplicate newsletter")
+      setTimeout(() => setError(""), 3000)
+    }
+  }
+
+  const handleExportNewsletter = (newsletter: Newsletter) => {
+    try {
+      const exportData = {
+        name: newsletter.name,
+        type: newsletter.type,
+        storyTitle: newsletter.storyTitle,
+        theme: newsletter.theme,
+        recipients: newsletter.recipients,
+        createdAt: newsletter.createdAt,
+        sentAt: newsletter.sentAt,
+        openRate: newsletter.openRate,
+        clickRate: newsletter.clickRate,
+        donationRate: newsletter.donationRate
+      }
+      
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${newsletter.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      
+      setSuccess(`Newsletter "${newsletter.name}" exported successfully`)
+      setTimeout(() => setSuccess(""), 3000)
+    } catch (error) {
+      setError("Failed to export newsletter")
+      setTimeout(() => setError(""), 3000)
+    }
+  }
+
+  const handleDeleteNewsletter = async () => {
+    if (!newsletterToDelete) return
+    
+    setIsDeleting(true)
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      setNewsletters(prev => prev.filter(n => n.id !== newsletterToDelete.id))
+      setSuccess(`Newsletter "${newsletterToDelete.name}" deleted successfully`)
+      
+      setTimeout(() => setSuccess(""), 3000)
+    } catch (error) {
+      setError("Failed to delete newsletter")
+      setTimeout(() => setError(""), 3000)
+    } finally {
+      setIsDeleting(false)
+      setShowDeleteDialog(false)
+      setNewsletterToDelete(null)
+    }
+  }
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -252,8 +409,110 @@ export default function NewslettersPage() {
     )
   }
 
+  // Show full-page Newsletter Builder
+  if (builderMode) {
+    return (
+      <div className="h-screen flex flex-col">
+        {/* Builder Header */}
+        <div className="h-16 border-b border-gray-200/50 bg-white/80 backdrop-blur-sm flex items-center justify-between px-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBuilderMode(false)}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Newsletters
+            </Button>
+            <div className="h-6 w-px bg-gray-300" />
+            <div>
+              <h1 className="text-lg font-semibold text-gray-900">
+                {editingNewsletter ? `Editing: ${editingNewsletter.name}` : 'Create New Newsletter'}
+              </h1>
+              <p className="text-sm text-gray-500">Design your newsletter with our drag-and-drop builder</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-sm bg-white/50 hover:bg-white border-gray-200 hover:border-blue-300 rounded-lg transition-all duration-200"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save Draft
+            </Button>
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-sm font-medium px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              Send Newsletter
+            </Button>
+          </div>
+        </div>
+
+        {/* Full-page Newsletter Builder */}
+        <div className="flex-1 overflow-hidden">
+          <Suspense fallback={
+            <div className="h-full flex items-center justify-center">
+              <LoadingSpinner />
+            </div>
+          }>
+            <NewsletterBuilder 
+              storyId={editingNewsletter?.storyId || selectedStory || stories[0]?.id || ''}
+              organizationId={org?.id || ''}
+              onSave={(newsletter) => {
+                console.log('Newsletter saved:', newsletter)
+                setBuilderMode(false)
+                fetchNewsletters()
+              }}
+              onSend={(newsletter) => {
+                console.log('Newsletter sent:', newsletter)
+                setBuilderMode(false)
+                fetchNewsletters()
+              }}
+            />
+          </Suspense>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
+      {/* Error and Success Messages */}
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+          <div className="w-4 h-4 text-red-500">⚠️</div>
+          <span className="text-red-700 text-sm">{error}</span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setError("")}
+            className="ml-auto text-red-500 hover:text-red-700"
+          >
+            ×
+          </Button>
+        </div>
+      )}
+      {success && (
+        <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+          <div className="w-4 h-4 text-green-500">✅</div>
+          <span className="text-green-700 text-sm">{success}</span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setSuccess("")}
+            className="ml-auto text-green-500 hover:text-green-700"
+          >
+            ×
+          </Button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -297,24 +556,49 @@ export default function NewslettersPage() {
                   <span className="sm:hidden">Create</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-7xl h-[90vh]">
+              <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Newsletter Builder</DialogTitle>
+                  <DialogTitle>Create New Newsletter</DialogTitle>
                 </DialogHeader>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <NewsletterBuilder 
-                    storyId={selectedStory || stories[0]?.id || ''}
-                    organizationId={org?.id || ''}
-                    onSave={(newsletter) => {
-                      console.log('Newsletter saved:', newsletter)
-                      fetchNewsletters()
-                    }}
-                    onSend={(newsletter) => {
-                      console.log('Newsletter sent:', newsletter)
-                      fetchNewsletters()
-                    }}
-                  />
-                </Suspense>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Select Story</label>
+                    <Select value={selectedStory} onValueChange={setSelectedStory}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Choose a story for your newsletter" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {stories.map((story) => (
+                          <SelectItem key={story.id} value={story.id}>
+                            {story.title} ({story.subscribers_count} subscribers)
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setSelectedStory("")}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        if (selectedStory) {
+                          setEditingNewsletter(null)
+                          setBuilderMode(true)
+                        } else {
+                          setError("Please select a story first")
+                        }
+                      }}
+                      disabled={!selectedStory}
+                      className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                    >
+                      Create Newsletter
+                    </Button>
+                  </div>
+                </div>
               </DialogContent>
             </Dialog>
           </div>
@@ -449,7 +733,13 @@ export default function NewslettersPage() {
               <p className="text-muted-foreground mb-6">
                 Create your first newsletter to engage with your story subscribers.
               </p>
-              <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg">
+              <Button 
+                onClick={() => {
+                  setEditingNewsletter(null)
+                  setBuilderMode(true)
+                }}
+                className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Your First Newsletter
               </Button>
@@ -495,27 +785,45 @@ export default function NewslettersPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleNewsletterAction('preview', newsletter)}
+                        className="cursor-pointer"
+                      >
                         <Eye className="mr-2 h-4 w-4" />
                         Preview
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleNewsletterAction('edit', newsletter)}
+                        className="cursor-pointer"
+                      >
                         <Edit className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleNewsletterAction('duplicate', newsletter)}
+                        className="cursor-pointer"
+                      >
                         <Copy className="mr-2 h-4 w-4" />
                         Duplicate
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleNewsletterAction('analytics', newsletter)}
+                        className="cursor-pointer"
+                      >
                         <BarChart3 className="mr-2 h-4 w-4" />
                         Analytics
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleNewsletterAction('export', newsletter)}
+                        className="cursor-pointer"
+                      >
                         <Download className="mr-2 h-4 w-4" />
                         Export
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem 
+                        onClick={() => handleNewsletterAction('delete', newsletter)}
+                        className="text-red-600 cursor-pointer"
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>
@@ -527,6 +835,89 @@ export default function NewslettersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Preview Dialog */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-4xl h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Eye className="w-5 h-5" />
+              Newsletter Preview
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto">
+            {previewNewsletter && (
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h3 className="text-lg font-semibold">{previewNewsletter.name}</h3>
+                  <p className="text-sm text-gray-600">For: {previewNewsletter.storyTitle}</p>
+                  <div className="flex gap-2 mt-2">
+                    {getStatusBadge(previewNewsletter.status)}
+                    {getTypeBadge(previewNewsletter.type)}
+                  </div>
+                </div>
+                <div className="border rounded-lg p-6 bg-white">
+                  <div className="text-center text-gray-500">
+                    <Mail className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg font-medium">Newsletter Preview</p>
+                    <p className="text-sm">This would show the actual newsletter content</p>
+                    <div className="mt-4 text-xs text-gray-400">
+                      <p>Recipients: {previewNewsletter.recipients}</p>
+                      {previewNewsletter.openRate && <p>Open Rate: {previewNewsletter.openRate}%</p>}
+                      {previewNewsletter.clickRate && <p>Click Rate: {previewNewsletter.clickRate}%</p>}
+                      {previewNewsletter.donationRate && <p>Donation Rate: {previewNewsletter.donationRate}%</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trash2 className="w-5 h-5 text-red-600" />
+              Delete Newsletter
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Are you sure you want to delete <strong>"{newsletterToDelete?.name}"</strong>? 
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowDeleteDialog(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={handleDeleteNewsletter}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Newsletter
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

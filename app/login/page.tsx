@@ -11,6 +11,8 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Confetti } from "@/components/ui/confetti"
+import { GlobalHeader } from "@/components/layout/global-header"
+import { GlobalFooter } from "@/components/layout/global-footer"
 
 export default function LoginPage() {
   const { signIn, user } = useAuth()
@@ -69,26 +71,29 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-xl">N</span>
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50">
+      <GlobalHeader variant="minimal" />
+      
+      <div className="flex items-center justify-center p-4 pt-20">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-xl">N</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">#</span>
+                </div>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xs">#</span>
-              </div>
+              <span className="text-2xl font-bold text-foreground">The NMBR</span>
             </div>
-            <span className="text-2xl font-bold text-foreground">The NMBR</span>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
+            <p className="text-muted-foreground">
+              Sign in to continue creating amazing impact stories
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground">
-            Sign in to continue creating amazing impact stories
-          </p>
-        </div>
 
         {/* Benefits */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -199,7 +204,10 @@ export default function LoginPage() {
             <div className="text-sm font-semibold text-blue-600">Red Cross</div>
           </div>
         </div>
+        </div>
       </div>
+      
+      <GlobalFooter />
     </div>
   )
 }

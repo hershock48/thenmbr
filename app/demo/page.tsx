@@ -5,17 +5,65 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Search, Heart, Users, DollarSign, ArrowRight, CheckCircle, Star, Shield, Zap, Target, Gift, Settings, LogIn, UserPlus, Eye, Play } from "lucide-react"
+import { Search, Heart, Users, DollarSign, ArrowRight, CheckCircle, Star, Shield, Zap, Target, Gift, Settings, LogIn, UserPlus, Eye, Play, AlertCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
 export default function DemoPage() {
+  const [searchValue, setSearchValue] = useState('')
+  const [searchError, setSearchError] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchSuccess, setSearchSuccess] = useState(false)
+
+  const validNumbers = ['1', '2', '3']
+  
+  const handleSearch = () => {
+    if (!searchValue.trim()) {
+      setSearchError('Please enter a story number')
+      return
+    }
+    
+    if (!validNumbers.includes(searchValue.trim())) {
+      setSearchError('Please enter 1, 2, or 3')
+      return
+    }
+    
+    setSearchError('')
+    setIsSearching(true)
+    setSearchSuccess(false)
+    
+    // Simulate search delay
+    setTimeout(() => {
+      window.open(`/widget?org=demo-org-123&type=story-search&nmbr=${searchValue.trim()}`, '_blank')
+      setIsSearching(false)
+      setSearchSuccess(true)
+      setSearchValue('')
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSearchSuccess(false), 3000)
+    }, 500)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value)
+    if (searchError) {
+      setSearchError('')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card/50 backdrop-blur-sm border-b border-border sticky top-0 z-50 supports-[backdrop-filter]:bg-card/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity">
               <div className="relative">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-base sm:text-lg">N</span>
@@ -24,9 +72,16 @@ export default function DemoPage() {
                   <span className="text-white font-bold text-xs">#</span>
                 </div>
               </div>
-              <span className="text-lg sm:text-2xl font-bold text-foreground hidden xs:block">The NMBR</span>
-            </div>
+              <span className="text-lg sm:text-2xl font-bold text-foreground hidden sm:block">The NMBR</span>
+            </Link>
             <div className="flex items-center space-x-2 sm:space-x-4">
+              <Link href="/">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                  <ArrowRight className="w-4 h-4 mr-2 rotate-180 sm:mr-2" />
+                  <span className="hidden sm:inline">Back to Home</span>
+                  <span className="sm:hidden">Home</span>
+                </Button>
+              </Link>
               <Link href="/login">
                 <Button variant="ghost" className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
                   Sign In
@@ -76,7 +131,7 @@ export default function DemoPage() {
                 Try Our Live Widget
               </CardTitle>
               <CardDescription className="text-muted-foreground text-base">
-                This is exactly what your donors will see on your website. Search for a story using the numbers 1, 2, or 3.
+                This is exactly what your donors will see on your website. Search for a story using the numbers 1, 2, or 3, or click the buttons below to try different stories.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -86,31 +141,51 @@ export default function DemoPage() {
                     Search for a story by number:
                   </Label>
                   <div className="flex gap-2">
-                    <Input
-                      id="demo-search"
-                      placeholder="Try: 1, 2, or 3"
-                      className="flex-1"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          const value = (e.target as HTMLInputElement).value;
-                          if (value === '1' || value === '2' || value === '3') {
-                            window.open(`/widget?org=demo-org-123&type=story-search&nmbr=${value}`, '_blank');
-                          }
-                        }
-                      }}
-                    />
+                    <div className="flex-1">
+                      <Input
+                        id="demo-search"
+                        placeholder="Try: 1, 2, or 3"
+                        value={searchValue}
+                        onChange={handleInputChange}
+                        onKeyPress={handleKeyPress}
+                        className={`flex-1 ${
+                          searchError ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20' : 
+                          searchSuccess ? 'border-green-300 focus:border-green-500 focus:ring-green-500/20' : 
+                          'border-gray-300 focus:border-cyan-500 focus:ring-cyan-500/20'
+                        }`}
+                        disabled={isSearching}
+                        aria-describedby={searchError ? "search-error" : searchSuccess ? "search-success" : undefined}
+                      />
+                      {searchError && (
+                        <p id="search-error" className="text-red-600 text-xs mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {searchError}
+                        </p>
+                      )}
+                      {searchSuccess && (
+                        <p id="search-success" className="text-green-600 text-xs mt-1 flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          Story opened in new tab!
+                        </p>
+                      )}
+                    </div>
                     <Button 
-                      onClick={() => {
-                        const input = document.getElementById('demo-search') as HTMLInputElement;
-                        const value = input.value;
-                        if (value === '1' || value === '2' || value === '3') {
-                          window.open(`/widget?org=demo-org-123&type=story-search&nmbr=${value}`, '_blank');
-                        }
-                      }}
-                      className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white"
+                      onClick={handleSearch}
+                      disabled={isSearching || !searchValue.trim()}
+                      className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label={isSearching ? "Opening story..." : "Search for story"}
                     >
-                      <Search className="w-4 h-4 mr-2" />
-                      Find Story
+                      {isSearching ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Opening...
+                        </>
+                      ) : (
+                        <>
+                          <Search className="w-4 h-4 mr-2" />
+                          Find Story
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -119,7 +194,12 @@ export default function DemoPage() {
                   <Button 
                     variant="outline" 
                     className="h-12 border-2 border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:border-cyan-300 transition-all duration-300"
-                    onClick={() => window.open('/widget?org=demo-org-123&type=story-search&nmbr=1', '_blank')}
+                    onClick={() => {
+                      setSearchValue('1')
+                      handleSearch()
+                    }}
+                    disabled={isSearching}
+                    aria-label="Try Story #1 - Maria's Education Journey"
                   >
                     <Heart className="w-4 h-4 mr-2" />
                     Story #1
@@ -127,7 +207,12 @@ export default function DemoPage() {
                   <Button 
                     variant="outline" 
                     className="h-12 border-2 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 transition-all duration-300"
-                    onClick={() => window.open('/widget?org=demo-org-123&type=story-search&nmbr=2', '_blank')}
+                    onClick={() => {
+                      setSearchValue('2')
+                      handleSearch()
+                    }}
+                    disabled={isSearching}
+                    aria-label="Try Story #2 - Clean Water for Village"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Story #2
@@ -135,11 +220,34 @@ export default function DemoPage() {
                   <Button 
                     variant="outline" 
                     className="h-12 border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300 transition-all duration-300"
-                    onClick={() => window.open('/widget?org=demo-org-123&type=story-search&nmbr=3', '_blank')}
+                    onClick={() => {
+                      setSearchValue('3')
+                      handleSearch()
+                    }}
+                    disabled={isSearching}
+                    aria-label="Try Story #3 - Medical Equipment Fund"
                   >
                     <DollarSign className="w-4 h-4 mr-2" />
                     Story #3
                   </Button>
+                </div>
+                
+                {/* Instructions */}
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-blue-600 text-sm font-bold">i</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-blue-900 mb-1">How to try the demo:</h4>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        <li>• Type 1, 2, or 3 in the search box above</li>
+                        <li>• Or click any of the story buttons below</li>
+                        <li>• The story will open in a new tab</li>
+                        <li>• This shows exactly what your donors will see</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>

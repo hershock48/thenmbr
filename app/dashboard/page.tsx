@@ -368,15 +368,18 @@ export default function DashboardPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => router.push(`/dashboard/nmbrs/${story.id}`)}>
                         <Eye className="mr-2 h-4 w-4" />
                         View
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => router.push(`/dashboard/nmbrs/${story.id}/edit`)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/story/${story.nmbr_code}`)
+                        alert('Story link copied to clipboard!')
+                      }}>
                         <Share2 className="mr-2 h-4 w-4" />
                         Share
                       </DropdownMenuItem>
@@ -444,7 +447,7 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <Link href="/marketplace">
+            <Link href="/dashboard/marketplace">
               <Button variant="outline" className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300 text-sm">
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Visit Marketplace

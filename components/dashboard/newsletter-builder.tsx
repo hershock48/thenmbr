@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Type,
   ImageIcon,
@@ -106,37 +107,28 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
   const undo = useCallback(() => {
     if (historyIndex > 0) {
       setHistoryIndex(historyIndex - 1)
-      setBlocks([...history[historyIndex - 1]])
+      setBlocks(history[historyIndex - 1])
     }
   }, [history, historyIndex])
 
   const redo = useCallback(() => {
     if (historyIndex < history.length - 1) {
       setHistoryIndex(historyIndex + 1)
-      setBlocks([...history[historyIndex + 1]])
+      setBlocks(history[historyIndex + 1])
     }
   }, [history, historyIndex])
 
   const addBlock = useCallback(
-    (type: NewsletterBlock["type"], insertIndex?: number) => {
+    (type: NewsletterBlock["type"]) => {
       const newBlock: NewsletterBlock = {
-        id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${type}-${Date.now()}`,
         type,
-        order: insertIndex !== undefined ? insertIndex + 1 : blocks.length + 1,
-        content: getDefaultBlockContent(type),
+        content: getDefaultContent(type),
         styling: getDefaultBlockStyling(type),
+        order: blocks.length + 1,
       }
-
-      let newBlocks = [...blocks]
-      if (insertIndex !== undefined) {
-        newBlocks.splice(insertIndex + 1, 0, newBlock)
-        newBlocks = newBlocks.map((block, index) => ({ ...block, order: index + 1 }))
-      } else {
-        newBlocks.push(newBlock)
-      }
-
+      const newBlocks = [...blocks, newBlock]
       setBlocks(newBlocks)
-      setSelectedBlock(newBlock.id)
       addToHistory(newBlocks)
     },
     [blocks, addToHistory],
@@ -155,49 +147,47 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
     (blockId: string) => {
       const newBlocks = blocks.filter((block) => block.id !== blockId)
       setBlocks(newBlocks)
+      addToHistory(newBlocks)
       if (selectedBlock === blockId) {
         setSelectedBlock(null)
       }
-      addToHistory(newBlocks)
     },
-    [blocks, selectedBlock, addToHistory],
+    [blocks, addToHistory, selectedBlock],
   )
 
   const duplicateBlock = useCallback(
     (blockId: string) => {
-      const block = blocks.find((b) => b.id === blockId)
-      if (block) {
-        const newBlock = {
-          ...block,
-          id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          order: block.order + 1,
+      const blockToDuplicate = blocks.find((block) => block.id === blockId)
+      if (blockToDuplicate) {
+        const newBlock: NewsletterBlock = {
+          ...blockToDuplicate,
+          id: `${blockToDuplicate.type}-${Date.now()}`,
+          order: blocks.length + 1,
         }
-        const newBlocks = [...blocks]
-        newBlocks.splice(block.order, 0, newBlock)
-        const updatedBlocks = newBlocks.map((b, index) => ({ ...b, order: index + 1 }))
-        setBlocks(updatedBlocks)
-        addToHistory(updatedBlocks)
+        const newBlocks = [...blocks, newBlock]
+        setBlocks(newBlocks)
+        addToHistory(newBlocks)
       }
     },
     [blocks, addToHistory],
   )
 
-  const getDefaultBlockContent = (type: NewsletterBlock["type"]) => {
+  const getDefaultContent = (type: NewsletterBlock["type"]) => {
     switch (type) {
       case "header":
-        return { title: "Your Story Update", subtitle: "Making a difference together" }
+        return { title: "{STORY_TITLE}", subtitle: "Your Impact Story Update" }
       case "text":
-        return { text: "Add your message here..." }
+        return { text: "Hi {SUBSCRIBER_NAME}!\n\nGreat news! {STORY_TITLE} has reached {PROGRESS_PERCENTAGE}% of its goal!" }
       case "image":
-        return { src: "", alt: "Image", caption: "" }
+        return { src: "", alt: "Story Image", caption: "" }
       case "button":
         return { text: "Donate Now", url: "#", style: "primary" }
       case "progress":
-        return { raised: "$0", goal: "$1,000", percentage: "0%", remaining: "$1,000" }
+        return { percentage: 65, label: "Progress to Goal" }
       case "spacer":
-        return { height: "30px" }
+        return { height: 30 }
       case "divider":
-        return {}
+        return { style: "solid" }
       default:
         return {}
     }
@@ -271,19 +261,26 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
   }
 
   return (
-    <div className="h-screen flex bg-gray-50">
-      {/* Enhanced Sidebar */}
+    <div className="h-full flex bg-background">
+      {/* Left Sidebar */}
       <div
         className={cn(
-          "bg-white border-r border-gray-200 flex flex-col transition-all duration-300 shadow-sm",
+          "bg-card border-r flex flex-col transition-all duration-300",
           sidebarCollapsed ? "w-16" : "w-80",
         )}
       >
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-6 border-b">
           <div className="flex items-center justify-between">
-            <div className={cn("space-y-1", sidebarCollapsed && "hidden")}>
-              <h2 className="text-lg font-semibold text-gray-900">Newsletter Builder</h2>
-              <p className="text-sm text-gray-500">Create professional newsletters</p>
+            <div className={cn("space-y-2", sidebarCollapsed && "hidden")}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Newsletter Builder</h2>
+                  <p className="text-sm text-muted-foreground">Create stunning newsletters</p>
+                </div>
+              </div>
             </div>
             <Button
               variant="ghost"
@@ -296,9 +293,9 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
           </div>
 
           {!sidebarCollapsed && (
-            <div className="space-y-3 mt-4">
-              <div>
-                <Label htmlFor="newsletter-name" className="text-sm font-medium">
+            <div className="space-y-4 mt-6">
+              <div className="space-y-2">
+                <Label htmlFor="newsletter-name" className="text-sm font-semibold">
                   Newsletter Name
                 </Label>
                 <Input
@@ -306,13 +303,12 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
                   value={newsletterName}
                   onChange={(e) => setNewsletterName(e.target.value)}
                   placeholder="Enter newsletter name"
-                  className="mt-1"
                 />
               </div>
 
-              <div>
-                <Label className="text-sm font-medium">Template</Label>
-                <div className="mt-1 space-y-2">
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Template</Label>
+                <div className="space-y-3">
                   <Select
                     value={selectedTemplate?.id}
                     onValueChange={(id) => {
@@ -331,14 +327,17 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
                     <SelectContent>
                       {newsletterTemplates.map((template) => (
                         <SelectItem key={template.id} value={template.id}>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3">
                             <div
-                              className="w-4 h-4 rounded"
+                              className="w-5 h-5 rounded-lg"
                               style={{
                                 background: `linear-gradient(135deg, ${template.theme.colors.primary}, ${template.theme.colors.secondary})`,
                               }}
                             />
-                            {template.name}
+                            <div>
+                              <div className="font-medium">{template.name}</div>
+                              <div className="text-xs text-muted-foreground">{template.description}</div>
+                            </div>
                           </div>
                         </SelectItem>
                       ))}
@@ -347,7 +346,7 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full bg-transparent"
+                    className="w-full"
                     onClick={() => setShowTemplateGallery(true)}
                   >
                     <Layout className="w-4 h-4 mr-2" />
@@ -361,26 +360,35 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
 
         {!sidebarCollapsed && (
           <Tabs defaultValue="blocks" className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-3 mx-4 mt-4">
-              <TabsTrigger value="blocks" className="text-xs">
+            <TabsList className="grid w-full grid-cols-3 mx-6 mt-6">
+              <TabsTrigger value="blocks">
+                <Layout className="w-3 h-3 mr-1" />
                 Blocks
               </TabsTrigger>
-              <TabsTrigger value="themes" className="text-xs">
+              <TabsTrigger value="themes">
+                <Sparkles className="w-3 h-3 mr-1" />
                 Design
               </TabsTrigger>
-              <TabsTrigger value="settings" className="text-xs">
+              <TabsTrigger value="settings">
+                <Settings className="w-3 h-3 mr-1" />
                 Settings
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="blocks" className="flex-1 p-4 space-y-4 overflow-y-auto">
+            <TabsContent value="blocks" className="flex-1 p-6 space-y-6 overflow-y-auto">
               <div>
-                <h3 className="font-medium mb-3 text-gray-900">Add Content</h3>
-                <div className="space-y-3">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-primary" />
+                  Add Content
+                </h3>
+                <div className="space-y-4">
                   {["content", "media", "interactive", "layout"].map((category) => (
                     <div key={category}>
-                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{category}</h4>
-                      <div className="grid grid-cols-2 gap-2">
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        {category}
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3">
                         {blockTypes
                           .filter((blockType) => blockType.category === category)
                           .map((blockType) => (
@@ -389,10 +397,15 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
                               variant="outline"
                               size="sm"
                               onClick={() => addBlock(blockType.type as NewsletterBlock["type"])}
-                              className="h-auto p-3 flex flex-col items-center gap-2 hover:bg-blue-50 hover:border-blue-200 transition-colors group"
+                              className="h-auto p-4 flex flex-col items-center gap-3 hover:bg-accent transition-colors group"
                             >
-                              <blockType.icon className="w-4 h-4 text-gray-600 group-hover:text-blue-600" />
-                              <span className="text-xs font-medium">{blockType.label}</span>
+                              <div className="w-8 h-8 bg-muted group-hover:bg-accent rounded-lg flex items-center justify-center transition-colors">
+                                <blockType.icon className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
+                              </div>
+                              <div className="text-center">
+                                <span className="text-xs font-semibold">{blockType.label}</span>
+                                <p className="text-xs text-muted-foreground mt-1">{blockType.description}</p>
+                              </div>
                             </Button>
                           ))}
                       </div>
@@ -404,54 +417,64 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
               <Separator />
 
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-medium text-gray-900">Content Blocks</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Layout className="w-4 h-4 text-primary" />
+                    Content Blocks
+                  </h3>
                   <Badge variant="secondary" className="text-xs">
                     {blocks.length} blocks
                   </Badge>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {blocks.map((block, index) => (
                     <div
                       key={block.id}
                       className={cn(
-                        "p-3 border rounded-lg cursor-pointer transition-all duration-200 group",
+                        "p-4 border rounded-lg cursor-pointer transition-all duration-200 group hover:bg-accent",
                         selectedBlock === block.id
-                          ? "border-blue-500 bg-blue-50 shadow-sm"
-                          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50",
+                          ? "border-primary bg-accent"
+                          : "border-border hover:border-primary/50",
                       )}
                       onClick={() => setSelectedBlock(block.id)}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <GripVertical className="w-3 h-3 text-gray-400" />
-                          <span className="text-sm font-medium capitalize text-gray-900">{block.type}</span>
-                          {block.type === "text" && block.content.text && (
-                            <span className="text-xs text-gray-500 truncate max-w-20">
-                              {block.content.text.replace(/<[^>]*>/g, "").substring(0, 20)}...
-                            </span>
-                          )}
+                        <div className="flex items-center gap-3">
+                          <div className="w-6 h-6 bg-muted group-hover:bg-accent rounded-lg flex items-center justify-center transition-colors">
+                            <GripVertical className="w-3 h-3 text-muted-foreground" />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold capitalize">{block.type}</span>
+                            <Badge variant="outline" className="text-xs">
+                              Block {index + 1}
+                            </Badge>
+                            {block.type === "text" && block.content.text && (
+                              <span className="text-xs text-muted-foreground truncate max-w-20">
+                                {block.content.text.replace(/<[^>]*>/g, "").substring(0, 20)}...
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
-                            size="sm"
                             variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
                             onClick={(e) => {
                               e.stopPropagation()
                               duplicateBlock(block.id)
                             }}
-                            className="h-6 w-6 p-0"
                           >
                             <Copy className="w-3 h-3" />
                           </Button>
                           <Button
-                            size="sm"
                             variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 text-destructive hover:text-destructive"
                             onClick={(e) => {
                               e.stopPropagation()
                               deleteBlock(block.id)
                             }}
-                            className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
@@ -459,169 +482,74 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
                       </div>
                     </div>
                   ))}
-
-                  {blocks.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <Layout className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm">No blocks yet</p>
-                      <p className="text-xs">Add content blocks to get started</p>
-                    </div>
-                  )}
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="themes" className="flex-1 p-4 overflow-y-auto">
+            <TabsContent value="themes" className="flex-1 p-6 space-y-6 overflow-y-auto">
               <div>
-                <h3 className="font-medium mb-3 text-gray-900">Choose Design</h3>
-                <div className="space-y-3">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  Choose Theme
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
                   {newsletterThemes.map((theme) => (
-                    <div
+                    <Card
                       key={theme.id}
                       className={cn(
-                        "p-4 border rounded-lg cursor-pointer transition-all duration-200",
+                        "cursor-pointer transition-all duration-200 hover:shadow-md",
                         selectedTheme.id === theme.id
-                          ? "border-blue-500 bg-blue-50 shadow-sm"
-                          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50",
+                          ? "ring-2 ring-primary"
+                          : "hover:ring-1 hover:ring-primary/50",
                       )}
                       onClick={() => setSelectedTheme(theme)}
                     >
-                      <div className="flex items-start gap-3">
-                        <div
-                          className="w-12 h-12 rounded-lg flex-shrink-0 shadow-sm"
-                          style={{
-                            background: `linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary})`,
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium text-gray-900">{theme.name}</h4>
-                            <Badge variant="outline" className="text-xs capitalize">
-                              {theme.category}
-                            </Badge>
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-4 h-4 rounded"
+                              style={{ backgroundColor: theme.colors.primary }}
+                            />
+                            <div
+                              className="w-4 h-4 rounded"
+                              style={{ backgroundColor: theme.colors.secondary }}
+                            />
+                            <div
+                              className="w-4 h-4 rounded"
+                              style={{ backgroundColor: theme.colors.accent }}
+                            />
                           </div>
-                          <p className="text-sm text-gray-600">{theme.description}</p>
-                          <div className="flex gap-1 mt-2">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.primary }} />
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.secondary }} />
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.colors.accent }} />
+                          <div>
+                            <h4 className="font-medium">{theme.name}</h4>
+                            <p className="text-xs text-muted-foreground">{theme.description}</p>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="settings" className="flex-1 p-4 overflow-y-auto">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-3 text-gray-900">Brand Colors</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <Label className="text-sm">Primary Color</Label>
-                      <div className="flex gap-2 mt-1">
-                        <Input
-                          type="color"
-                          value={selectedTheme.colors.primary}
-                          onChange={(e) =>
-                            setSelectedTheme({
-                              ...selectedTheme,
-                              colors: { ...selectedTheme.colors, primary: e.target.value },
-                            })
-                          }
-                          className="w-12 h-10 p-1 border rounded"
-                        />
-                        <Input
-                          value={selectedTheme.colors.primary}
-                          onChange={(e) =>
-                            setSelectedTheme({
-                              ...selectedTheme,
-                              colors: { ...selectedTheme.colors, primary: e.target.value },
-                            })
-                          }
-                          className="flex-1 font-mono text-sm"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm">Secondary Color</Label>
-                      <div className="flex gap-2 mt-1">
-                        <Input
-                          type="color"
-                          value={selectedTheme.colors.secondary}
-                          onChange={(e) =>
-                            setSelectedTheme({
-                              ...selectedTheme,
-                              colors: { ...selectedTheme.colors, secondary: e.target.value },
-                            })
-                          }
-                          className="w-12 h-10 p-1 border rounded"
-                        />
-                        <Input
-                          value={selectedTheme.colors.secondary}
-                          onChange={(e) =>
-                            setSelectedTheme({
-                              ...selectedTheme,
-                              colors: { ...selectedTheme.colors, secondary: e.target.value },
-                            })
-                          }
-                          className="flex-1 font-mono text-sm"
-                        />
-                      </div>
-                    </div>
+            <TabsContent value="settings" className="flex-1 p-6 space-y-6 overflow-y-auto">
+              <div>
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Settings className="w-4 h-4 text-primary" />
+                  Newsletter Settings
+                </h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">Subject Line</Label>
+                    <Input placeholder="Enter email subject" />
                   </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h3 className="font-medium mb-3 text-gray-900">Layout Settings</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm">Content Width</Label>
-                      <Select
-                        value={selectedTheme.layout.contentWidth}
-                        onValueChange={(value: "narrow" | "medium" | "wide") =>
-                          setSelectedTheme({
-                            ...selectedTheme,
-                            layout: { ...selectedTheme.layout, contentWidth: value },
-                          })
-                        }
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="narrow">Narrow (600px)</SelectItem>
-                          <SelectItem value="medium">Medium (700px)</SelectItem>
-                          <SelectItem value="wide">Wide (800px)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label className="text-sm">Button Style</Label>
-                      <Select
-                        value={selectedTheme.layout.buttonStyle}
-                        onValueChange={(value: "rounded" | "square" | "pill") =>
-                          setSelectedTheme({
-                            ...selectedTheme,
-                            layout: { ...selectedTheme.layout, buttonStyle: value },
-                          })
-                        }
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="rounded">Rounded</SelectItem>
-                          <SelectItem value="square">Square</SelectItem>
-                          <SelectItem value="pill">Pill</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">From Name</Label>
+                    <Input placeholder="Your Organization Name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">Reply To</Label>
+                    <Input placeholder="noreply@yourorg.com" />
                   </div>
                 </div>
               </div>
@@ -630,600 +558,436 @@ export function NewsletterBuilder({ storyId, organizationId, onSave, onSend }: N
         )}
       </div>
 
-      {/* Enhanced Main Content */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
-        <div className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-6 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-              <Button
-                variant={previewMode ? "ghost" : "default"}
-                size="sm"
-                onClick={() => setPreviewMode(false)}
-                className="h-8 px-3 text-sm"
-              >
-                <Settings className="w-4 h-4 mr-1" />
-                Edit
-              </Button>
-              <Button
-                variant={previewMode ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setPreviewMode(true)}
-                className="h-8 px-3 text-sm"
-              >
-                <Eye className="w-4 h-4 mr-1" />
-                Preview
-              </Button>
-            </div>
-
-            {previewMode && (
-              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+        {/* Toolbar */}
+        <div className="border-b bg-card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
                 <Button
-                  variant={previewDevice === "desktop" ? "default" : "ghost"}
+                  variant="outline"
                   size="sm"
-                  onClick={() => setPreviewDevice("desktop")}
-                  className="h-8 w-8 p-0"
+                  onClick={undo}
+                  disabled={historyIndex === 0}
                 >
-                  <Monitor className="w-4 h-4" />
+                  <Undo className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant={previewDevice === "tablet" ? "default" : "ghost"}
+                  variant="outline"
                   size="sm"
-                  onClick={() => setPreviewDevice("tablet")}
-                  className="h-8 w-8 p-0"
+                  onClick={redo}
+                  disabled={historyIndex === history.length - 1}
                 >
-                  <Tablet className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={previewDevice === "mobile" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setPreviewDevice("mobile")}
-                  className="h-8 w-8 p-0"
-                >
-                  <Smartphone className="w-4 h-4" />
+                  <Redo className="w-4 h-4" />
                 </Button>
               </div>
-            )}
-
-            <Separator orientation="vertical" className="h-6" />
-
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={undo} disabled={historyIndex <= 0} className="h-8 w-8 p-0">
-                <Undo className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={redo}
-                disabled={historyIndex >= history.length - 1}
-                className="h-8 w-8 p-0"
-              >
-                <Redo className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="text-sm bg-transparent">
-              <Save className="w-4 h-4 mr-2" />
-              Save Draft
-            </Button>
-            <Button
-              size="sm"
-              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-sm"
-            >
-              <Send className="w-4 h-4 mr-2" />
-              Send Newsletter
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-auto bg-gray-50 p-6">
-          {previewMode ? (
-            <div className="flex justify-center">
-              <div
-                className="bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300"
-                style={getPreviewDimensions()}
-              >
-                <div className="p-8">
-                  <div className="text-center text-gray-500 mb-4">
-                    <Eye className="w-8 h-8 mx-auto mb-2" />
-                    <h3 className="font-medium">Newsletter Preview</h3>
-                    <p className="text-sm">This is how your newsletter will look</p>
-                  </div>
-                  {/* Newsletter preview content would be rendered here */}
-                  <div className="space-y-4">
-                    {blocks.map((block) => (
-                      <div key={block.id} className="border-2 border-dashed border-gray-200 p-4 rounded">
-                        {renderBlockPreview(block)}
-                      </div>
-                    ))}
-                  </div>
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex gap-2">
+                <Button
+                  variant={previewMode ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setPreviewMode(!previewMode)}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview
+                </Button>
+                <div className="flex border rounded-lg">
+                  <Button
+                    variant={previewDevice === "desktop" ? "default" : "ghost"}
+                    size="sm"
+                    className="rounded-r-none"
+                    onClick={() => setPreviewDevice("desktop")}
+                  >
+                    <Monitor className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={previewDevice === "tablet" ? "default" : "ghost"}
+                    size="sm"
+                    className="rounded-none border-x"
+                    onClick={() => setPreviewDevice("tablet")}
+                  >
+                    <Tablet className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={previewDevice === "mobile" ? "default" : "ghost"}
+                    size="sm"
+                    className="rounded-l-none"
+                    onClick={() => setPreviewDevice("mobile")}
+                  >
+                    <Smartphone className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="max-w-3xl mx-auto">
-              <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-                <Droppable droppableId="blocks">
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => onSave?.({ blocks, theme: selectedTheme })}>
+                <Save className="w-4 h-4 mr-2" />
+                Save Draft
+              </Button>
+              <Button onClick={() => onSend?.({ blocks, theme: selectedTheme })}>
+                <Send className="w-4 h-4 mr-2" />
+                Send Newsletter
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Newsletter Preview/Editor */}
+        <div className="flex-1 p-6 overflow-auto">
+          <div className="max-w-4xl mx-auto">
+            <div
+              className="bg-background border rounded-lg shadow-sm"
+              style={getPreviewDimensions()}
+            >
+              <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                <Droppable droppableId="newsletter-blocks">
                   {(provided, snapshot) => (
                     <div
-                      {...provided.droppableProps}
                       ref={provided.innerRef}
+                      {...provided.droppableProps}
                       className={cn(
-                        "space-y-4 min-h-96 transition-colors duration-200",
-                        snapshot.isDraggingOver && "bg-blue-50",
+                        "min-h-96 p-6 space-y-4",
+                        snapshot.isDraggingOver && "bg-accent/50",
                       )}
                     >
-                      {blocks.length === 0 && (
-                        <div className="text-center py-16 border-2 border-dashed border-gray-300 rounded-xl bg-white">
-                          <Sparkles className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">Start Building Your Newsletter</h3>
-                          <p className="text-gray-500 mb-6">
+                      {blocks.length === 0 ? (
+                        <div className="text-center py-12">
+                          <Layout className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                          <h3 className="text-lg font-semibold mb-2">Start Building Your Newsletter</h3>
+                          <p className="text-muted-foreground mb-4">
                             Add content blocks from the sidebar to create your newsletter
                           </p>
-                          <div className="flex justify-center gap-2">
-                            <Button onClick={() => addBlock("header")} size="sm">
-                              <Type className="w-4 h-4 mr-2" />
-                              Add Header
-                            </Button>
-                            <Button onClick={() => addBlock("text")} variant="outline" size="sm">
-                              <Type className="w-4 h-4 mr-2" />
-                              Add Text
-                            </Button>
-                          </div>
+                          <Button onClick={() => addBlock("header")}>
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add First Block
+                          </Button>
                         </div>
-                      )}
-
-                      {blocks.map((block, index) => (
-                        <Draggable key={block.id} draggableId={block.id} index={index}>
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className={cn(
-                                "group relative bg-white border-2 rounded-xl transition-all duration-200 overflow-hidden",
-                                selectedBlock === block.id
-                                  ? "border-blue-500 shadow-lg shadow-blue-100"
-                                  : "border-gray-200 hover:border-gray-300 hover:shadow-md",
-                                snapshot.isDragging && "shadow-2xl rotate-2 scale-105",
-                              )}
-                            >
+                      ) : (
+                        blocks.map((block, index) => (
+                          <Draggable key={block.id} draggableId={block.id} index={index}>
+                            {(provided, snapshot) => (
                               <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 className={cn(
-                                  "flex items-center justify-between p-3 bg-gray-50 border-b border-gray-200 transition-colors",
-                                  selectedBlock === block.id && "bg-blue-50 border-blue-200",
+                                  "group relative",
+                                  snapshot.isDragging && "opacity-50",
+                                  selectedBlock === block.id && "ring-2 ring-primary",
                                 )}
                               >
-                                <div className="flex items-center gap-3">
-                                  <GripVertical className="w-4 h-4 text-gray-400 cursor-grab active:cursor-grabbing" />
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium capitalize text-gray-900">{block.type}</span>
-                                    <Badge variant="outline" className="text-xs">
-                                      Block {index + 1}
-                                    </Badge>
+                                <div className="p-4 border rounded-lg bg-card hover:shadow-md transition-all">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                      <GripVertical className="w-4 h-4 text-muted-foreground" />
+                                      <span className="text-sm font-medium capitalize">{block.type} Block {index + 1}</span>
+                                    </div>
+                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-6 w-6 p-0"
+                                        onClick={() => duplicateBlock(block.id)}
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                                        onClick={() => deleteBlock(block.id)}
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="text-sm text-muted-foreground">
+                                    {block.type === "header" && (
+                                      <div>
+                                        <div className="font-semibold text-lg">{block.content.title}</div>
+                                        <div className="text-sm">{block.content.subtitle}</div>
+                                      </div>
+                                    )}
+                                    {block.type === "text" && (
+                                      <div className="whitespace-pre-wrap">{block.content.text}</div>
+                                    )}
+                                    {block.type === "image" && (
+                                      <div className="text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                                        <ImageIcon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                                        <div className="text-sm text-muted-foreground">Image: {block.content.alt || "No alt text"}</div>
+                                      </div>
+                                    )}
+                                    {block.type === "button" && (
+                                      <div className="text-center">
+                                        <Button className="bg-primary text-primary-foreground">
+                                          {block.content.text}
+                                        </Button>
+                                      </div>
+                                    )}
+                                    {block.type === "progress" && (
+                                      <div className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                          <span>{block.content.label}</span>
+                                          <span>{block.content.percentage}%</span>
+                                        </div>
+                                        <div className="w-full bg-muted rounded-full h-2">
+                                          <div
+                                            className="bg-primary h-2 rounded-full"
+                                            style={{ width: `${block.content.percentage}%` }}
+                                          />
+                                        </div>
+                                      </div>
+                                    )}
+                                    {block.type === "spacer" && (
+                                      <div className="text-center text-muted-foreground">
+                                        <div className="border-t border-dashed border-muted-foreground/25 my-2" />
+                                        <span className="text-xs">Spacer ({block.content.height}px)</span>
+                                      </div>
+                                    )}
+                                    {block.type === "divider" && (
+                                      <div className="border-t border-muted-foreground/25" />
+                                    )}
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => addBlock("text", index)}
-                                    className="h-7 w-7 p-0"
-                                    title="Add block above"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => duplicateBlock(block.id)}
-                                    className="h-7 w-7 p-0"
-                                    title="Duplicate block"
-                                  >
-                                    <Copy className="w-3 h-3" />
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => deleteBlock(block.id)}
-                                    className="h-7 w-7 p-0 text-red-600 hover:text-red-700"
-                                    title="Delete block"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
-                                </div>
                               </div>
-                              <div className="p-6 cursor-pointer" onClick={() => setSelectedBlock(block.id)}>
-                                {renderBlockPreview(block)}
-                              </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                            )}
+                          </Draggable>
+                        ))
+                      )}
                       {provided.placeholder}
                     </div>
                   )}
                 </Droppable>
               </DragDropContext>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
+      {/* Right Sidebar - Block Properties */}
       {selectedBlockData && (
-        <div className="w-80 bg-white border-l border-gray-200 shadow-lg">
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gray-900 capitalize flex items-center gap-2">
-                <Settings className="w-4 h-4" />
-                {selectedBlockData.type} Settings
-              </h3>
-              <Button size="sm" variant="ghost" onClick={() => setSelectedBlock(null)} className="h-8 w-8 p-0">
+        <div className="w-80 bg-card border-l p-6 space-y-6 overflow-y-auto">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Block Properties</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSelectedBlock(null)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-semibold">Content</Label>
+              {selectedBlockData.type === "header" && (
+                <div className="space-y-3 mt-2">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Title</Label>
+                    <Input
+                      value={selectedBlockData.content.title}
+                      onChange={(e) =>
+                        updateBlock(selectedBlockData.id, {
+                          content: { ...selectedBlockData.content, title: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Subtitle</Label>
+                    <Input
+                      value={selectedBlockData.content.subtitle}
+                      onChange={(e) =>
+                        updateBlock(selectedBlockData.id, {
+                          content: { ...selectedBlockData.content, subtitle: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+              {selectedBlockData.type === "text" && (
+                <div className="mt-2">
+                  <Label className="text-xs text-muted-foreground">Text Content</Label>
+                  <Textarea
+                    value={selectedBlockData.content.text}
+                    onChange={(e) =>
+                      updateBlock(selectedBlockData.id, {
+                        content: { ...selectedBlockData.content, text: e.target.value },
+                      })
+                    }
+                    rows={4}
+                  />
+                </div>
+              )}
+              {selectedBlockData.type === "button" && (
+                <div className="space-y-3 mt-2">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Button Text</Label>
+                    <Input
+                      value={selectedBlockData.content.text}
+                      onChange={(e) =>
+                        updateBlock(selectedBlockData.id, {
+                          content: { ...selectedBlockData.content, text: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">URL</Label>
+                    <Input
+                      value={selectedBlockData.content.url}
+                      onChange={(e) =>
+                        updateBlock(selectedBlockData.id, {
+                          content: { ...selectedBlockData.content, url: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Template Gallery Modal */}
+      {showTemplateGallery && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b">
+              <div>
+                <h2 className="text-2xl font-bold">Choose a Template</h2>
+                <p className="text-muted-foreground">Select a professional template to start building your newsletter</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowTemplateGallery(false)}
+              >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-sm text-gray-500">Customize this block's appearance and content</p>
-          </div>
-          <div className="p-4 space-y-6 overflow-y-auto max-h-[calc(100vh-120px)]">
-            {renderBlockEditor(selectedBlockData, updateBlock)}
+            
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {newsletterTemplates.map((template) => (
+                  <Card
+                    key={template.id}
+                    className={cn(
+                      "cursor-pointer transition-all duration-200 hover:shadow-lg group",
+                      selectedTemplate?.id === template.id
+                        ? "ring-2 ring-primary"
+                        : "hover:ring-1 hover:ring-primary/50"
+                    )}
+                    onClick={() => {
+                      setSelectedTemplate(template)
+                      setBlocks(template.blocks)
+                      setSelectedTheme(template.theme)
+                      addToHistory(template.blocks)
+                      setShowTemplateGallery(false)
+                    }}
+                  >
+                    <CardContent className="p-4">
+                      <div className="space-y-4">
+                        {/* Template Preview */}
+                        <div className="bg-muted rounded-lg p-4 h-48 overflow-hidden">
+                          <div className="space-y-3">
+                            {/* Header Preview */}
+                            <div 
+                              className="h-8 rounded"
+                              style={{ backgroundColor: template.theme.colors.primary }}
+                            />
+                            <div className="space-y-2">
+                              <div className="h-3 bg-foreground/20 rounded w-3/4" />
+                              <div className="h-3 bg-foreground/10 rounded w-1/2" />
+                            </div>
+                            {/* Content Blocks Preview */}
+                            <div className="space-y-2">
+                              {template.blocks.slice(0, 3).map((block, index) => (
+                                <div key={index} className="space-y-1">
+                                  {block.type === "text" && (
+                                    <div className="space-y-1">
+                                      <div className="h-2 bg-foreground/10 rounded w-full" />
+                                      <div className="h-2 bg-foreground/5 rounded w-4/5" />
+                                    </div>
+                                  )}
+                                  {block.type === "button" && (
+                                    <div 
+                                      className="h-6 rounded text-center text-xs flex items-center justify-center text-white"
+                                      style={{ backgroundColor: template.theme.colors.primary }}
+                                    >
+                                      {block.content.text}
+                                    </div>
+                                  )}
+                                  {block.type === "progress" && (
+                                    <div className="space-y-1">
+                                      <div className="h-2 bg-foreground/10 rounded w-full" />
+                                      <div 
+                                        className="h-1 rounded"
+                                        style={{ 
+                                          backgroundColor: template.theme.colors.primary,
+                                          width: `${block.content.percentage}%`
+                                        }}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Template Info */}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-3 h-3 rounded"
+                              style={{ backgroundColor: template.theme.colors.primary }}
+                            />
+                            <div
+                              className="w-3 h-3 rounded"
+                              style={{ backgroundColor: template.theme.colors.secondary }}
+                            />
+                            <div
+                              className="w-3 h-3 rounded"
+                              style={{ backgroundColor: template.theme.colors.accent }}
+                            />
+                          </div>
+                          <h3 className="font-semibold">{template.name}</h3>
+                          <p className="text-sm text-muted-foreground">{template.description}</p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Layout className="w-3 h-3" />
+                            {template.blocks.length} blocks
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+            
+            <div className="p-6 border-t bg-muted/30">
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTemplateGallery(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => setShowTemplateGallery(false)}
+                >
+                  Use Selected Template
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
     </div>
   )
-}
-
-function renderBlockEditor(
-  block: NewsletterBlock,
-  updateBlock: (blockId: string, updates: Partial<NewsletterBlock>) => void,
-) {
-  switch (block.type) {
-    case "header":
-      return (
-        <div className="space-y-4">
-          <div>
-            <Label className="text-sm font-medium">Title</Label>
-            <Input
-              value={block.content.title}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, title: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="Enter header title"
-            />
-          </div>
-          <div>
-            <Label className="text-sm font-medium">Subtitle</Label>
-            <Input
-              value={block.content.subtitle}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, subtitle: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="Enter subtitle"
-            />
-          </div>
-          <Separator />
-          <div>
-            <Label className="text-sm font-medium">Background Color</Label>
-            <div className="flex gap-2 mt-1">
-              <Input
-                type="color"
-                value={block.styling?.backgroundColor || "#0891b2"}
-                onChange={(e) =>
-                  updateBlock(block.id, {
-                    styling: { ...block.styling, backgroundColor: e.target.value },
-                  })
-                }
-                className="w-12 h-10 p-1"
-              />
-              <Input
-                value={block.styling?.backgroundColor || "#0891b2"}
-                onChange={(e) =>
-                  updateBlock(block.id, {
-                    styling: { ...block.styling, backgroundColor: e.target.value },
-                  })
-                }
-                className="flex-1 font-mono text-sm"
-              />
-            </div>
-          </div>
-          <div>
-            <Label className="text-sm font-medium">Text Color</Label>
-            <div className="flex gap-2 mt-1">
-              <Input
-                type="color"
-                value={block.styling?.textColor || "#ffffff"}
-                onChange={(e) =>
-                  updateBlock(block.id, {
-                    styling: { ...block.styling, textColor: e.target.value },
-                  })
-                }
-                className="w-12 h-10 p-1"
-              />
-              <Input
-                value={block.styling?.textColor || "#ffffff"}
-                onChange={(e) =>
-                  updateBlock(block.id, {
-                    styling: { ...block.styling, textColor: e.target.value },
-                  })
-                }
-                className="flex-1 font-mono text-sm"
-              />
-            </div>
-          </div>
-        </div>
-      )
-    case "text":
-      return (
-        <div className="space-y-4">
-          <div>
-            <Label className="text-sm font-medium">Text Content</Label>
-            <Textarea
-              value={block.content.text}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, text: e.target.value },
-                })
-              }
-              rows={6}
-              className="mt-1"
-              placeholder="Enter your text content..."
-            />
-          </div>
-          <Separator />
-          <div>
-            <Label className="text-sm font-medium">Font Size</Label>
-            <Select
-              value={block.styling?.fontSize || "16px"}
-              onValueChange={(value) =>
-                updateBlock(block.id, {
-                  styling: { ...block.styling, fontSize: value },
-                })
-              }
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="14px">Small (14px)</SelectItem>
-                <SelectItem value="16px">Medium (16px)</SelectItem>
-                <SelectItem value="18px">Large (18px)</SelectItem>
-                <SelectItem value="20px">Extra Large (20px)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      )
-    case "image":
-      return (
-        <div className="space-y-4">
-          <div>
-            <Label className="text-sm font-medium">Image URL</Label>
-            <Input
-              value={block.content.src}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, src: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
-          <div>
-            <Label className="text-sm font-medium">Alt Text</Label>
-            <Input
-              value={block.content.alt}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, alt: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="Describe the image"
-            />
-          </div>
-          <div>
-            <Label className="text-sm font-medium">Caption (Optional)</Label>
-            <Input
-              value={block.content.caption}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, caption: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="Image caption"
-            />
-          </div>
-          <Separator />
-          <div>
-            <Label className="text-sm font-medium">Border Radius</Label>
-            <Select
-              value={block.styling?.borderRadius || "8px"}
-              onValueChange={(value) =>
-                updateBlock(block.id, {
-                  styling: { ...block.styling, borderRadius: value },
-                })
-              }
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0px">Square</SelectItem>
-                <SelectItem value="8px">Rounded</SelectItem>
-                <SelectItem value="16px">Very Rounded</SelectItem>
-                <SelectItem value="50%">Circle</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      )
-    case "button":
-      return (
-        <div className="space-y-4">
-          <div>
-            <Label className="text-sm font-medium">Button Text</Label>
-            <Input
-              value={block.content.text}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, text: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="Button text"
-            />
-          </div>
-          <div>
-            <Label className="text-sm font-medium">Button URL</Label>
-            <Input
-              value={block.content.url}
-              onChange={(e) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, url: e.target.value },
-                })
-              }
-              className="mt-1"
-              placeholder="https://example.com"
-            />
-          </div>
-          <div>
-            <Label className="text-sm font-medium">Button Style</Label>
-            <Select
-              value={block.content.style}
-              onValueChange={(value) =>
-                updateBlock(block.id, {
-                  content: { ...block.content, style: value },
-                })
-              }
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="primary">Primary</SelectItem>
-                <SelectItem value="secondary">Secondary</SelectItem>
-                <SelectItem value="outline">Outline</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Separator />
-          <div>
-            <Label className="text-sm font-medium">Background Color</Label>
-            <div className="flex gap-2 mt-1">
-              <Input
-                type="color"
-                value={block.styling?.backgroundColor || "#0891b2"}
-                onChange={(e) =>
-                  updateBlock(block.id, {
-                    styling: { ...block.styling, backgroundColor: e.target.value },
-                  })
-                }
-                className="w-12 h-10 p-1"
-              />
-              <Input
-                value={block.styling?.backgroundColor || "#0891b2"}
-                onChange={(e) =>
-                  updateBlock(block.id, {
-                    styling: { ...block.styling, backgroundColor: e.target.value },
-                  })
-                }
-                className="flex-1 font-mono text-sm"
-              />
-            </div>
-          </div>
-        </div>
-      )
-    default:
-      return (
-        <div className="text-center py-8 text-gray-500">
-          <Settings className="w-8 h-8 mx-auto mb-2" />
-          <p className="text-sm">No settings available for this block type</p>
-        </div>
-      )
-  }
-}
-
-function renderBlockPreview(block: NewsletterBlock) {
-  switch (block.type) {
-    case "header":
-      return (
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900">{block.content.title}</h2>
-          <p className="text-gray-600">{block.content.subtitle}</p>
-        </div>
-      )
-    case "text":
-      return (
-        <div
-          className="prose prose-sm max-w-none text-gray-700"
-          dangerouslySetInnerHTML={{ __html: block.content.text }}
-        />
-      )
-    case "image":
-      return (
-        <div className="text-center space-y-3">
-          <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-            {block.content.src ? (
-              <img
-                src={block.content.src || "/placeholder.svg"}
-                alt={block.content.alt}
-                className="max-w-full max-h-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="text-center">
-                <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                <span className="text-gray-500 text-sm">No image selected</span>
-              </div>
-            )}
-          </div>
-          {block.content.caption && <p className="text-sm text-gray-600">{block.content.caption}</p>}
-        </div>
-      )
-    case "button":
-      return (
-        <div className="text-center">
-          <button className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-            {block.content.text}
-          </button>
-        </div>
-      )
-    case "progress":
-      return (
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-          <div className="flex justify-between text-sm mb-3 font-medium">
-            <span className="text-blue-900">Raised: {block.content.raised}</span>
-            <span className="text-blue-900">Goal: {block.content.goal}</span>
-          </div>
-          <div className="w-full bg-blue-200 rounded-full h-3 mb-2">
-            <div
-              className="bg-gradient-to-r from-blue-600 to-blue-700 h-3 rounded-full transition-all duration-500"
-              style={{ width: "65%" }}
-            ></div>
-          </div>
-          <p className="text-center text-sm text-blue-800 font-medium">65% Complete</p>
-        </div>
-      )
-    case "spacer":
-      return (
-        <div
-          style={{ height: block.content.height }}
-          className="bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center"
-        >
-          <span className="text-gray-500 text-sm">Spacer ({block.content.height})</span>
-        </div>
-      )
-    case "divider":
-      return <div className="border-t-2 border-gray-300"></div>
-    default:
-      return <div className="text-gray-500">Unknown block type</div>
-  }
 }
