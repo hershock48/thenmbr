@@ -4,6 +4,9 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { 
   Building2, 
   Plus, 
@@ -17,7 +20,7 @@ import {
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner } from "@/components/patterns/loading-states"
 import { supabase } from "@/lib/supabase"
 import { OrgSelectionTour } from "@/components/ui/org-selection-tour"
 
@@ -38,6 +41,10 @@ export default function SelectOrgPage() {
   const [error, setError] = useState('')
   const [selectedOrgId, setSelectedOrgId] = useState<string>('')
   const [showOrgTour, setShowOrgTour] = useState(false)
+  const [showCreateOrg, setShowCreateOrg] = useState(false)
+  const [newOrgName, setNewOrgName] = useState('')
+  const [newOrgWebsite, setNewOrgWebsite] = useState('')
+  const [newOrgColor, setNewOrgColor] = useState('#3B82F6')
 
   useEffect(() => {
     if (!user) {
@@ -99,6 +106,56 @@ export default function SelectOrgPage() {
     } catch (err) {
       console.error('Error:', err)
       setError('Failed to load organizations')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCreateOrg = async () => {
+    if (!newOrgName.trim()) {
+      setError('Organization name is required')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    
+    try {
+      console.log('Creating new organization:', { newOrgName, newOrgWebsite, newOrgColor })
+      
+      const { data: newOrg, error: createError } = await supabase
+        .from('nonprofits')
+        .insert({
+          name: newOrgName.trim(),
+          website: newOrgWebsite.trim() || null,
+          brand_color: newOrgColor,
+          is_active: true
+        })
+        .select()
+        .single()
+      
+      if (createError) {
+        console.error('Error creating organization:', createError)
+        throw createError
+      }
+      
+      console.log('Created new organization:', newOrg)
+      
+      // Add to organizations list
+      setOrganizations(prev => [newOrg, ...prev])
+      
+      // Select the new organization
+      setSelectedOrgId(newOrg.id)
+      
+      // Close the create form
+      setShowCreateOrg(false)
+      setNewOrgName('')
+      setNewOrgWebsite('')
+      setNewOrgColor('#3B82F6')
+      
+    } catch (err) {
+      console.error('Error creating organization:', err)
+      setError(`Failed to create organization: ${err.message || 'Unknown error'}`)
     } finally {
       setLoading(false)
     }
@@ -267,6 +324,7 @@ export default function SelectOrgPage() {
           <Card 
             className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border-dashed border-2 border-cyan-200 hover:border-cyan-300"
             data-tour="create-new-org"
+            onClick={() => setShowCreateOrg(true)}
           >
             <CardHeader className="pb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl flex items-center justify-center">
@@ -342,6 +400,82 @@ export default function SelectOrgPage() {
         onClose={() => setShowOrgTour(false)}
         onComplete={() => setShowOrgTour(false)}
       />
+
+      {/* Create Organization Modal */}
+      <Dialog open={showCreateOrg} onOpenChange={setShowCreateOrg}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Organization</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="orgName">Organization Name *</Label>
+              <Input
+                id="orgName"
+                value={newOrgName}
+                onChange={(e) => setNewOrgName(e.target.value)}
+                placeholder="Enter organization name"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="orgWebsite">Website (Optional)</Label>
+              <Input
+                id="orgWebsite"
+                value={newOrgWebsite}
+                onChange={(e) => setNewOrgWebsite(e.target.value)}
+                placeholder="https://your-organization.com"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="orgColor">Brand Color</Label>
+              <div className="flex items-center space-x-2 mt-1">
+                <Input
+                  id="orgColor"
+                  type="color"
+                  value={newOrgColor}
+                  onChange={(e) => setNewOrgColor(e.target.value)}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  value={newOrgColor}
+                  onChange={(e) => setNewOrgColor(e.target.value)}
+                  placeholder="#3B82F6"
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateOrg(false)
+                  setNewOrgName('')
+                  setNewOrgWebsite('')
+                  setNewOrgColor('#3B82F6')
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateOrg}
+                disabled={!newOrgName.trim() || loading}
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Organization'
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
