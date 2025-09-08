@@ -225,14 +225,7 @@ export default function SelectOrgPage() {
       }
       setOrg(nonprofitOrg)
       
-      // Trigger multi-org achievement if this is not the first org
-      try {
-        const { useAchievements } = await import('@/components/ui/achievement-system')
-        const { updateAchievement } = useAchievements()
-        updateAchievement('multi-org', 1)
-      } catch (err) {
-        console.log('Achievement system not available:', err instanceof Error ? err.message : 'Unknown error')
-      }
+      // Multi-org functionality - could add analytics tracking here
       
       console.log('Redirecting to dashboard...')
       router.push('/dashboard')

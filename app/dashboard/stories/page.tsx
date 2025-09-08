@@ -19,7 +19,7 @@ import {
   Plus,
   TrendingUp,
   Users,
-  QrCode,
+  Hash,
   Heart,
 } from "lucide-react"
 import { useOrganization } from "@/contexts/OrganizationContext"
@@ -197,9 +197,9 @@ export default function StoriesPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              {orgType === "nonprofit" ? "QR Code Scans" : "QR Code Scans"}
+              {orgType === "nonprofit" ? "NMBR Searches" : "NMBR Searches"}
             </CardTitle>
-            <QrCode className="h-4 w-4 text-muted-foreground" />
+            <Hash className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-foreground">{totalScans.toLocaleString()}</div>

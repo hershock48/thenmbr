@@ -17,7 +17,7 @@ import {
   BarChart3,
   ArrowRight,
   Building2,
-  QrCode,
+  Hash,
   TrendingUp,
   DollarSign,
   Package,
@@ -31,8 +31,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { TourTrigger } from "@/components/ui/onboarding-tour"
-import { AchievementSystem } from "@/components/ui/achievement-system"
-import { ProgressTracker } from "@/components/ui/progress-tracker"
+import { AnalyticsDashboard } from "@/components/ui/analytics-dashboard"
 
 interface Story {
   id: string
@@ -67,7 +66,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [businessMetrics, setBusinessMetrics] = useState({
     storyDrivenSales: 47250,
-    qrCodeScans: 1847,
+    nmbrSearches: 1847,
     conversionRate: 12.4,
     avgOrderValue: 89.5,
     revenueShare: 2365,
@@ -142,10 +141,10 @@ export default function DashboardPage() {
         icon: DollarSign,
       },
       {
-        key: "qr-scans",
-        name: "QR Code Scans",
+        key: "nmbr-searches",
+        name: "NMBR Searches",
         description: "Product story discoveries",
-        icon: QrCode,
+        icon: Hash,
       },
       {
         key: "conversion",
@@ -287,7 +286,6 @@ export default function DashboardPage() {
               <span className="hidden sm:inline">Switch Organization</span>
               <span className="sm:hidden">Switch</span>
             </Button>
-            <AchievementSystem />
             <TourTrigger />
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <Plus className="w-4 h-4 mr-2" />
@@ -298,8 +296,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mb-6" data-tour="progress-banner">
-        <ProgressTracker />
+      <div className="mb-6" data-tour="analytics-dashboard">
+        <AnalyticsDashboard orgType={orgType} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-tour="stats-cards">
@@ -312,8 +310,8 @@ export default function DashboardPage() {
               case "story-sales":
                 value = `$${businessMetrics.storyDrivenSales.toLocaleString()}`
                 break
-              case "qr-scans":
-                value = businessMetrics.qrCodeScans.toLocaleString()
+              case "nmbr-searches":
+                value = businessMetrics.nmbrSearches.toLocaleString()
                 break
               case "conversion":
                 value = `${businessMetrics.conversionRate}%`
@@ -397,7 +395,7 @@ export default function DashboardPage() {
               </div>
               <CardTitle className="text-xl text-card-foreground">Add Product Stories</CardTitle>
               <CardDescription className="text-muted-foreground">
-                Create compelling stories for your products with embedded QR codes
+                Create compelling stories for your products with unique NMBRs
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
@@ -412,11 +410,11 @@ export default function DashboardPage() {
           <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
             <CardHeader className="pb-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <QrCode className="w-6 h-6 text-primary" />
+                <Hash className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle className="text-xl text-card-foreground">Generate QR Codes</CardTitle>
+              <CardTitle className="text-xl text-card-foreground">Generate NMBRs</CardTitle>
               <CardDescription className="text-muted-foreground">
-                Create unique QR codes for product packaging and marketing materials
+                Create unique NMBRs for product packaging and marketing materials
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
@@ -424,8 +422,8 @@ export default function DashboardPage() {
                 variant="outline"
                 className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
               >
-                <QrCode className="w-4 h-4 mr-2" />
-                Generate Codes
+                <Hash className="w-4 h-4 mr-2" />
+                Generate NMBRs
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>

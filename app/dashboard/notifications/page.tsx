@@ -50,8 +50,8 @@ const mockNotifications: Notification[] = [
   {
     id: "4",
     type: "system",
-    title: "QR Code Scanned",
-    message: "25 people scanned your QR code at the community event",
+    title: "NMBR Searched",
+    message: "25 people searched your NMBR at the community event",
     timestamp: "1 day ago",
     read: true,
     priority: "low",

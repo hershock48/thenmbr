@@ -153,7 +153,7 @@ export function MobileWidget({ organization, onSubscribe, onDonate }: MobileWidg
     // In a real app, this would open the camera
     setTimeout(() => {
       setShowCamera(false)
-      // Simulate QR code scanning
+      // Simulate NMBR searching
       setSearchCode("1")
     }, 2000)
   }

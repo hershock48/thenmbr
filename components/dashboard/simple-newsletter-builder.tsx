@@ -34,13 +34,18 @@ import {
   Heart as HeartIcon,
   Gift,
   CreditCard,
-  HandHeart
+  HandHeart,
+  Sparkles,
+  Lightbulb,
+  Wand2,
+  MessageSquare,
+  RefreshCw
 } from "lucide-react"
 import { useOrganization } from "@/contexts/OrganizationContext"
 
 interface NewsletterBlock {
   id: string
-  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation' | 'action'
+  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation' | 'action' | 'product' | 'sale'
   content: any
   order: number
 }
@@ -115,7 +120,23 @@ const blockTypes = [
     icon: HeartIcon, 
     color: 'bg-red-500',
     description: orgType === 'business' ? 'Add purchase call-to-action' : orgType === 'grassroots' ? 'Add support call-to-action' : 'Add donation call-to-action'
-  }
+  },
+  ...(orgType === 'business' ? [
+    { 
+      type: 'product', 
+      label: 'Product Announcement', 
+      icon: Gift, 
+      color: 'bg-green-500',
+      description: 'Announce new products or collections'
+    },
+    { 
+      type: 'sale', 
+      label: 'Sale Promotion', 
+      icon: DollarSign, 
+      color: 'bg-orange-500',
+      description: 'Promote sales and special offers'
+    }
+  ] : [])
 ]
 
 export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSend }: NewsletterBuilderProps) {
@@ -151,6 +172,18 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
     donorEmail: '',
     donorName: '',
     showDonationForm: false
+  })
+
+  const [aiState, setAiState] = useState<{
+    isGenerating: boolean
+    suggestions: string[]
+    currentPrompt: string
+    showAiPanel: boolean
+  }>({
+    isGenerating: false,
+    suggestions: [],
+    currentPrompt: '',
+    showAiPanel: false
   })
 
   const addBlock = (type: string) => {
@@ -218,6 +251,28 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
           showDonorInfo: true,
           allowRecurring: false,
           minimumAmount: 5
+        }
+      case 'product':
+        return {
+          title: 'New Product Launch',
+          description: 'Introducing our latest collection, crafted with care and attention to detail.',
+          image: '',
+          price: '$49.99',
+          buttonText: 'Shop Now',
+          buttonUrl: '#',
+          features: ['Handcrafted', 'Sustainable materials', 'Limited edition']
+        }
+      case 'sale':
+        return {
+          title: 'Special Offer - Limited Time!',
+          description: 'Get 20% off your next purchase. This offer won\'t last long!',
+          discount: '20% OFF',
+          originalPrice: '$99.99',
+          salePrice: '$79.99',
+          buttonText: 'Shop Sale',
+          buttonUrl: '#',
+          endDate: '2024-12-31',
+          urgency: 'high'
         }
       default:
         return {}
@@ -324,6 +379,123 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
     }
 
     processDonation(amount, donationState.donorEmail, donationState.donorName)
+  }
+
+  // AI Writing Assistance Functions
+  const getWritingPrompts = (blockType: string) => {
+    const prompts = {
+      heading: [
+        "Create an engaging headline for a story update",
+        "Write a compelling call-to-action heading",
+        "Generate a warm welcome message title",
+        "Create an urgent fundraising headline"
+      ],
+      text: [
+        "Write a personal story about impact",
+        "Create a thank you message to supporters",
+        "Write an update on recent progress",
+        "Generate a compelling call-to-action paragraph"
+      ],
+      story: [
+        "Tell the story of someone we helped",
+        "Describe a recent success or milestone",
+        "Share a volunteer's experience",
+        "Write about the community impact"
+      ],
+      donation: [
+        "Create an urgent fundraising appeal",
+        "Write a thank you message for supporters",
+        "Generate a compelling donation ask",
+        "Create a monthly giving invitation"
+      ],
+      product: [
+        "Write a compelling product launch announcement",
+        "Create a description highlighting unique features",
+        "Generate excitement about a new collection",
+        "Write about the craftsmanship behind the product"
+      ],
+      sale: [
+        "Create an urgent limited-time offer message",
+        "Write a compelling discount announcement",
+        "Generate excitement about a flash sale",
+        "Create a countdown-style promotion"
+      ]
+    }
+    return prompts[blockType as keyof typeof prompts] || []
+  }
+
+  const generateAIContent = async (blockType: string, prompt: string) => {
+    setAiState(prev => ({ ...prev, isGenerating: true }))
+    
+    try {
+      // Simulate AI generation (replace with actual AI API call)
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      const generatedContent = {
+        heading: [
+          "🌟 Amazing Progress Update!",
+          "Your Support is Making a Real Difference",
+          "Join Us in This Incredible Journey",
+          "Together, We're Changing Lives"
+        ],
+        text: [
+          "Thanks to your incredible support, we've been able to make a real difference in our community. Every donation, every share, every moment of your time has contributed to something truly special.",
+          "We're excited to share some incredible news with you! Your generosity has helped us reach a major milestone that we never thought possible.",
+          "When you support our cause, you're not just giving money – you're giving hope, opportunity, and a chance for a better future.",
+          "Your impact goes far beyond what you might imagine. Every dollar you give creates a ripple effect that touches countless lives."
+        ],
+        story: [
+          "Meet Sarah, a single mother who was struggling to make ends meet. Thanks to your support, we were able to provide her family with essential resources and job training. Today, Sarah has a stable job and her children are thriving in school.",
+          "Last month, we opened our new community center, and the response has been overwhelming. Over 200 families now have access to resources they never had before, all because of supporters like you.",
+          "When Maria first came to us, she was homeless and had lost hope. Through our housing program, she now has a safe place to call home and is working toward her dream of becoming a teacher."
+        ],
+        donation: [
+          "Your donation today will provide meals for 10 families this week. Every $25 you give puts food on the table for a family in need.",
+          "Help us reach our goal of $10,000 this month. We're 60% there, and with your support, we can make it happen!",
+          "Join our monthly giving program and become a champion for change. Even $10 a month makes a huge difference in someone's life."
+        ],
+        product: [
+          "Introducing our latest collection, where every piece tells a story of craftsmanship and passion. Hand-selected materials meet timeless design.",
+          "We're thrilled to announce our newest addition to the family. This limited edition piece combines traditional techniques with modern innovation.",
+          "Get ready to fall in love with our newest creation. Each item is carefully crafted by skilled artisans who pour their heart into every detail.",
+          "Discover the perfect blend of style and sustainability in our latest release. Made with love, designed for life."
+        ],
+        sale: [
+          "Don't miss out on this incredible opportunity! For a limited time, get 25% off everything in our store. This offer won't last long!",
+          "Flash sale alert! We're offering our biggest discount of the year. Stock up on your favorites before they're gone forever.",
+          "Last chance to save big! Our end-of-season sale is here with discounts up to 50% off. Shop now before it's too late!",
+          "Exclusive offer for our newsletter subscribers! Get 30% off your next purchase when you use code NEWSLETTER30."
+        ]
+      }
+      
+      const suggestions = generatedContent[blockType as keyof typeof generatedContent] || []
+      setAiState(prev => ({ ...prev, suggestions, isGenerating: false }))
+      
+    } catch (error) {
+      console.error('AI generation error:', error)
+      setAiState(prev => ({ ...prev, isGenerating: false }))
+    }
+  }
+
+  const applyAISuggestion = (suggestion: string, blockId: string) => {
+    const block = blocks.find(b => b.id === blockId)
+    if (!block) return
+
+    if (block.type === 'heading') {
+      updateBlock(blockId, { text: suggestion })
+    } else if (block.type === 'text') {
+      updateBlock(blockId, { text: suggestion })
+    } else if (block.type === 'story') {
+      updateBlock(blockId, { description: suggestion })
+    } else if (block.type === 'donation') {
+      updateBlock(blockId, { description: suggestion })
+    } else if (block.type === 'product') {
+      updateBlock(blockId, { description: suggestion })
+    } else if (block.type === 'sale') {
+      updateBlock(blockId, { description: suggestion })
+    }
+    
+    setAiState(prev => ({ ...prev, showAiPanel: false }))
   }
 
   const renderBlock = (block: NewsletterBlock, index: number) => {
@@ -813,6 +985,132 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                     className="rounded"
                   />
                   <Label htmlFor="allowRecurring" className="text-white">Allow recurring {orgType === 'business' ? 'purchases' : orgType === 'grassroots' ? 'support' : 'donations'}</Label>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+
+      case 'product':
+        return (
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
+            <div className="flex items-start gap-4">
+              <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Gift className="w-8 h-8 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-green-900 mb-2">{block.content.title}</h3>
+                <p className="text-green-800 mb-4">{block.content.description}</p>
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-2xl font-bold text-green-900">{block.content.price}</span>
+                  <Button className="bg-green-600 hover:bg-green-700">
+                    {block.content.buttonText}
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {block.content.features.map((feature: string, index: number) => (
+                    <Badge key={index} variant="secondary" className="bg-green-100 text-green-800">
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {selectedBlock === block.id && (
+              <div className="space-y-4 mt-6 bg-white/50 p-4 rounded-lg">
+                <div>
+                  <Label>Product Title</Label>
+                  <Input
+                    value={block.content.title}
+                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Description</Label>
+                  <Textarea
+                    value={block.content.description}
+                    onChange={(e) => updateBlock(block.id, { description: e.target.value })}
+                    rows={3}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Price</Label>
+                    <Input
+                      value={block.content.price}
+                      onChange={(e) => updateBlock(block.id, { price: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Button Text</Label>
+                    <Input
+                      value={block.content.buttonText}
+                      onChange={(e) => updateBlock(block.id, { buttonText: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+
+      case 'sale':
+        return (
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-lg">
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <DollarSign className="w-8 h-8" />
+                <span className="text-3xl font-bold">{block.content.discount}</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-2">{block.content.title}</h3>
+              <p className="text-lg mb-4 opacity-90">{block.content.description}</p>
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <span className="text-2xl line-through opacity-70">{block.content.originalPrice}</span>
+                <span className="text-3xl font-bold">{block.content.salePrice}</span>
+              </div>
+              <Button className="bg-white text-orange-600 hover:bg-gray-100 font-bold px-8 py-3 text-lg">
+                {block.content.buttonText}
+              </Button>
+              <p className="text-sm mt-4 opacity-90">
+                Offer ends {new Date(block.content.endDate).toLocaleDateString()}
+              </p>
+            </div>
+            {selectedBlock === block.id && (
+              <div className="space-y-4 mt-6 bg-white/10 p-4 rounded-lg">
+                <div>
+                  <Label className="text-white">Sale Title</Label>
+                  <Input
+                    value={block.content.title}
+                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                  />
+                </div>
+                <div>
+                  <Label className="text-white">Description</Label>
+                  <Textarea
+                    value={block.content.description}
+                    onChange={(e) => updateBlock(block.id, { description: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    rows={3}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-white">Discount</Label>
+                    <Input
+                      value={block.content.discount}
+                      onChange={(e) => updateBlock(block.id, { discount: e.target.value })}
+                      className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-white">Sale Price</Label>
+                    <Input
+                      value={block.content.salePrice}
+                      onChange={(e) => updateBlock(block.id, { salePrice: e.target.value })}
+                      className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    />
+                  </div>
                 </div>
               </div>
             )}

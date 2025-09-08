@@ -18,54 +18,54 @@ import {
   LineChart,
   Line,
 } from "recharts"
-import { Search, Download, RefreshCw, QrCode, MapPin, Globe, Calendar, TrendingUp } from "lucide-react"
+import { Search, Download, RefreshCw, Hash, MapPin, Globe, Calendar, TrendingUp } from "lucide-react"
 
-// Mock data for QR codes
-const qrCodes = [
+// Mock data for NMBRs
+const nmbrCodes = [
   {
-    id: "QR001",
+    id: "NMBR001",
     name: "Ethiopian Coffee Story",
     product: "Premium Coffee Blend",
     status: "Active",
-    scans: 1247,
+    searches: 1247,
     conversions: 89,
     revenue: 2340,
     created: "2024-01-15",
-    lastScan: "2 hours ago",
+    lastSearch: "2 hours ago",
   },
   {
-    id: "QR002",
+    id: "NMBR002",
     name: "Organic Tea Journey",
     product: "Earl Grey Tea",
     status: "Active",
-    scans: 892,
+    searches: 892,
     conversions: 67,
     revenue: 1680,
     created: "2024-01-20",
-    lastScan: "5 hours ago",
+    lastSearch: "5 hours ago",
   },
   {
-    id: "QR003",
+    id: "NMBR003",
     name: "Cocoa Farm Impact",
     product: "Dark Chocolate Bar",
     status: "Paused",
-    scans: 634,
+    searches: 634,
     conversions: 45,
     revenue: 1125,
     created: "2024-01-25",
-    lastScan: "1 day ago",
+    lastSearch: "1 day ago",
   },
 ]
 
 // Mock analytics data
-const scanTrends = [
-  { date: "Jan 1", scans: 45, conversions: 3 },
-  { date: "Jan 2", scans: 67, conversions: 5 },
-  { date: "Jan 3", scans: 89, conversions: 7 },
-  { date: "Jan 4", scans: 123, conversions: 9 },
-  { date: "Jan 5", scans: 156, conversions: 12 },
-  { date: "Jan 6", scans: 134, conversions: 10 },
-  { date: "Jan 7", scans: 178, conversions: 14 },
+const searchTrends = [
+  { date: "Jan 1", searches: 45, conversions: 3 },
+  { date: "Jan 2", searches: 67, conversions: 5 },
+  { date: "Jan 3", searches: 89, conversions: 7 },
+  { date: "Jan 4", searches: 123, conversions: 9 },
+  { date: "Jan 5", searches: 156, conversions: 12 },
+  { date: "Jan 6", searches: 134, conversions: 10 },
+  { date: "Jan 7", searches: 178, conversions: 14 },
 ]
 
 const deviceData = [
@@ -75,39 +75,39 @@ const deviceData = [
 ]
 
 const locationData = [
-  { country: "United States", scans: 456, percentage: 38 },
-  { country: "United Kingdom", scans: 234, percentage: 19 },
-  { country: "Canada", scans: 189, percentage: 16 },
-  { country: "Australia", scans: 167, percentage: 14 },
-  { country: "Germany", scans: 123, percentage: 10 },
-  { country: "Others", scans: 45, percentage: 3 },
+  { country: "United States", searches: 456, percentage: 38 },
+  { country: "United Kingdom", searches: 234, percentage: 19 },
+  { country: "Canada", searches: 189, percentage: 16 },
+  { country: "Australia", searches: 167, percentage: 14 },
+  { country: "Germany", searches: 123, percentage: 10 },
+  { country: "Others", searches: 45, percentage: 3 },
 ]
 
-export default function QRCodesPage() {
+export default function NMBRCodesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [viewMode, setViewMode] = useState("grid")
 
-  const filteredQRCodes = qrCodes.filter((qr) => {
+  const filteredNMBRCodes = nmbrCodes.filter((nmbr) => {
     const matchesSearch =
-      qr.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      qr.product.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || qr.status.toLowerCase() === statusFilter
+      nmbr.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      nmbr.product.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || nmbr.status.toLowerCase() === statusFilter
     return matchesSearch && matchesStatus
   })
 
-  const totalScans = qrCodes.reduce((sum, qr) => sum + qr.scans, 0)
-  const totalConversions = qrCodes.reduce((sum, qr) => sum + qr.conversions, 0)
-  const totalRevenue = qrCodes.reduce((sum, qr) => sum + qr.revenue, 0)
-  const conversionRate = totalScans > 0 ? ((totalConversions / totalScans) * 100).toFixed(1) : "0"
+  const totalSearches = nmbrCodes.reduce((sum, nmbr) => sum + nmbr.searches, 0)
+  const totalConversions = nmbrCodes.reduce((sum, nmbr) => sum + nmbr.conversions, 0)
+  const totalRevenue = nmbrCodes.reduce((sum, nmbr) => sum + nmbr.revenue, 0)
+  const conversionRate = totalSearches > 0 ? ((totalConversions / totalSearches) * 100).toFixed(1) : "0"
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">QR Code Management</h1>
-          <p className="text-muted-foreground">Track and manage your QR code performance</p>
+          <h1 className="text-3xl font-bold text-foreground">NMBR Management</h1>
+          <p className="text-muted-foreground">Track and manage your NMBR performance</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -115,8 +115,8 @@ export default function QRCodesPage() {
             Export Data
           </Button>
           <Button size="sm" className="bg-primary hover:bg-primary/90">
-            <QrCode className="h-4 w-4 mr-2" />
-            Generate QR Code
+            <Hash className="h-4 w-4 mr-2" />
+            Generate NMBR
           </Button>
         </div>
       </div>
@@ -125,11 +125,11 @@ export default function QRCodesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Scans</CardTitle>
-            <QrCode className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Searches</CardTitle>
+            <Hash className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{totalScans.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-primary">{totalSearches.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">+12% from last month</p>
           </CardContent>
         </Card>
@@ -169,17 +169,17 @@ export default function QRCodesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Scan Trends</CardTitle>
-            <CardDescription>Daily scans and conversions over time</CardDescription>
+            <CardTitle>Search Trends</CardTitle>
+            <CardDescription>Daily searches and conversions over time</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={scanTrends}>
+              <LineChart data={searchTrends}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="scans" stroke="var(--color-primary)" strokeWidth={2} />
+                <Line type="monotone" dataKey="searches" stroke="var(--color-primary)" strokeWidth={2} />
                 <Line type="monotone" dataKey="conversions" stroke="var(--color-secondary)" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -189,7 +189,7 @@ export default function QRCodesPage() {
         <Card>
           <CardHeader>
             <CardTitle>Device Breakdown</CardTitle>
-            <CardDescription>Scans by device type</CardDescription>
+            <CardDescription>Searches by device type</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -225,11 +225,11 @@ export default function QRCodesPage() {
       </div>
 
       {/* Geographic Distribution */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Geographic Distribution</CardTitle>
-          <CardDescription>Scans by country</CardDescription>
-        </CardHeader>
+        <Card>
+          <CardHeader>
+            <CardTitle>Geographic Distribution</CardTitle>
+            <CardDescription>Searches by country</CardDescription>
+          </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {locationData.map((location, index) => (
@@ -243,7 +243,7 @@ export default function QRCodesPage() {
                     <div className="bg-primary h-2 rounded-full" style={{ width: `${location.percentage}%` }} />
                   </div>
                   <span className="text-sm text-muted-foreground w-16 text-right">
-                    {location.scans} ({location.percentage}%)
+                    {location.searches} ({location.percentage}%)
                   </span>
                 </div>
               </div>
@@ -257,14 +257,14 @@ export default function QRCodesPage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <CardTitle>QR Code Library</CardTitle>
-              <CardDescription>Manage and track your QR codes</CardDescription>
+              <CardTitle>NMBR Library</CardTitle>
+              <CardDescription>Manage and track your NMBRs</CardDescription>
             </div>
             <div className="flex gap-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search QR codes..."
+                  placeholder="Search NMBRs..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 w-64"
@@ -285,34 +285,34 @@ export default function QRCodesPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredQRCodes.map((qr) => (
-              <Card key={qr.id} className="hover:shadow-md transition-shadow">
+            {filteredNMBRCodes.map((nmbr) => (
+              <Card key={nmbr.id} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-lg">{qr.name}</CardTitle>
-                      <CardDescription>{qr.product}</CardDescription>
+                      <CardTitle className="text-lg">{nmbr.name}</CardTitle>
+                      <CardDescription>{nmbr.product}</CardDescription>
                     </div>
-                    <Badge variant={qr.status === "Active" ? "default" : "secondary"}>{qr.status}</Badge>
+                    <Badge variant={nmbr.status === "Active" ? "default" : "secondary"}>{nmbr.status}</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Scans</span>
-                      <p className="font-semibold text-primary">{qr.scans.toLocaleString()}</p>
+                      <span className="text-muted-foreground">Searches</span>
+                      <p className="font-semibold text-primary">{nmbr.searches.toLocaleString()}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Conversions</span>
-                      <p className="font-semibold text-secondary">{qr.conversions}</p>
+                      <p className="font-semibold text-secondary">{nmbr.conversions}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Revenue</span>
-                      <p className="font-semibold text-chart-4">${qr.revenue.toLocaleString()}</p>
+                      <p className="font-semibold text-chart-4">${nmbr.revenue.toLocaleString()}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Last Scan</span>
-                      <p className="font-semibold">{qr.lastScan}</p>
+                      <span className="text-muted-foreground">Last Search</span>
+                      <p className="font-semibold">{nmbr.lastSearch}</p>
                     </div>
                   </div>
                   <div className="flex gap-2 pt-2">

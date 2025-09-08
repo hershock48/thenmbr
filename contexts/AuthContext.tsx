@@ -6,7 +6,6 @@ import { createContext, useContext, useEffect, useState } from "react"
 import type { User } from "@supabase/supabase-js"
 import { supabase } from "@/lib/supabase"
 import type { Nonprofit, OrganizationType } from "@/types"
-import { useAchievements } from "@/components/ui/achievement-system"
 
 interface AuthContextType {
   user: User | null
@@ -31,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [org, setOrg] = useState<Nonprofit | null>(null)
   const [loading, setLoading] = useState(true)
-  const { updateAchievement } = useAchievements()
+  // Achievement system removed - could add analytics tracking here
 
   useEffect(() => {
     // Get initial session
@@ -100,9 +99,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     if (error) throw error
 
-    // Trigger first login achievement
+    // First login tracked
     if (data.user) {
-      updateAchievement("first-login", 1)
+      console.log('User signed in successfully')
     }
   }
 

@@ -217,15 +217,9 @@ export function EnhancedAuthProvider({ children }: { children: ReactNode }) {
         await fetchOrganization(user.organizationId)
       }
       
-      // Trigger first login achievement
+      // User login - could add analytics tracking here
       if (user) {
-        try {
-          const { useAchievements } = await import('@/components/ui/achievement-system')
-          const { updateAchievement } = useAchievements()
-          updateAchievement('first-login', 1)
-        } catch (err) {
-          console.log('Achievement system not available:', err)
-        }
+        console.log('User logged in successfully')
       }
       
       return { error: null }

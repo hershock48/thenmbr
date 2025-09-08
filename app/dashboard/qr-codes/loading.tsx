@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function QRCodesLoading() {
+export default function NMBRCodesLoading() {
   return (
     <div className="space-y-6">
       {/* Header Skeleton */}
@@ -71,7 +71,7 @@ export default function QRCodesLoading() {
         </CardContent>
       </Card>
 
-      {/* QR Code Library Skeleton */}
+      {/* NMBR Library Skeleton */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

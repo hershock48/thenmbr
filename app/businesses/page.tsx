@@ -88,7 +88,7 @@ export default function BusinessesPage() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/demo">
+            <Link href="/demo?audience=business">
               <Button
                 variant="outline"
                 size="lg"
@@ -349,7 +349,7 @@ export default function BusinessesPage() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/demo">
+            <Link href="/demo?audience=business">
               <Button
                 variant="outline"
                 size="lg"

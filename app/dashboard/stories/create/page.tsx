@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import {
   ArrowLeft,
   Eye,
-  QrCode,
+  Hash,
   Coffee,
   Shirt,
   Mountain,
@@ -133,7 +133,7 @@ export default function CreateStoryPage() {
     media: [] as { type: string; name: string; url: string }[],
   })
   const [showPreview, setShowPreview] = useState(false)
-  const [qrCode, setQrCode] = useState<string | null>(null)
+  const [nmbrCode, setNmbrCode] = useState<string | null>(null)
 
   const availableTemplates = industryTemplates.filter((template) => template.orgTypes.includes(orgType || "business"))
 
@@ -170,10 +170,10 @@ export default function CreateStoryPage() {
     }))
   }
 
-  const generateQrCode = () => {
-    // Simulate QR code generation
+  const generateNmbrCode = () => {
+    // Simulate NMBR generation
     const itemName = orgType === "nonprofit" ? storyData.beneficiaryName || "impact story" : storyData.productName
-    setQrCode(`/placeholder.svg?height=200&width=200&query=QR code for ${itemName}`)
+    setNmbrCode(`/placeholder.svg?height=200&width=200&query=NMBR for ${itemName}`)
   }
 
   const handleSave = () => {
@@ -397,7 +397,7 @@ export default function CreateStoryPage() {
                     <CardDescription>
                       {orgType === "nonprofit"
                         ? "Add details about the beneficiary and impact goals"
-                        : "Link this story to specific products and generate QR codes"}
+                        : "Link this story to specific products and generate NMBRs"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -526,30 +526,30 @@ export default function CreateStoryPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <QrCode className="h-5 w-5" />
-                  QR Code Generation
+                  <Hash className="h-5 w-5" />
+                  NMBR Generation
                 </CardTitle>
                 <CardDescription>
                   {orgType === "nonprofit"
-                    ? "Generate QR codes for fundraising materials and events"
-                    : "Generate QR codes for your products"}
+                    ? "Generate NMBRs for fundraising materials and events"
+                    : "Generate NMBRs for your products"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {qrCode ? (
+                {nmbrCode ? (
                   <div className="text-center space-y-4">
                     <div className="bg-white p-4 rounded-lg border inline-block">
-                      <img src={qrCode || "/placeholder.svg"} alt="Generated QR Code" className="h-32 w-32" />
+                      <img src={nmbrCode || "/placeholder.svg"} alt="Generated NMBR" className="h-32 w-32" />
                     </div>
                     <div className="space-y-2">
                       <Button variant="outline" size="sm" className="w-full bg-transparent">
-                        Download QR Code
+                        Download NMBR
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         className="w-full bg-transparent"
-                        onClick={() => setQrCode(null)}
+                        onClick={() => setNmbrCode(null)}
                       >
                         Generate New
                       </Button>
@@ -557,12 +557,12 @@ export default function CreateStoryPage() {
                   </div>
                 ) : (
                   <Button
-                    onClick={generateQrCode}
+                    onClick={generateNmbrCode}
                     className="w-full"
                     disabled={orgType === "nonprofit" ? !storyData.beneficiaryName : !storyData.productName}
                   >
-                    <QrCode className="h-4 w-4 mr-2" />
-                    Generate QR Code
+                    <Hash className="h-4 w-4 mr-2" />
+                    Generate NMBR
                   </Button>
                 )}
               </CardContent>
@@ -598,7 +598,7 @@ export default function CreateStoryPage() {
                     // Business analytics remain the same
                     <>
                       <div className="flex justify-between">
-                        <span>QR Code Scans</span>
+                        <span>NMBR Searches</span>
                         <span>-</span>
                       </div>
                       <div className="flex justify-between">
@@ -630,7 +630,7 @@ export default function CreateStoryPage() {
             <DialogDescription>
               {orgType === "nonprofit"
                 ? "This is how donors will see your impact story"
-                : "This is how customers will see your story when they scan the QR code"}
+                : "This is how customers will see your story when they search the NMBR"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

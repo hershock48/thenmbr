@@ -127,14 +127,8 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
     if (currentStep < tourSteps.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
-      // Mark tour as completed and trigger achievement
-      try {
-        const { useAchievements } = await import('@/components/ui/achievement-system')
-        const { updateAchievement } = useAchievements()
-        updateAchievement('tour-completed', 1)
-      } catch (err) {
-        console.log('Achievement system not available:', err)
-      }
+      // Tour completed - could add analytics tracking here
+      console.log('Onboarding tour completed')
       onComplete()
     }
   }

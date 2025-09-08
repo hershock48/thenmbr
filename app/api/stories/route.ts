@@ -13,8 +13,53 @@ export async function GET(request: NextRequest) {
     // For demo purposes, always return mock data
     // TODO: Replace with actual database queries when Supabase is configured
     {
-      // Return compelling mock data for demo purposes
-      const mockStories = [
+      // Determine if this is a business or nonprofit based on org ID
+      const isBusinessDemo = org === 'demo-business-456'
+      
+      // Return different mock data based on organization type
+      const mockStories = isBusinessDemo ? [
+        // Business Demo Stories
+        {
+          id: 'story-1',
+          org_id: org,
+          nmbr_code: '1',
+          title: 'Handcrafted Coffee from Ethiopian Highlands',
+          description: 'This premium coffee comes from small family farms in the Ethiopian highlands, where traditional cultivation methods have been passed down for generations. Each bean is hand-picked at peak ripeness and sun-dried on raised beds. The farmers receive fair trade prices, ensuring sustainable livelihoods for their families. This particular batch was harvested by the Tesfaye family, who have been growing coffee for over 50 years. Their dedication to quality and environmental stewardship results in a rich, complex flavor profile with notes of dark chocolate and citrus. By purchasing this coffee, you\'re directly supporting sustainable farming practices and helping preserve traditional agricultural knowledge. The Tesfaye family uses their earnings to send their children to school and invest in community infrastructure.',
+          photo_url: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&h=600&fit=crop&crop=faces',
+          goal_amount: 2500,
+          current_amount: 1800,
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: 'story-2',
+          org_id: org,
+          nmbr_code: '2',
+          title: 'Sustainable Bamboo Phone Case',
+          description: 'This eco-friendly phone case is made from 100% biodegradable bamboo fiber, crafted by skilled artisans in Vietnam. Each case is unique, featuring natural bamboo grain patterns that make it a one-of-a-kind piece. The manufacturing process uses zero-waste techniques and renewable energy, making it completely carbon-neutral. The artisans, led by master craftsman Nguyen Van Minh, have been perfecting bamboo techniques for over 20 years. Your purchase supports fair wages for the artisan community and helps preserve traditional Vietnamese craftsmanship. The case provides excellent protection while being completely compostable at the end of its life. This represents a perfect blend of modern technology and traditional sustainability.',
+          photo_url: 'https://images.unsplash.com/photo-1511707171631-9bb0b6bc2d28?w=800&h=600&fit=crop&crop=faces',
+          goal_amount: 1500,
+          current_amount: 1200,
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          id: 'story-3',
+          org_id: org,
+          nmbr_code: '3',
+          title: 'Artisan Ceramic Dinnerware Set',
+          description: 'This handcrafted ceramic dinnerware set is created by master potter Elena Rodriguez in her studio in Oaxaca, Mexico. Each piece is thrown on a traditional potter\'s wheel and decorated with indigenous Zapotec patterns that have been passed down through generations. The clay is sourced locally from sustainable deposits, and the glazes are made from natural minerals. Elena employs local women in her studio, providing them with skills training and fair wages. The dinnerware is both functional art and a celebration of Mexican cultural heritage. Your purchase helps preserve traditional pottery techniques and supports women\'s economic empowerment in rural Mexico. Each set is unique, signed by Elena, and comes with a certificate of authenticity.',
+          photo_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=faces',
+          goal_amount: 3200,
+          current_amount: 2400,
+          status: 'active',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ] : [
+        // Nonprofit Demo Stories
         {
           id: 'story-1',
           org_id: org,
@@ -50,32 +95,6 @@ export async function GET(request: NextRequest) {
           photo_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&h=600&fit=crop&crop=faces',
           goal_amount: 15000,
           current_amount: 9200,
-          status: 'active',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: 'story-4',
-          org_id: org,
-          nmbr_code: '4',
-          title: 'Emergency Relief for Earthquake Victims',
-          description: 'A devastating 7.2 magnitude earthquake struck the region, leaving thousands homeless and without basic necessities. Our emergency response team is on the ground providing immediate relief, but we need your help to scale our efforts. Your donation provides emergency shelter, clean water, medical supplies, and food for families who have lost everything. We\'re working around the clock to reach the most vulnerable - children, elderly, and those with disabilities. Every dollar goes directly to relief efforts, with 95% of donations reaching those in need. Our team includes local volunteers who understand the community and can ensure aid reaches the right people. This is a race against time, and your support can mean the difference between life and death for many families.',
-          photo_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
-          goal_amount: 25000,
-          current_amount: 18750,
-          status: 'active',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: 'story-5',
-          org_id: org,
-          nmbr_code: '5',
-          title: 'Building Hope: New School for 200 Children',
-          description: 'In a rural village where education is a luxury, 200 children currently study under a tree or in makeshift shelters. When it rains, school is cancelled. When it\'s too hot, children faint from heat exhaustion. We\'re building a proper school with classrooms, desks, clean water, and electricity. This school will serve not just the children, but the entire community as a center for adult education, health clinics, and community meetings. The school will be built using sustainable materials and solar power, ensuring it lasts for generations. Local craftsmen will be employed in construction, providing income to families. Education is the foundation of change, and this school will transform the future of an entire village. Your donation builds more than a building - it builds hope, opportunity, and a pathway out of poverty.',
-          photo_url: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=800&h=600&fit=crop',
-          goal_amount: 35000,
-          current_amount: 22100,
           status: 'active',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

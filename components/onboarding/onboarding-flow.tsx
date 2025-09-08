@@ -25,7 +25,6 @@ import {
   X,
 } from "lucide-react"
 import { OnboardingTour } from "@/components/ui/onboarding-tour"
-import { useAchievements } from "@/components/ui/achievement-system"
 
 interface OnboardingStep {
   id: string
@@ -60,7 +59,7 @@ export function OnboardingFlow({ isOpen, onClose, onComplete, organizationId }: 
     teamMembers: [],
   })
 
-  const { updateAchievement } = useAchievements()
+  // Achievement system removed - could add analytics tracking here
 
   const steps: OnboardingStep[] = [
     {
@@ -133,9 +132,9 @@ export function OnboardingFlow({ isOpen, onClose, onComplete, organizationId }: 
   useEffect(() => {
     if (isOpen) {
       // Mark first login achievement
-      updateAchievement("first-login", 1)
+      // First login tracked
     }
-  }, [isOpen, updateAchievement])
+  }, [isOpen])
 
   const completedSteps = stepStates.filter((step) => step.completed).length
   const totalSteps = stepStates.length
@@ -174,7 +173,7 @@ export function OnboardingFlow({ isOpen, onClose, onComplete, organizationId }: 
     localStorage.setItem("nmbr-onboarding-data", JSON.stringify(onboardingData))
 
     // Trigger achievements
-    updateAchievement("brand-customized", 1)
+    // Brand customization tracked
 
     onComplete()
   }
@@ -326,7 +325,7 @@ export function OnboardingFlow({ isOpen, onClose, onComplete, organizationId }: 
         onClose={() => setShowTour(false)}
         onComplete={() => {
           setShowTour(false)
-          updateAchievement("tour-completed", 1)
+          // Tour completion tracked
         }}
       />
     </>
