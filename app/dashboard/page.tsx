@@ -192,10 +192,10 @@ export default function DashboardPage() {
   }
 
   // Debug logging
-  console.log("Dashboard Debug:", { orgType, org: org?.org_type, businessMetrics: businessMetrics })
+  console.log("Dashboard Debug:", { orgType, org: org?.organization_type, businessMetrics: businessMetrics })
 
   // Force business metrics if org type is business or if we detect business context
-  const isBusiness = orgType === "business" || org?.org_type === "business"
+  const isBusiness = orgType === "business" || org?.organization_type === "business"
   
   const metrics = isBusiness
     ? getBusinessMetrics()

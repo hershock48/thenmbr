@@ -343,7 +343,7 @@ const organizationConfigs = {
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
   const { org } = useAuth()
-  const orgType: OrganizationType = org?.org_type || "nonprofit"
+  const orgType: OrganizationType = org?.organization_type || "nonprofit"
   const config = organizationConfigs[orgType]
 
   const getTerminology = (key: keyof OrganizationTerminology): string => {
