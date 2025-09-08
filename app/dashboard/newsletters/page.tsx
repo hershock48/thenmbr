@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {
   Mail,
   Plus,
@@ -97,7 +96,6 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ModernNewsletterBuilder } from "@/components/dashboard/modern-newsletter-builder"
 import { MediaUpload } from "@/components/dashboard/media-upload"
 import { newsletterTemplates, newsletterThemes } from "@/lib/newsletter-templates"
 
@@ -349,32 +347,14 @@ export default function NewslettersPage() {
                 />
               </DialogContent>
             </Dialog>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg text-sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Create Newsletter</span>
-                  <span className="sm:hidden">Create</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-7xl h-[90vh]">
-                <DialogHeader>
-                  <DialogTitle>Newsletter Builder</DialogTitle>
-                </DialogHeader>
-                <ModernNewsletterBuilder 
-                  storyId={selectedStory || stories[0]?.id || ''}
-                  organizationId={org?.id || ''}
-                  onSave={(newsletter) => {
-                    console.log('Newsletter saved:', newsletter)
-                    fetchNewsletters()
-                  }}
-                  onSend={(newsletter) => {
-                    console.log('Newsletter sent:', newsletter)
-                    fetchNewsletters()
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
+            <Button 
+              className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg text-sm"
+              onClick={() => router.push(`/dashboard/newsletters/builder?storyId=${selectedStory || stories[0]?.id || ''}`)}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Create Newsletter</span>
+              <span className="sm:hidden">Create</span>
+            </Button>
           </div>
         </div>
       </div>
