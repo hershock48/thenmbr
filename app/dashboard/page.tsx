@@ -191,12 +191,17 @@ export default function DashboardPage() {
     ]
   }
 
-  const metrics =
-    orgType === "business"
-      ? getBusinessMetrics()
-      : orgType === "nonprofit"
-        ? getNonprofitMetrics()
-        : getMetricsForType()
+  // Debug logging
+  console.log("Dashboard Debug:", { orgType, org: org?.org_type, businessMetrics: businessMetrics })
+
+  // Force business metrics if org type is business or if we detect business context
+  const isBusiness = orgType === "business" || org?.org_type === "business"
+  
+  const metrics = isBusiness
+    ? getBusinessMetrics()
+    : orgType === "nonprofit"
+      ? getNonprofitMetrics()
+      : getMetricsForType()
 
   if (!user) {
     return (
@@ -302,7 +307,7 @@ export default function DashboardPage() {
           const IconComponent = metric.icon
           let value: string | number = "0"
 
-          if (orgType === "business") {
+          if (isBusiness) {
             switch (metric.key) {
               case "story-sales":
                 value = `$${businessMetrics.storyDrivenSales.toLocaleString()}`
