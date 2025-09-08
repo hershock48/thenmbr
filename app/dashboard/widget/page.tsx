@@ -15,8 +15,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link"
+import { useOrganization } from "@/contexts/OrganizationContext"
 
 export default function WidgetPage() {
+  const { terminology, orgType } = useOrganization()
+  
   return (
     <div className="space-y-8">
       <Breadcrumb>
@@ -31,7 +34,7 @@ export default function WidgetPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-slate-900 font-medium">Widget</BreadcrumbPage>
+            <BreadcrumbPage className="text-slate-900 font-medium">{terminology.widget}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -39,8 +42,8 @@ export default function WidgetPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Widget</h1>
-          <p className="text-gray-600">Customize and embed your NMBR widget on your website</p>
+          <h1 className="text-3xl font-bold text-gray-900">{terminology.widget}</h1>
+          <p className="text-gray-600">Customize and embed your NMBR {terminology.widget.toLowerCase()} on your website</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline">
@@ -61,9 +64,9 @@ export default function WidgetPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Settings className="w-5 h-5" />
-                Widget Configuration
+                {terminology.widget} Configuration
               </CardTitle>
-              <CardDescription>Customize how your widget appears and behaves</CardDescription>
+              <CardDescription>Customize how your {terminology.widget.toLowerCase()} appears and behaves</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="appearance" className="w-full">
@@ -78,15 +81,15 @@ export default function WidgetPage() {
                     <div className="space-y-2">
                       <Label htmlFor="primary-color">Primary Color</Label>
                       <div className="flex items-center space-x-2">
-                        <Input id="primary-color" type="color" value="#2563eb" className="w-12 h-10 p-1" />
-                        <Input value="#2563eb" className="flex-1" />
+                        <Input id="primary-color" type="color" defaultValue="#2563eb" className="w-12 h-10 p-1" />
+                        <Input defaultValue="#2563eb" className="flex-1" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="secondary-color">Secondary Color</Label>
                       <div className="flex items-center space-x-2">
-                        <Input id="secondary-color" type="color" value="#ffffff" className="w-12 h-10 p-1" />
-                        <Input value="#ffffff" className="flex-1" />
+                        <Input id="secondary-color" type="color" defaultValue="#ffffff" className="w-12 h-10 p-1" />
+                        <Input defaultValue="#ffffff" className="flex-1" />
                       </div>
                     </div>
                   </div>
@@ -311,8 +314,8 @@ export default function WidgetPage() {
           {/* Analytics Preview */}
           <Card>
             <CardHeader>
-              <CardTitle>Widget Analytics</CardTitle>
-              <CardDescription>Track how your widget is performing</CardDescription>
+              <CardTitle>{terminology.widget} Analytics</CardTitle>
+              <CardDescription>Track how your {terminology.widget.toLowerCase()} is performing</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
