@@ -3,23 +3,27 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
-import { Nonprofit } from '@/types'
+import { Organization, OrganizationType, ORGANIZATION_TYPES } from '@/types'
+import { getTerminologyByOrgType, getDefaultSettingsByOrgType } from '@/lib/content-system'
 
 interface AuthContextType {
   user: User | null
-  org: Nonprofit | null
+  org: Organization | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, orgName: string, website?: string) => Promise<void>
+  signUp: (email: string, password: string, orgName: string, website?: string, orgType?: OrganizationType) => Promise<void>
   signOut: () => Promise<void>
-  setOrg: (org: Nonprofit | null) => void
+  setOrg: (org: Organization | null) => void
+  getOrgType: () => OrganizationType | null
+  getTerminology: () => Record<string, string>
+  getDefaultSettings: () => Record<string, any>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [org, setOrg] = useState<Nonprofit | null>(null)
+  const [org, setOrg] = useState<Organization | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -60,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (orgId) {
         const { data, error } = await supabase
-          .from('nonprofits')
+          .from('organizations')
           .select('*')
           .eq('id', orgId)
           .single()
@@ -103,10 +107,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signUp = async (email: string, password: string, orgName: string, website?: string) => {
-    console.log('AuthContext signUp called with:', { email, orgName, website })
+  const signUp = async (email: string, password: string, orgName: string, website?: string, orgType: OrganizationType = 'nonprofit') => {
+    console.log('AuthContext signUp called with:', { email, orgName, website, orgType })
     try {
       console.log('Starting signup process...')
+      
+      // Get default settings for organization type
+      const defaultSettings = getDefaultSettingsByOrgType(orgType)
       
       // First create the user account
       console.log('Creating user account...')
@@ -117,6 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: {
             org_name: orgName,
             website: website || null,
+            org_type: orgType,
             role: 'admin'
           }
         }
@@ -140,11 +148,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.user && data.session) {
         console.log('User authenticated, creating organization...')
         const { data: org, error: orgError } = await supabase
-          .from('nonprofits')
+          .from('organizations')
           .insert({
             name: orgName,
             website: website || null,
-            brand_color: '#3B82F6'
+            organization_type: orgType,
+            brand_color: '#3B82F6',
+            show_powered_by: defaultSettings.showPoweredBy,
+            metadata: {
+              // Add type-specific metadata
+              ...(orgType === 'nonprofit' && { tax_exempt_status: false }),
+              ...(orgType === 'business' && { industry: 'General' }),
+              ...(orgType === 'grassroots' && { community_focus: 'General' })
+            }
           })
           .select()
           .single()
@@ -167,6 +183,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
+  // Helper functions for organization type management
+  const getOrgType = (): OrganizationType | null => {
+    return org?.organization_type || null
+  }
+
+  const getTerminology = (): Record<string, string> => {
+    const orgType = getOrgType()
+    if (!orgType) return {}
+    return getTerminologyByOrgType(orgType)
+  }
+
+  const getDefaultSettings = (): Record<string, any> => {
+    const orgType = getOrgType()
+    if (!orgType) return {}
+    return getDefaultSettingsByOrgType(orgType)
+  }
+
   const value = {
     user,
     org,
@@ -175,6 +208,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     setOrg,
+    getOrgType,
+    getTerminology,
+    getDefaultSettings,
   }
 
   return (
