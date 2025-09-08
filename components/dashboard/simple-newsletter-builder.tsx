@@ -30,12 +30,16 @@ import {
   Save,
   Send,
   Eye,
-  Download
+  Download,
+  Heart as HeartIcon,
+  Gift,
+  CreditCard,
+  HandHeart
 } from "lucide-react"
 
 interface NewsletterBlock {
   id: string
-  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact'
+  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation'
   content: any
   order: number
 }
@@ -103,6 +107,13 @@ const blockTypes = [
     icon: Phone, 
     color: 'bg-indigo-500',
     description: 'Add contact details'
+  },
+  { 
+    type: 'donation', 
+    label: 'Donation Button', 
+    icon: HeartIcon, 
+    color: 'bg-red-500',
+    description: 'Add donation call-to-action'
   }
 ]
 
@@ -169,6 +180,17 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
           phone: '(555) 123-4567',
           address: '123 Main St, City, State 12345',
           website: 'www.yourorg.org'
+        }
+      case 'donation':
+        return {
+          title: 'Make a Difference Today',
+          description: 'Your donation helps us continue our important work and make a real impact in the community.',
+          buttonText: 'Donate Now',
+          buttonUrl: '#',
+          suggestedAmounts: [25, 50, 100, 250],
+          customAmount: true,
+          urgency: 'normal', // normal, urgent, critical
+          impact: 'Your $50 donation provides meals for 10 families'
         }
       default:
         return {}
@@ -511,6 +533,123 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                   value={block.content.website}
                   onChange={(e) => updateBlock(block.id, { website: e.target.value })}
                 />
+              </div>
+            )}
+          </div>
+        )
+
+      case 'donation':
+        const urgencyColors = {
+          normal: 'from-blue-500 to-blue-600',
+          urgent: 'from-orange-500 to-orange-600',
+          critical: 'from-red-500 to-red-600'
+        }
+        
+        return (
+          <div className={`bg-gradient-to-r ${urgencyColors[block.content.urgency as keyof typeof urgencyColors]} text-white p-6 rounded-lg`}>
+            <div className="text-center">
+              <HeartIcon className="h-12 w-12 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold mb-2">{block.content.title}</h3>
+              <p className="text-lg mb-6 opacity-90">{block.content.description}</p>
+              
+              {/* Suggested Amounts */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                {block.content.suggestedAmounts.map((amount: number, index: number) => (
+                  <button
+                    key={index}
+                    className="bg-white/20 hover:bg-white/30 rounded-lg p-3 font-semibold transition-colors"
+                  >
+                    ${amount}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Custom Amount */}
+              {block.content.customAmount && (
+                <div className="mb-6">
+                  <input
+                    type="number"
+                    placeholder="Custom amount"
+                    className="w-32 px-3 py-2 rounded-lg text-gray-900 text-center font-semibold"
+                  />
+                </div>
+              )}
+              
+              {/* Donate Button */}
+              <Button 
+                size="lg" 
+                className="bg-white text-gray-900 hover:bg-gray-100 font-bold px-8 py-3 text-lg"
+              >
+                <CreditCard className="h-5 w-5 mr-2" />
+                {block.content.buttonText}
+              </Button>
+              
+              {/* Impact Statement */}
+              {block.content.impact && (
+                <p className="text-sm mt-4 opacity-90 italic">
+                  {block.content.impact}
+                </p>
+              )}
+            </div>
+            
+            {selectedBlock === block.id && (
+              <div className="space-y-4 mt-6 bg-white/10 p-4 rounded-lg">
+                <div>
+                  <Label className="text-white">Title</Label>
+                  <Input
+                    value={block.content.title}
+                    onChange={(e) => updateBlock(block.id, { title: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    placeholder="Donation title..."
+                  />
+                </div>
+                <div>
+                  <Label className="text-white">Description</Label>
+                  <Textarea
+                    value={block.content.description}
+                    onChange={(e) => updateBlock(block.id, { description: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label className="text-white">Button Text</Label>
+                  <Input
+                    value={block.content.buttonText}
+                    onChange={(e) => updateBlock(block.id, { buttonText: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                  />
+                </div>
+                <div>
+                  <Label className="text-white">Button URL</Label>
+                  <Input
+                    value={block.content.buttonUrl}
+                    onChange={(e) => updateBlock(block.id, { buttonUrl: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    placeholder="https://your-donation-page.com"
+                  />
+                </div>
+                <div>
+                  <Label className="text-white">Impact Statement</Label>
+                  <Input
+                    value={block.content.impact}
+                    onChange={(e) => updateBlock(block.id, { impact: e.target.value })}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
+                    placeholder="Your $50 donation provides..."
+                  />
+                </div>
+                <div>
+                  <Label className="text-white">Urgency Level</Label>
+                  <select
+                    value={block.content.urgency}
+                    onChange={(e) => updateBlock(block.id, { urgency: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg bg-white/20 border-white/30 text-white"
+                  >
+                    <option value="normal">Normal</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="critical">Critical</option>
+                  </select>
+                </div>
               </div>
             )}
           </div>
