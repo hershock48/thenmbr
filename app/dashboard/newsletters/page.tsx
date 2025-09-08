@@ -25,14 +25,79 @@ import {
   Image,
   Settings,
   Download,
-  Upload
+  Upload,
+  SortAsc,
+  SortDesc,
+  X,
+  Check,
+  ArrowUpDown,
+  Hash,
+  Tag,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  Star,
+  Heart,
+  Zap,
+  Target,
+  Award,
+  Globe,
+  Shield,
+  Lightbulb,
+  Rocket,
+  Diamond,
+  Crown,
+  Flame,
+  Sun,
+  Moon,
+  Cloud,
+  Leaf,
+  Flower,
+  Tree,
+  Mountain,
+  Ocean,
+  Fire,
+  Water,
+  Earth,
+  Air,
+  Space,
+  Galaxy,
+  Planet,
+  Sparkles,
+  Gift,
+  Award as AwardIcon,
+  Target as TargetIcon,
+  Globe as GlobeIcon,
+  Shield as ShieldIcon,
+  Lightbulb as LightbulbIcon,
+  Rocket as RocketIcon,
+  Diamond as DiamondIcon,
+  Crown as CrownIcon,
+  Flame as FlameIcon,
+  Sun as SunIcon,
+  Moon as MoonIcon,
+  Cloud as CloudIcon,
+  Leaf as LeafIcon,
+  Flower as FlowerIcon,
+  Tree as TreeIcon,
+  Mountain as MountainIcon,
+  Ocean as OceanIcon,
+  Fire as FireIcon,
+  Water as WaterIcon,
+  Earth as EarthIcon,
+  Air as AirIcon,
+  Space as SpaceIcon,
+  Galaxy as GalaxyIcon,
+  Planet as PlanetIcon,
+  Sparkles as SparklesIcon,
+  Gift as GiftIcon
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { NewsletterBuilder } from "@/components/dashboard/newsletter-builder"
+import { ModernNewsletterBuilder } from "@/components/dashboard/modern-newsletter-builder"
 import { MediaUpload } from "@/components/dashboard/media-upload"
 import { newsletterTemplates, newsletterThemes } from "@/lib/newsletter-templates"
 
@@ -296,7 +361,7 @@ export default function NewslettersPage() {
                 <DialogHeader>
                   <DialogTitle>Newsletter Builder</DialogTitle>
                 </DialogHeader>
-                <NewsletterBuilder 
+                <ModernNewsletterBuilder 
                   storyId={selectedStory || stories[0]?.id || ''}
                   organizationId={org?.id || ''}
                   onSave={(newsletter) => {

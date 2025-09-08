@@ -92,7 +92,7 @@ const organizationConfigs = {
         icon: BarChart3,
         description: "Track donations and campaign performance",
       },
-      { name: "Marketplace", href: "/marketplace", icon: ShoppingCart, description: "Order branded merchandise" },
+      { name: "Marketplace", href: "/dashboard/marketplace", icon: ShoppingCart, description: "Order branded merchandise" },
       {
         name: "Donation Widget",
         href: "/dashboard/widget",
@@ -275,7 +275,7 @@ const organizationConfigs = {
         icon: TrendingUp,
         description: "Track sales and customer engagement",
       },
-      { name: "Marketplace", href: "/marketplace", icon: ShoppingCart, description: "Order branded merchandise" },
+      { name: "Marketplace", href: "/dashboard/marketplace", icon: ShoppingCart, description: "Order branded merchandise" },
       {
         name: "Engagement Widget",
         href: "/dashboard/widget",

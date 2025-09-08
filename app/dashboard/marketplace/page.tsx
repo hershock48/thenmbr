@@ -52,7 +52,7 @@ const braceletDesigns: BraceletDesign[] = [
     description: 'Soft, durable silicone bracelet perfect for everyday wear',
     basePrice: 2.99,
     colors: ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#000000', '#FFFFFF'],
-    image: '/placeholder.jpg',
+    image: '/placeholder.svg',
     popular: true
   },
   {
@@ -61,7 +61,7 @@ const braceletDesigns: BraceletDesign[] = [
     description: 'High-quality leather band with engraved numbers',
     basePrice: 8.99,
     colors: ['#8B4513', '#654321', '#D2691E', '#A0522D', '#000000'],
-    image: '/placeholder.jpg',
+    image: '/placeholder.svg',
     popular: false
   },
   {
@@ -70,7 +70,7 @@ const braceletDesigns: BraceletDesign[] = [
     description: 'Durable metal bracelet with laser-engraved numbers',
     basePrice: 12.99,
     colors: ['#C0C0C0', '#FFD700', '#CD7F32', '#000000'],
-    image: '/placeholder.jpg',
+    image: '/placeholder.svg',
     popular: true
   },
   {
@@ -79,7 +79,7 @@ const braceletDesigns: BraceletDesign[] = [
     description: 'Eco-friendly wooden beads with carved numbers',
     basePrice: 6.99,
     colors: ['#8B4513', '#D2691E', '#DEB887', '#F4A460'],
-    image: '/placeholder.jpg',
+    image: '/placeholder.svg',
     popular: false
   }
 ]
@@ -102,10 +102,6 @@ export default function MarketplacePage() {
   const [cart, setCart] = useState<any[]>([])
   const [showCart, setShowCart] = useState(false)
   const [currentStep, setCurrentStep] = useState<'designs' | 'customize' | 'cart'>('designs')
-  const [errors, setErrors] = useState<{[key: string]: string}>({})
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [success, setSuccess] = useState("")
-  const [showCheckout, setShowCheckout] = useState(false)
 
   const handleDesignSelect = (design: BraceletDesign) => {
     setSelectedDesign(design)
@@ -150,11 +146,6 @@ export default function MarketplacePage() {
   const addToCart = () => {
     if (!selectedDesign) return
 
-    // Validate before adding to cart
-    if (!validateCustomization()) {
-      return
-    }
-
     const item = {
       id: `${selectedDesign.id}-${Date.now()}`,
       design: selectedDesign,
@@ -164,9 +155,6 @@ export default function MarketplacePage() {
 
     setCart(prev => [...prev, item])
     setShowCart(true)
-    setErrors({}) // Clear any previous errors
-    setSuccess("Item added to cart successfully!")
-    setTimeout(() => setSuccess(""), 3000)
     // Automatically advance to cart step
     setCurrentStep('cart')
   }
@@ -175,128 +163,22 @@ export default function MarketplacePage() {
     return cart.reduce((sum, item) => sum + item.totalPrice, 0)
   }
 
-  // Form validation
-  const validateCustomization = () => {
-    const newErrors: {[key: string]: string} = {}
-    
-    if (!customization.color) {
-      newErrors.color = 'Please select a color'
-    }
-    
-    if (customization.numbers.filter(n => n.trim()).length === 0) {
-      newErrors.numbers = 'Please enter at least one number'
-    }
-    
-    if (customization.logoOption === 'custom-text' && !customization.customText?.trim()) {
-      newErrors.customText = 'Please enter custom text'
-    }
-    
-    if (customization.customText && customization.customText.length > 20) {
-      newErrors.customText = 'Custom text must be 20 characters or less'
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  // Cart management functions
-  const removeFromCart = (itemId: string) => {
-    setCart(prev => prev.filter(item => item.id !== itemId))
-    if (cart.length === 1) {
-      setCurrentStep('designs')
-    }
-  }
-
-  const updateCartItem = (itemId: string, updates: Partial<Customization>) => {
-    setCart(prev => prev.map(item => 
-      item.id === itemId 
-        ? { 
-            ...item, 
-            customization: { ...item.customization, ...updates },
-            totalPrice: item.design.basePrice * (updates.quantity || item.customization.quantity)
-          }
-        : item
-    ))
-  }
-
-  // Checkout process
-  const handleCheckout = async () => {
-    if (cart.length === 0) return
-    
-    setIsProcessing(true)
-    try {
-      // Simulate checkout process
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      setSuccess(`Order placed successfully! ${cart.length} item(s) will be processed.`)
-      setCart([])
-      setCurrentStep('designs')
-      setSelectedDesign(null)
-      setCustomization({
-        quantity: 1,
-        color: '',
-        numbers: [''],
-        logoOption: 'number-only'
-      })
-      
-      setTimeout(() => setSuccess(""), 5000)
-    } catch (error) {
-      setErrors({ checkout: 'Checkout failed. Please try again.' })
-    } finally {
-      setIsProcessing(false)
-    }
-  }
-
   return (
     <div className="space-y-8">
-      {/* Error and Success Messages */}
-      {Object.keys(errors).length > 0 && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 text-red-500">⚠️</div>
-            <div className="text-red-700 text-sm">
-              {Object.values(errors).map((error, index) => (
-                <div key={index}>{error}</div>
-              ))}
-            </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setErrors({})}
-              className="ml-auto text-red-500 hover:text-red-700"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-      )}
-      {success && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-          <div className="w-4 h-4 text-green-500">✅</div>
-          <span className="text-green-700 text-sm">{success}</span>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setSuccess("")}
-            className="ml-auto text-green-500 hover:text-green-700"
-          >
-            ×
-          </Button>
-        </div>
-      )}
-
       {/* Header */}
       <div className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white py-8 rounded-lg">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">NMBR Marketplace</h1>
-          <p className="text-lg text-cyan-100 max-w-3xl mx-auto">
-            Create custom numbered bracelets that connect your supporters to the people they help. 
-            Each bracelet tells a story and makes a real impact.
-          </p>
+        <div className="px-6">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold mb-2">NMBR Marketplace</h1>
+            <p className="text-lg text-cyan-100 max-w-3xl mx-auto">
+              Create custom numbered bracelets that connect your supporters to the people they help. 
+              Each bracelet tells a story and makes a real impact.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="px-6">
         <Tabs value={currentStep} onValueChange={(value) => setCurrentStep(value as any)} className="space-y-8">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="designs">Choose Design</TabsTrigger>
@@ -460,18 +342,13 @@ export default function MarketplacePage() {
                                   : 'border-gray-200 hover:border-gray-300'
                               }`}
                               style={{ backgroundColor: color }}
-                              onClick={() => {
-                                setCustomization(prev => ({ ...prev, color }))
-                                if (errors.color) {
-                                  setErrors(prev => ({ ...prev, color: '' }))
-                                }
-                              }}
+                              onClick={() => setCustomization(prev => ({
+                                ...prev,
+                                color
+                              }))}
                             />
                           ))}
                         </div>
-                        {errors.color && (
-                          <p className="text-sm text-red-600">{errors.color}</p>
-                        )}
                       </div>
 
                       {/* Logo Option */}
@@ -508,23 +385,11 @@ export default function MarketplacePage() {
                             id="customText"
                             placeholder="Enter custom text..."
                             value={customization.customText || ''}
-                            onChange={(e) => {
-                              setCustomization(prev => ({
-                                ...prev,
-                                customText: e.target.value
-                              }))
-                              if (errors.customText) {
-                                setErrors(prev => ({ ...prev, customText: '' }))
-                              }
-                            }}
-                            maxLength={20}
+                            onChange={(e) => setCustomization(prev => ({
+                              ...prev,
+                              customText: e.target.value
+                            }))}
                           />
-                          <p className="text-xs text-muted-foreground">
-                            {customization.customText?.length || 0}/20 characters
-                          </p>
-                          {errors.customText && (
-                            <p className="text-sm text-red-600">{errors.customText}</p>
-                          )}
                         </div>
                       )}
 
@@ -537,12 +402,7 @@ export default function MarketplacePage() {
                               <Input
                                 placeholder={`Number ${index + 1}`}
                                 value={number}
-                                onChange={(e) => {
-                                  handleNumberChange(index, e.target.value)
-                                  if (errors.numbers) {
-                                    setErrors(prev => ({ ...prev, numbers: '' }))
-                                  }
-                                }}
+                                onChange={(e) => handleNumberChange(index, e.target.value)}
                                 className="flex-1"
                               />
                               {customization.numbers.length > 1 && (
@@ -565,9 +425,6 @@ export default function MarketplacePage() {
                             Add Another Number
                           </Button>
                         </div>
-                        {errors.numbers && (
-                          <p className="text-sm text-red-600">{errors.numbers}</p>
-                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -672,12 +529,7 @@ export default function MarketplacePage() {
                         </div>
                         <div className="text-right">
                           <div className="text-lg font-bold">${item.totalPrice.toFixed(2)}</div>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-2"
-                            onClick={() => removeFromCart(item.id)}
-                          >
+                          <Button variant="outline" size="sm" className="mt-2">
                             Remove
                           </Button>
                         </div>
@@ -693,22 +545,9 @@ export default function MarketplacePage() {
                       <span>${calculateTotal().toFixed(2)}</span>
                     </div>
                     <div className="mt-4 space-y-2">
-                      <Button 
-                        className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                        onClick={handleCheckout}
-                        disabled={isProcessing}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <Truck className="w-4 h-4 mr-2" />
-                            Proceed to Checkout
-                          </>
-                        )}
+                      <Button className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700">
+                        <Truck className="w-4 h-4 mr-2" />
+                        Proceed to Checkout
                       </Button>
                       <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
                         <div className="flex items-center">
