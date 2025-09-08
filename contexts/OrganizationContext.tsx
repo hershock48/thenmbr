@@ -20,6 +20,7 @@ import {
   UserCheck,
   Megaphone,
   FolderOpen,
+  QrCode,
 } from "lucide-react"
 
 interface OrganizationTerminology {
@@ -252,7 +253,7 @@ const organizationConfigs = {
       },
       {
         name: "Brand Stories",
-        href: "/dashboard/nmbrs",
+        href: "/dashboard/stories",
         icon: Building2,
         badge: "24",
         description: "Manage your brand and product stories",
@@ -274,6 +275,18 @@ const organizationConfigs = {
         href: "/dashboard/analytics",
         icon: TrendingUp,
         description: "Track sales and customer engagement",
+      },
+      {
+        name: "QR Codes",
+        href: "/dashboard/qr-codes",
+        icon: QrCode,
+        description: "Manage QR codes and track scans",
+      },
+      {
+        name: "Integrations",
+        href: "/dashboard/integrations",
+        icon: Settings,
+        description: "Connect your e-commerce platforms",
       },
       { name: "Marketplace", href: "/dashboard/marketplace", icon: ShoppingCart, description: "Order branded merchandise" },
       {
@@ -330,7 +343,7 @@ const organizationConfigs = {
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
   const { org } = useAuth()
-  const orgType: OrganizationType = org?.organization_type || "nonprofit"
+  const orgType: OrganizationType = org?.org_type || "nonprofit"
   const config = organizationConfigs[orgType]
 
   const getTerminology = (key: keyof OrganizationTerminology): string => {

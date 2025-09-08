@@ -32,6 +32,7 @@ import {
   AreaChart
 } from "lucide-react"
 import { useState } from "react"
+import { useOrganization } from "@/contexts/OrganizationContext"
 
 interface DataVisualizationProps {
   data: {
@@ -78,6 +79,7 @@ interface DataVisualizationProps {
 }
 
 export function DataVisualization({ data }: DataVisualizationProps) {
+  const { terminology, orgType } = useOrganization()
   const [activeChart, setActiveChart] = useState("revenue")
 
   const StatCard = ({ title, value, change, icon: Icon, trend, subtitle, color }: {
@@ -340,7 +342,7 @@ export function DataVisualization({ data }: DataVisualizationProps) {
                 </div>
                 <div className="text-center p-4 bg-red-50 rounded-lg">
                   <Heart className="w-8 h-8 text-red-600 mx-auto mb-2" />
-                  <p className="text-sm text-red-600">Donation Rate</p>
+                  <p className="text-sm text-red-600">{orgType === 'business' ? 'Conversion Rate' : orgType === 'grassroots' ? 'Support Rate' : 'Donation Rate'}</p>
                   <p className="text-2xl font-bold text-red-900">{data.engagement.donationRate}%</p>
                 </div>
                 <div className="text-center p-4 bg-purple-50 rounded-lg">
@@ -403,7 +405,7 @@ export function DataVisualization({ data }: DataVisualizationProps) {
         <CardContent>
           <div className="space-y-4">
             {[
-              { type: "donation", message: "Sarah M. donated $50 to Maria's Water Well", time: "2 min ago", color: "green" },
+              { type: "donation", message: orgType === 'business' ? "Sarah M. purchased $50 from Maria's Product" : orgType === 'grassroots' ? "Sarah M. supported $50 for Maria's Project" : "Sarah M. donated $50 to Maria's Water Well", time: "2 min ago", color: "green" },
               { type: "subscription", message: "Michael R. subscribed to Ahmed's Education", time: "5 min ago", color: "blue" },
               { type: "milestone", message: "Maria's Water Well reached 75% of goal", time: "8 min ago", color: "purple" },
               { type: "completion", message: "Ahmed's Education story completed!", time: "12 min ago", color: "orange" },

@@ -18,6 +18,10 @@ import {
   ArrowRight,
   Building2,
   ShoppingCart,
+  QrCode,
+  TrendingUp,
+  DollarSign,
+  Package,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
@@ -61,6 +65,22 @@ export default function DashboardPage() {
     activeStories: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [businessMetrics, setBusinessMetrics] = useState({
+    storyDrivenSales: 47250,
+    qrCodeScans: 1847,
+    conversionRate: 12.4,
+    avgOrderValue: 89.5,
+    revenueShare: 2365,
+    activeProducts: 23,
+  })
+  const [nonprofitMetrics, setNonprofitMetrics] = useState({
+    totalDonations: 15750,
+    activeDonors: 342,
+    impactStories: 28,
+    avgDonation: 46.05,
+    donorRetention: 78.5,
+    storyEngagement: 92.3,
+  })
 
   useEffect(() => {
     if (org?.id) {
@@ -87,8 +107,8 @@ export default function DashboardPage() {
     try {
       setStats({
         totalStories: stories.length,
-        totalSubscribers: 42,
-        totalRaised: 15750,
+        totalSubscribers: orgType === "nonprofit" ? nonprofitMetrics.activeDonors : 42,
+        totalRaised: orgType === "nonprofit" ? nonprofitMetrics.totalDonations : 15750,
         activeStories: stories.filter((s) => s.status === "active").length,
       })
     } catch (error) {
@@ -105,13 +125,44 @@ export default function DashboardPage() {
       case "grassroots":
         return "Ready to share more community project updates? Let's see how your projects are progressing."
       case "business":
-        return "Ready to tell more brand stories? Let's see how your customer engagement is performing."
+        return "Ready to boost your story-driven sales? Let's see how your product stories are converting customers."
       default:
         return "Ready to create more amazing stories? Let's see how things are going."
     }
   }
 
-  const metrics = getMetricsForType()
+  const getBusinessMetrics = () => {
+    if (orgType !== "business") return getMetricsForType()
+
+    return [
+      {
+        key: "story-sales",
+        name: "Story-Driven Sales",
+        description: "Revenue from story engagement",
+        icon: DollarSign,
+      },
+      {
+        key: "qr-scans",
+        name: "QR Code Scans",
+        description: "Product story discoveries",
+        icon: QrCode,
+      },
+      {
+        key: "conversion",
+        name: "Conversion Rate",
+        description: "Story viewers to customers",
+        icon: TrendingUp,
+      },
+      {
+        key: "avg-order",
+        name: "Avg Order Value",
+        description: "Revenue per story-driven sale",
+        icon: Package,
+      },
+    ]
+  }
+
+  const metrics = getBusinessMetrics()
 
   if (!user) {
     return (
@@ -224,6 +275,18 @@ export default function DashboardPage() {
             case "sales":
               value = `$${stats.totalRaised.toLocaleString()}`
               break
+            case "story-sales":
+              value = `$${businessMetrics.storyDrivenSales.toLocaleString()}`
+              break
+            case "qr-scans":
+              value = businessMetrics.qrCodeScans.toLocaleString()
+              break
+            case "conversion":
+              value = `${businessMetrics.conversionRate}%`
+              break
+            case "avg-order":
+              value = `$${businessMetrics.avgOrderValue}`
+              break
             case "donors":
             case "supporters":
             case "customers":
@@ -273,7 +336,7 @@ export default function DashboardPage() {
               </CardTitle>
               <CardDescription className="text-slate-600">
                 {orgType === "nonprofit"
-                  ? "Manage and track your personalized impact stories that connect donors to the people they help"
+                  ? `Manage and track your personalized impact stories that connect ${terminology.subscribers.toLowerCase()} to the people they help`
                   : orgType === "grassroots"
                     ? "Manage and track your community project stories that connect supporters to local initiatives"
                     : "Manage and track your brand stories that connect customers to your company's impact"}
@@ -304,7 +367,7 @@ export default function DashboardPage() {
               <h3 className="text-lg font-semibold text-slate-900 mb-2">No {terminology.stories.toLowerCase()} yet</h3>
               <p className="text-slate-600 mb-6 max-w-md mx-auto">
                 {orgType === "nonprofit"
-                  ? "Create your first impact story to start connecting donors with the people they help"
+                  ? `Create your first impact story to start connecting ${terminology.subscribers.toLowerCase()} with the people they help`
                   : orgType === "grassroots"
                     ? "Create your first project story to start connecting supporters with your community initiatives"
                     : "Create your first brand story to start connecting customers with your company's impact"}
@@ -382,7 +445,7 @@ export default function DashboardPage() {
             <CardTitle className="text-xl text-slate-900">Create New {terminology.stories.split(" ")[0]}</CardTitle>
             <CardDescription className="text-slate-600">
               {orgType === "nonprofit"
-                ? "Add a new impact story to connect donors with the people they help"
+                ? `Add a new impact story to connect ${terminology.subscribers.toLowerCase()} with the people they help`
                 : orgType === "grassroots"
                   ? "Add a new project story to connect supporters with community initiatives"
                   : "Add a new brand story to connect customers with your company's impact"}
@@ -407,7 +470,7 @@ export default function DashboardPage() {
             <CardTitle className="text-xl text-slate-900">View {terminology.analytics}</CardTitle>
             <CardDescription className="text-slate-600">
               {orgType === "nonprofit"
-                ? "See how your stories are performing and track your fundraising impact"
+                ? `See how your stories are performing and track your ${terminology.fundraising.toLowerCase()} impact`
                 : orgType === "grassroots"
                   ? "See how your projects are performing and track community engagement"
                   : "See how your stories are performing and track customer engagement"}

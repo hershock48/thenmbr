@@ -27,7 +27,7 @@ export function Header() {
   const getSearchPlaceholder = () => {
     switch (orgType) {
       case "nonprofit":
-        return "Search stories, donors..."
+        return `Search stories, ${terminology.subscribers.toLowerCase()}...`
       case "grassroots":
         return "Search projects, supporters..."
       case "business":

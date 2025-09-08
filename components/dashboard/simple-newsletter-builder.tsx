@@ -36,10 +36,11 @@ import {
   CreditCard,
   HandHeart
 } from "lucide-react"
+import { useOrganization } from "@/contexts/OrganizationContext"
 
 interface NewsletterBlock {
   id: string
-  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation'
+  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation' | 'action'
   content: any
   order: number
 }
@@ -110,14 +111,15 @@ const blockTypes = [
   },
   { 
     type: 'donation', 
-    label: 'Donation Button', 
+    label: orgType === 'business' ? 'Purchase Button' : orgType === 'grassroots' ? 'Support Button' : 'Donation Button', 
     icon: HeartIcon, 
     color: 'bg-red-500',
-    description: 'Add donation call-to-action'
+    description: orgType === 'business' ? 'Add purchase call-to-action' : orgType === 'grassroots' ? 'Add support call-to-action' : 'Add donation call-to-action'
   }
 ]
 
 export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSend }: NewsletterBuilderProps) {
+  const { terminology, orgType } = useOrganization()
   const [blocks, setBlocks] = useState<NewsletterBlock[]>([
     {
       id: '1',
@@ -198,13 +200,21 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
         }
       case 'donation':
         return {
-          title: 'Make a Difference Today',
-          description: 'Your donation helps us continue our important work and make a real impact in the community.',
-          buttonText: 'Donate Now',
+          title: orgType === 'business' ? 'Get Started Today' : orgType === 'grassroots' ? 'Support Our Mission' : 'Make a Difference Today',
+          description: orgType === 'business' 
+            ? 'Your purchase helps us continue providing quality products and services to our customers.'
+            : orgType === 'grassroots' 
+              ? 'Your support helps us continue our important community work and make a real impact locally.'
+              : 'Your donation helps us continue our important work and make a real impact in the community.',
+          buttonText: orgType === 'business' ? 'Purchase Now' : orgType === 'grassroots' ? 'Support Now' : 'Donate Now',
           suggestedAmounts: [25, 50, 100, 250],
           customAmount: true,
           urgency: 'normal', // normal, urgent, critical
-          impact: 'Your $50 donation provides meals for 10 families',
+          impact: orgType === 'business' 
+            ? 'Your $50 purchase supports our team and helps us serve more customers'
+            : orgType === 'grassroots' 
+              ? 'Your $50 support provides resources for 10 community members'
+              : 'Your $50 donation provides meals for 10 families',
           showDonorInfo: true,
           allowRecurring: false,
           minimumAmount: 5
@@ -250,7 +260,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
 
   const processDonation = async (amount: number, donorEmail?: string, donorName?: string) => {
     if (!organizationId) {
-      alert('Organization ID is required for donations')
+      alert(`Organization ID is required for ${orgType === 'business' ? 'purchases' : orgType === 'grassroots' ? 'support' : 'donations'}`)
       return
     }
 
@@ -278,11 +288,11 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
         // Redirect to Stripe Checkout
         window.location.href = data.url
       } else {
-        throw new Error(data.error || 'Failed to create donation session')
+        throw new Error(data.error || `Failed to create ${orgType === 'business' ? 'purchase' : orgType === 'grassroots' ? 'support' : 'donation'} session`)
       }
     } catch (error) {
       console.error('Donation error:', error)
-      alert('Failed to process donation. Please try again.')
+      alert(`Failed to process ${orgType === 'business' ? 'purchase' : orgType === 'grassroots' ? 'support' : 'donation'}. Please try again.`)
     } finally {
       setDonationState(prev => ({ ...prev, isProcessing: false }))
     }
@@ -309,7 +319,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
     const amount = donationState.selectedAmount || parseFloat(donationState.customAmount)
     
     if (!amount || amount < (blocks.find(b => b.type === 'donation')?.content.minimumAmount || 5)) {
-      alert(`Minimum donation amount is $${blocks.find(b => b.type === 'donation')?.content.minimumAmount || 5}`)
+      alert(`Minimum ${orgType === 'business' ? 'purchase' : orgType === 'grassroots' ? 'support' : 'donation'} amount is $${blocks.find(b => b.type === 'donation')?.content.minimumAmount || 5}`)
       return
     }
 
@@ -668,7 +678,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                 </div>
               )}
               
-              {/* Donor Information Form */}
+              {/* Contact Information Form */}
               {donationState.showDonationForm && (
                 <div className="mb-6 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -769,7 +779,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                     value={block.content.impact}
                     onChange={(e) => updateBlock(block.id, { impact: e.target.value })}
                     className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
-                    placeholder="Your $50 donation provides..."
+                    placeholder={orgType === 'business' ? "Your $50 purchase supports..." : orgType === 'grassroots' ? "Your $50 support provides..." : "Your $50 donation provides..."}
                   />
                 </div>
                 <div>
@@ -792,7 +802,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                     onChange={(e) => updateBlock(block.id, { showDonorInfo: e.target.checked })}
                     className="rounded"
                   />
-                  <Label htmlFor="showDonorInfo" className="text-white">Collect donor information</Label>
+                  <Label htmlFor="showDonorInfo" className="text-white">Collect {orgType === 'business' ? 'customer' : orgType === 'grassroots' ? 'supporter' : 'donor'} information</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <input
@@ -802,7 +812,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                     onChange={(e) => updateBlock(block.id, { allowRecurring: e.target.checked })}
                     className="rounded"
                   />
-                  <Label htmlFor="allowRecurring" className="text-white">Allow recurring donations</Label>
+                  <Label htmlFor="allowRecurring" className="text-white">Allow recurring {orgType === 'business' ? 'purchases' : orgType === 'grassroots' ? 'support' : 'donations'}</Label>
                 </div>
               </div>
             )}
