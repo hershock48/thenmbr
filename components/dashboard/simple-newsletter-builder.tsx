@@ -135,6 +135,21 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
   
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null)
   const [isPreview, setIsPreview] = useState(false)
+  const [donationState, setDonationState] = useState<{
+    isProcessing: boolean
+    selectedAmount: number | null
+    customAmount: string
+    donorEmail: string
+    donorName: string
+    showDonationForm: boolean
+  }>({
+    isProcessing: false,
+    selectedAmount: null,
+    customAmount: '',
+    donorEmail: '',
+    donorName: '',
+    showDonationForm: false
+  })
 
   const addBlock = (type: string) => {
     const newBlock: NewsletterBlock = {
@@ -186,11 +201,13 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
           title: 'Make a Difference Today',
           description: 'Your donation helps us continue our important work and make a real impact in the community.',
           buttonText: 'Donate Now',
-          buttonUrl: '#',
           suggestedAmounts: [25, 50, 100, 250],
           customAmount: true,
           urgency: 'normal', // normal, urgent, critical
-          impact: 'Your $50 donation provides meals for 10 families'
+          impact: 'Your $50 donation provides meals for 10 families',
+          showDonorInfo: true,
+          allowRecurring: false,
+          minimumAmount: 5
         }
       default:
         return {}
@@ -229,6 +246,74 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
     // Update order
     const updatedBlocks = newBlocks.map((block, index) => ({ ...block, order: index }))
     setBlocks(updatedBlocks)
+  }
+
+  const processDonation = async (amount: number, donorEmail?: string, donorName?: string) => {
+    if (!organizationId) {
+      alert('Organization ID is required for donations')
+      return
+    }
+
+    setDonationState(prev => ({ ...prev, isProcessing: true }))
+
+    try {
+      const response = await fetch('/api/donate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: amount * 100, // Convert to cents
+          org_id: organizationId,
+          story_id: storyId || null,
+          donor_email: donorEmail || '',
+          success_url: `${window.location.origin}/dashboard/newsletters?donation=success`,
+          cancel_url: `${window.location.origin}/dashboard/newsletters?donation=canceled`
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url
+      } else {
+        throw new Error(data.error || 'Failed to create donation session')
+      }
+    } catch (error) {
+      console.error('Donation error:', error)
+      alert('Failed to process donation. Please try again.')
+    } finally {
+      setDonationState(prev => ({ ...prev, isProcessing: false }))
+    }
+  }
+
+  const handleDonationAmountSelect = (amount: number) => {
+    setDonationState(prev => ({ 
+      ...prev, 
+      selectedAmount: amount,
+      customAmount: '',
+      showDonationForm: true
+    }))
+  }
+
+  const handleCustomAmountChange = (value: string) => {
+    setDonationState(prev => ({ 
+      ...prev, 
+      customAmount: value,
+      selectedAmount: null
+    }))
+  }
+
+  const handleDonationSubmit = () => {
+    const amount = donationState.selectedAmount || parseFloat(donationState.customAmount)
+    
+    if (!amount || amount < (blocks.find(b => b.type === 'donation')?.content.minimumAmount || 5)) {
+      alert(`Minimum donation amount is $${blocks.find(b => b.type === 'donation')?.content.minimumAmount || 5}`)
+      return
+    }
+
+    processDonation(amount, donationState.donorEmail, donationState.donorName)
   }
 
   const renderBlock = (block: NewsletterBlock, index: number) => {
@@ -557,7 +642,12 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                 {block.content.suggestedAmounts.map((amount: number, index: number) => (
                   <button
                     key={index}
-                    className="bg-white/20 hover:bg-white/30 rounded-lg p-3 font-semibold transition-colors"
+                    onClick={() => handleDonationAmountSelect(amount)}
+                    className={`rounded-lg p-3 font-semibold transition-colors ${
+                      donationState.selectedAmount === amount
+                        ? 'bg-white text-gray-900'
+                        : 'bg-white/20 hover:bg-white/30'
+                    }`}
                   >
                     ${amount}
                   </button>
@@ -570,18 +660,61 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                   <input
                     type="number"
                     placeholder="Custom amount"
+                    value={donationState.customAmount}
+                    onChange={(e) => handleCustomAmountChange(e.target.value)}
                     className="w-32 px-3 py-2 rounded-lg text-gray-900 text-center font-semibold"
+                    min={block.content.minimumAmount || 5}
                   />
+                </div>
+              )}
+              
+              {/* Donor Information Form */}
+              {donationState.showDonationForm && (
+                <div className="mb-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Your Name (Optional)</label>
+                      <input
+                        type="text"
+                        value={donationState.donorName}
+                        onChange={(e) => setDonationState(prev => ({ ...prev, donorName: e.target.value }))}
+                        placeholder="Enter your name"
+                        className="w-full px-3 py-2 rounded-lg text-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Email Address</label>
+                      <input
+                        type="email"
+                        value={donationState.donorEmail}
+                        onChange={(e) => setDonationState(prev => ({ ...prev, donorEmail: e.target.value }))}
+                        placeholder="Enter your email"
+                        className="w-full px-3 py-2 rounded-lg text-gray-900"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
               
               {/* Donate Button */}
               <Button 
                 size="lg" 
-                className="bg-white text-gray-900 hover:bg-gray-100 font-bold px-8 py-3 text-lg"
+                onClick={handleDonationSubmit}
+                disabled={donationState.isProcessing || (!donationState.selectedAmount && !donationState.customAmount)}
+                className="bg-white text-gray-900 hover:bg-gray-100 font-bold px-8 py-3 text-lg disabled:opacity-50"
               >
-                <CreditCard className="h-5 w-5 mr-2" />
-                {block.content.buttonText}
+                {donationState.isProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900 mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="h-5 w-5 mr-2" />
+                    {block.content.buttonText}
+                  </>
+                )}
               </Button>
               
               {/* Impact Statement */}
@@ -621,12 +754,13 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Button URL</Label>
+                  <Label className="text-white">Minimum Amount</Label>
                   <Input
-                    value={block.content.buttonUrl}
-                    onChange={(e) => updateBlock(block.id, { buttonUrl: e.target.value })}
+                    type="number"
+                    value={block.content.minimumAmount}
+                    onChange={(e) => updateBlock(block.id, { minimumAmount: parseFloat(e.target.value) || 5 })}
                     className="bg-white/20 border-white/30 text-white placeholder:text-white/70"
-                    placeholder="https://your-donation-page.com"
+                    placeholder="5"
                   />
                 </div>
                 <div>
@@ -649,6 +783,26 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                     <option value="urgent">Urgent</option>
                     <option value="critical">Critical</option>
                   </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="showDonorInfo"
+                    checked={block.content.showDonorInfo}
+                    onChange={(e) => updateBlock(block.id, { showDonorInfo: e.target.checked })}
+                    className="rounded"
+                  />
+                  <Label htmlFor="showDonorInfo" className="text-white">Collect donor information</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="allowRecurring"
+                    checked={block.content.allowRecurring}
+                    onChange={(e) => updateBlock(block.id, { allowRecurring: e.target.checked })}
+                    className="rounded"
+                  />
+                  <Label htmlFor="allowRecurring" className="text-white">Allow recurring donations</Label>
                 </div>
               </div>
             )}
