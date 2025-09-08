@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from "react"
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -187,75 +188,73 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
     }
   }
 
-  const moveBlock = (id: string, direction: 'up' | 'down') => {
-    const currentIndex = blocks.findIndex(block => block.id === id)
-    if (currentIndex === -1) return
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result
 
-    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-    if (newIndex < 0 || newIndex >= blocks.length) return
+    if (!destination) return
 
-    const newBlocks = [...blocks]
-    const [movedBlock] = newBlocks.splice(currentIndex, 1)
-    newBlocks.splice(newIndex, 0, movedBlock)
-    
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return
+    }
+
+    const newBlocks = Array.from(blocks)
+    const [reorderedBlock] = newBlocks.splice(source.index, 1)
+    newBlocks.splice(destination.index, 0, reorderedBlock)
+
     // Update order
     const updatedBlocks = newBlocks.map((block, index) => ({ ...block, order: index }))
     setBlocks(updatedBlocks)
   }
 
-  const renderBlock = (block: NewsletterBlock) => {
+  const renderBlock = (block: NewsletterBlock, index: number) => {
     const isSelected = selectedBlock === block.id
 
     return (
-      <div
-        key={block.id}
-        className={`group relative border-2 rounded-lg p-4 transition-all ${
-          isSelected 
-            ? 'border-blue-500 bg-blue-50' 
-            : 'border-transparent hover:border-gray-300 hover:bg-gray-50'
-        }`}
-        onClick={() => setSelectedBlock(block.id)}
-      >
-        {/* Block Controls */}
-        <div className="absolute -top-2 -right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-6 w-6 p-0 bg-white shadow-sm"
-            onClick={(e) => {
-              e.stopPropagation()
-              moveBlock(block.id, 'up')
-            }}
+      <Draggable key={block.id} draggableId={block.id} index={index}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            className={`group relative border-2 rounded-lg p-4 transition-all ${
+              isSelected 
+                ? 'border-blue-500 bg-blue-50' 
+                : 'border-transparent hover:border-gray-300 hover:bg-gray-50'
+            } ${snapshot.isDragging ? 'shadow-lg rotate-2' : ''}`}
+            onClick={() => setSelectedBlock(block.id)}
           >
-            ↑
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-6 w-6 p-0 bg-white shadow-sm"
-            onClick={(e) => {
-              e.stopPropagation()
-              moveBlock(block.id, 'down')
-            }}
-          >
-            ↓
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            className="h-6 w-6 p-0 shadow-sm"
-            onClick={(e) => {
-              e.stopPropagation()
-              deleteBlock(block.id)
-            }}
-          >
-            <Trash2 className="h-3 w-3" />
-          </Button>
-        </div>
+            {/* Drag Handle */}
+            <div
+              {...provided.dragHandleProps}
+              className="absolute -left-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+            >
+              <div className="bg-white border border-gray-300 rounded p-1 shadow-sm">
+                <GripVertical className="h-4 w-4 text-gray-500" />
+              </div>
+            </div>
 
-        {/* Block Content */}
-        {renderBlockContent(block)}
-      </div>
+            {/* Block Controls */}
+            <div className="absolute -top-2 -right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                size="sm"
+                variant="destructive"
+                className="h-6 w-6 p-0 shadow-sm"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  deleteBlock(block.id)
+                }}
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+
+            {/* Block Content */}
+            {renderBlockContent(block)}
+          </div>
+        )}
+      </Draggable>
     )
   }
 
@@ -582,22 +581,35 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
           {isPreview ? (
             <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
               <div className="space-y-6">
-                {blocks.map(renderBlock)}
+                {blocks.map((block, index) => renderBlock(block, index))}
               </div>
             </div>
           ) : (
             <div className="max-w-4xl mx-auto">
-              <div className="space-y-4">
-                {blocks.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <Plus className="h-12 w-12 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">Start Building Your Newsletter</h3>
-                    <p>Click on a content block from the sidebar to get started</p>
-                  </div>
-                ) : (
-                  blocks.map(renderBlock)
-                )}
-              </div>
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="newsletter-blocks">
+                  {(provided, snapshot) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className={`space-y-4 min-h-[200px] transition-colors ${
+                        snapshot.isDraggingOver ? 'bg-blue-50 rounded-lg border-2 border-dashed border-blue-300' : ''
+                      }`}
+                    >
+                      {blocks.length === 0 ? (
+                        <div className="text-center py-12 text-gray-500">
+                          <Plus className="h-12 w-12 mx-auto mb-4" />
+                          <h3 className="text-lg font-medium mb-2">Start Building Your Newsletter</h3>
+                          <p>Click on a content block from the sidebar to get started</p>
+                        </div>
+                      ) : (
+                        blocks.map((block, index) => renderBlock(block, index))
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </div>
           )}
         </div>
