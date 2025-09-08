@@ -1,122 +1,88 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { withAPIMiddleware, withRequestLogging } from '@/lib/api-middleware'
-import { logger, handleDatabaseError, ValidationError, validateEmail, validateRequired } from '@/lib/error-handler'
-import { createRateLimitMiddleware, RATE_LIMIT_CONFIGS } from '@/lib/rate-limiter'
-import { db } from '@/lib/database-optimizer'
 
-// Apply rate limiting to POST requests (subscription creation)
-const rateLimitedPOST = createRateLimitMiddleware({
-  ...RATE_LIMIT_CONFIGS.API,
-  maxRequests: 50, // More lenient for subscription creation
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  onLimitReached: (req, key) => {
-    logger.warn('Rate limit exceeded for subscription creation', { key, ip: req.headers.get('x-forwarded-for') })
-  }
-})
-
-export const POST = rateLimitedPOST(withRequestLogging(async (request: NextRequest) => {
+export async function POST(request: NextRequest) {
   try {
     const { email, firstName, lastName, storyId, orgId, source = 'widget' } = await request.json()
 
-    // Validate required fields
-    validateRequired(email, 'Email')
-    validateRequired(storyId, 'Story ID')
-    validateRequired(orgId, 'Organization ID')
-    
-    // Validate email format
-    if (!validateEmail(email)) {
-      throw new ValidationError('Invalid email format')
+    if (!email || !storyId || !orgId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
-
-    logger.info('Creating new subscriber', { email, storyId, orgId, source })
 
     // Using the supabase client from lib/supabase.ts
 
-    // Check if subscriber already exists (with caching)
-    const { data: existingSubscriber, error: selectError } = await db.select('subscribers', {
-      useCache: true,
-      cacheTTL: 5 * 60 * 1000, // 5 minutes
-      cacheTags: ['subscribers', `org:${orgId}`],
-      selectFields: ['*']
-    }, {
-      email,
-      org_id: orgId
-    })
+    // Check if subscriber already exists
+    const { data: existingSubscriber } = await supabase
+      .from('subscribers')
+      .select('*')
+      .eq('email', email)
+      .eq('org_id', orgId)
+      .single()
 
-    if (selectError) {
-      throw handleDatabaseError(selectError, { email, orgId })
-    }
-
-    if (existingSubscriber && existingSubscriber.length > 0) {
-      const subscriber = existingSubscriber[0]
-      
+    if (existingSubscriber) {
       // Update existing subscriber with new NMBR
-      const { data: updatedSubscriber, error: updateError } = await db.update('subscribers', {
-        first_name: firstName,
-        last_name: lastName,
-        updated_at: new Date().toISOString(),
-        source: source
-      }, {
-        id: subscriber.id
-      }, {
-        useCache: false,
-        cacheTags: ['subscribers', `org:${orgId}`, `subscriber:${subscriber.id}`],
-        selectFields: ['*']
-      })
+      const { data: updatedSubscriber, error: updateError } = await supabase
+        .from('subscribers')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          updated_at: new Date().toISOString(),
+          source: source
+        })
+        .eq('id', existingSubscriber.id)
+        .select()
+        .single()
 
       if (updateError) {
-        throw handleDatabaseError(updateError, { subscriberId: subscriber.id })
+        throw updateError
       }
 
       // Add story subscription if not already subscribed
-      const { error: subscriptionError } = await db.insert('nmbr_subscriptions', {
-        subscriber_id: subscriber.id,
-        story_id: storyId,
-        subscribed_at: new Date().toISOString()
-      }, {
-        useCache: false,
-        cacheTags: ['subscriptions', `subscriber:${subscriber.id}`, `story:${storyId}`]
-      })
+      const { error: subscriptionError } = await supabase
+        .from('nmbr_subscriptions')
+        .upsert({
+          subscriber_id: existingSubscriber.id,
+          story_id: storyId,
+          subscribed_at: new Date().toISOString()
+        })
 
       if (subscriptionError) {
-        throw handleDatabaseError(subscriptionError, { subscriberId: subscriber.id, storyId })
+        throw subscriptionError
       }
 
       return NextResponse.json({ 
         success: true, 
-        subscriber: updatedSubscriber && updatedSubscriber.length > 0 ? updatedSubscriber[0] : null,
+        subscriber: updatedSubscriber,
         message: 'Subscription updated successfully' 
       })
     }
 
     // Create new subscriber
-    const { data: newSubscriber, error: subscriberError } = await db.insert('subscribers', {
-      email,
-      first_name: firstName,
-      last_name: lastName,
-      org_id: orgId,
-      source: source,
-      subscribed_at: new Date().toISOString()
-    }, {
-      useCache: false,
-      cacheTags: ['subscribers', `org:${orgId}`],
-      selectFields: ['*']
-    })
+    const { data: newSubscriber, error: subscriberError } = await supabase
+      .from('subscribers')
+      .insert({
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        org_id: orgId,
+        source: source,
+        subscribed_at: new Date().toISOString()
+      })
+      .select()
+      .single()
 
     if (subscriberError) {
       throw subscriberError
     }
 
     // Create story subscription
-    const { error: subscriptionError } = await db.insert('nmbr_subscriptions', {
-      subscriber_id: newSubscriber && newSubscriber.length > 0 ? newSubscriber[0].id : null,
-      story_id: storyId,
-      subscribed_at: new Date().toISOString()
-    }, {
-      useCache: false,
-      cacheTags: ['subscriptions', `story:${storyId}`]
-    })
+    const { error: subscriptionError } = await supabase
+      .from('nmbr_subscriptions')
+      .insert({
+        subscriber_id: newSubscriber.id,
+        story_id: storyId,
+        subscribed_at: new Date().toISOString()
+      })
 
     if (subscriptionError) {
       throw subscriptionError
@@ -124,7 +90,7 @@ export const POST = rateLimitedPOST(withRequestLogging(async (request: NextReque
 
     return NextResponse.json({ 
       success: true, 
-      subscriber: newSubscriber && newSubscriber.length > 0 ? newSubscriber[0] : null,
+      subscriber: newSubscriber,
       message: 'Successfully subscribed to story updates' 
     })
 
@@ -134,16 +100,9 @@ export const POST = rateLimitedPOST(withRequestLogging(async (request: NextReque
       error: 'Failed to subscribe to story updates' 
     }, { status: 500 })
   }
-}))
+}
 
-// Apply rate limiting to GET requests (subscriber fetching)
-const rateLimitedGET = createRateLimitMiddleware({
-  ...RATE_LIMIT_CONFIGS.API,
-  maxRequests: 100, // More lenient for read operations
-  windowMs: 15 * 60 * 1000, // 15 minutes
-})
-
-export const GET = rateLimitedGET(async (request: NextRequest) => {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const orgId = searchParams.get('org')
@@ -153,34 +112,30 @@ export const GET = rateLimitedGET(async (request: NextRequest) => {
       return NextResponse.json({ error: 'Organization ID required' }, { status: 400 })
     }
 
-    // Build filters for optimized query
-    const filters: Record<string, any> = {
-      org_id: orgId
+    // Using the supabase client from lib/supabase.ts
+
+    let query = supabase
+      .from('subscribers')
+      .select(`
+        *,
+        nmbr_subscriptions (
+          story_id,
+          subscribed_at
+        )
+      `)
+      .eq('org_id', orgId)
+
+    if (storyId) {
+      query = query.eq('nmbr_subscriptions.story_id', storyId)
     }
 
-    // Use optimized database query with caching
-    const { data: subscribers, error } = await db.select('subscribers', {
-      useCache: true,
-      cacheTTL: 5 * 60 * 1000, // 5 minutes
-      cacheTags: ['subscribers', `org:${orgId}`, storyId ? `story:${storyId}` : 'all'],
-      selectFields: ['*']
-    }, filters)
+    const { data: subscribers, error } = await query
 
     if (error) {
       throw error
     }
 
-    // If storyId is specified, filter subscriptions in memory
-    // (This is a simplified approach - in production, you'd want a proper join)
-    let filteredSubscribers = subscribers || []
-    
-    if (storyId && subscribers) {
-      // This would ideally be done with a proper join query
-      // For now, we'll return all subscribers and let the client filter
-      // In a real implementation, you'd use a more sophisticated query
-    }
-
-    return NextResponse.json({ subscribers: filteredSubscribers })
+    return NextResponse.json({ subscribers: subscribers || [] })
 
   } catch (error) {
     console.error('Get subscribers error:', error)
@@ -188,16 +143,9 @@ export const GET = rateLimitedGET(async (request: NextRequest) => {
       error: 'Failed to fetch subscribers' 
     }, { status: 500 })
   }
-})
+}
 
-// Apply rate limiting to DELETE requests (unsubscribe)
-const rateLimitedDELETE = createRateLimitMiddleware({
-  ...RATE_LIMIT_CONFIGS.API,
-  maxRequests: 30, // Moderate limit for unsubscribe operations
-  windowMs: 15 * 60 * 1000, // 15 minutes
-})
-
-export const DELETE = rateLimitedDELETE(async (request: NextRequest) => {
+export async function DELETE(request: NextRequest) {
   try {
     const { subscriberId, storyId } = await request.json()
 
@@ -246,4 +194,4 @@ export const DELETE = rateLimitedDELETE(async (request: NextRequest) => {
       error: 'Failed to unsubscribe' 
     }, { status: 500 })
   }
-})
+}

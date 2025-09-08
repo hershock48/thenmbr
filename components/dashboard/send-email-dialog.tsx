@@ -88,7 +88,7 @@ export function SendEmailDialog({ stories, organizationId, onEmailSent }: SendEm
       console.error('Email sending error:', error)
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to send email. Please try again.",
+        description: error.message || "Failed to send email. Please try again.",
         variant: "destructive"
       })
     } finally {

@@ -516,7 +516,7 @@ export function generateNewsletterHTML(template: NewsletterTemplate, data: any):
           background-color: ${template.theme.colors.background}; 
         }
         .container { 
-          max-width: ${(template as any).layout?.contentWidth === 'narrow' ? '600px' : (template as any).layout?.contentWidth === 'wide' ? '800px' : '700px'}; 
+          max-width: ${template.layout.contentWidth === 'narrow' ? '600px' : template.layout.contentWidth === 'wide' ? '800px' : '700px'}; 
           margin: 0 auto; 
           background: white; 
         }

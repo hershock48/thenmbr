@@ -4,6 +4,7 @@ import type React from "react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { useAuth } from "@/contexts/AuthContext"
+import { OrganizationProvider } from "@/contexts/OrganizationContext"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -34,12 +35,14 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="lg:pl-64">
-        <Header />
-        <main className="p-3 sm:p-4 lg:p-6">{children}</main>
+    <OrganizationProvider>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
+        <div className="lg:pl-64">
+          <Header />
+          <main className="p-3 sm:p-4 lg:p-6">{children}</main>
+        </div>
       </div>
-    </div>
+    </OrganizationProvider>
   )
 }

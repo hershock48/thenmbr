@@ -4,8 +4,6 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { 
   Building2, 
   Plus, 
@@ -26,11 +24,10 @@ import { OrgSelectionTour } from "@/components/ui/org-selection-tour"
 interface Organization {
   id: string
   name: string
-  website?: string
+  website: string
   brand_color: string
-  is_active?: boolean
+  is_active: boolean
   created_at: string
-  updated_at?: string
 }
 
 export default function SelectOrgPage() {
@@ -41,10 +38,6 @@ export default function SelectOrgPage() {
   const [error, setError] = useState('')
   const [selectedOrgId, setSelectedOrgId] = useState<string>('')
   const [showOrgTour, setShowOrgTour] = useState(false)
-  const [showCreateOrg, setShowCreateOrg] = useState(false)
-  const [newOrgName, setNewOrgName] = useState('')
-  const [newOrgWebsite, setNewOrgWebsite] = useState('')
-  const [creatingOrg, setCreatingOrg] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -117,17 +110,22 @@ export default function SelectOrgPage() {
       return
     }
 
+    console.log('Selected org ID:', selectedOrgId)
+    console.log('Available organizations:', organizations)
+    
     setLoading(true)
     setError('')
     
     try {
       const selectedOrg = organizations.find(org => org.id === selectedOrgId)
+      console.log('Selected org:', selectedOrg)
       
       if (!selectedOrg) {
         throw new Error('Selected organization not found')
       }
 
       // Update user metadata with selected org_id
+      console.log('Updating user metadata with org_id:', selectedOrg.id)
       const { data, error } = await supabase.auth.updateUser({
         data: { org_id: selectedOrg.id }
       })
@@ -137,81 +135,26 @@ export default function SelectOrgPage() {
         throw error
       }
 
+      console.log('User metadata updated successfully:', data)
+
       // Set the organization in AuthContext
-      setOrg(selectedOrg as any)
+      setOrg(selectedOrg)
       
       // Trigger multi-org achievement if this is not the first org
       try {
-        const { useAchievements } = require('@/components/ui/achievement-system')
+        const { useAchievements } = await import('@/components/ui/achievement-system')
         const { updateAchievement } = useAchievements()
         updateAchievement('multi-org', 1)
       } catch (err) {
         console.log('Achievement system not available:', err)
-        // Fallback to localStorage
-        try {
-          const saved = localStorage.getItem('userProgress')
-          if (saved) {
-            const userProgress = JSON.parse(saved)
-            const achievement = userProgress.achievements.find((a: any) => a.id === 'multi-org')
-            if (achievement && !achievement.unlocked) {
-              updateAchievement('multi-org', 1)
-            }
-          }
-        } catch (fallbackErr) {
-          console.log('Fallback achievement update failed:', fallbackErr)
-        }
       }
       
+      console.log('Redirecting to dashboard...')
       router.push('/dashboard')
     } catch (err) {
       console.error('Error selecting organization:', err)
-      setError(`Failed to select organization: ${err instanceof Error ? err.message : 'Unknown error'}`)
+      setError(`Failed to select organization: ${err.message || 'Unknown error'}`)
       setLoading(false)
-    }
-  }
-
-  const handleCreateOrg = async () => {
-    if (!newOrgName.trim()) {
-      setError('Please enter an organization name')
-      return
-    }
-
-    setCreatingOrg(true)
-    setError('')
-
-    try {
-      const { data: newOrg, error: createError } = await supabase
-        .from('nonprofits')
-        .insert({
-          name: newOrgName.trim(),
-          website: newOrgWebsite.trim() || null,
-          brand_color: '#3B82F6',
-          is_active: true
-        })
-        .select()
-        .single()
-
-      if (createError) {
-        console.error('Error creating organization:', createError)
-        throw createError
-      }
-
-      // Add the new organization to the list
-      setOrganizations(prev => [newOrg, ...prev])
-      
-      // Select the new organization
-      setSelectedOrgId(newOrg.id)
-      
-      // Close the create form
-      setShowCreateOrg(false)
-      setNewOrgName('')
-      setNewOrgWebsite('')
-      
-    } catch (err) {
-      console.error('Error creating organization:', err)
-      setError(`Failed to create organization: ${err instanceof Error ? err.message : 'Unknown error'}`)
-    } finally {
-      setCreatingOrg(false)
     }
   }
 
@@ -291,27 +234,17 @@ export default function SelectOrgPage() {
                   : 'hover:border-cyan-200'
               }`}
               onClick={() => setSelectedOrgId(org.id)}
-              role="button"
-              tabIndex={0}
-              aria-label={`Select organization ${org.name}`}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  setSelectedOrgId(org.id)
-                }
-              }}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div 
                     className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg"
                     style={{ backgroundColor: org.brand_color }}
-                    aria-label={`${org.name} organization logo`}
                   >
                     {org.name.charAt(0)}
                   </div>
                   {selectedOrgId === org.id && (
-                    <CheckCircle className="w-6 h-6 text-cyan-500" aria-label="Selected organization" />
+                    <CheckCircle className="w-6 h-6 text-cyan-500" />
                   )}
                 </div>
                 <CardTitle className="text-lg">{org.name}</CardTitle>
@@ -331,105 +264,33 @@ export default function SelectOrgPage() {
           ))}
 
           {/* Create New Organization Card */}
-          <Dialog open={showCreateOrg} onOpenChange={setShowCreateOrg}>
-            <DialogTrigger asChild>
-              <Card 
-                className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border-dashed border-2 border-cyan-200 hover:border-cyan-300"
-                data-tour="create-new-org"
-              >
-                <CardHeader className="pb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl flex items-center justify-center">
-                    <Plus className="w-6 h-6 text-cyan-600" />
-                  </div>
-                  <CardTitle className="text-lg text-cyan-600">Create New Organization</CardTitle>
-                  <CardDescription className="text-sm">
-                    Start a new organization
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center text-sm text-cyan-600">
-                    <ArrowRight className="w-4 h-4 mr-1" />
-                    <span>Get started</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Create New Organization</DialogTitle>
-                <DialogDescription>
-                  Enter the details for your new organization. You can always update these later.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="org-name" className="text-sm font-medium text-foreground">
-                    Organization Name *
-                  </label>
-                  <Input
-                    id="org-name"
-                    type="text"
-                    placeholder="Enter organization name"
-                    value={newOrgName}
-                    onChange={(e) => setNewOrgName(e.target.value)}
-                    className="mt-1"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="org-website" className="text-sm font-medium text-foreground">
-                    Website (Optional)
-                  </label>
-                  <Input
-                    id="org-website"
-                    type="url"
-                    placeholder="https://example.com"
-                    value={newOrgWebsite}
-                    onChange={(e) => setNewOrgWebsite(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="flex justify-end space-x-2 pt-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowCreateOrg(false)
-                      setNewOrgName('')
-                      setNewOrgWebsite('')
-                      setError('')
-                    }}
-                    disabled={creatingOrg}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleCreateOrg}
-                    disabled={creatingOrg || !newOrgName.trim()}
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
-                  >
-                    {creatingOrg ? (
-                      <>
-                        <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Create Organization
-                      </>
-                    )}
-                  </Button>
-                </div>
+          <Card 
+            className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border-dashed border-2 border-cyan-200 hover:border-cyan-300"
+            data-tour="create-new-org"
+          >
+            <CardHeader className="pb-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl flex items-center justify-center">
+                <Plus className="w-6 h-6 text-cyan-600" />
               </div>
-            </DialogContent>
-          </Dialog>
+              <CardTitle className="text-lg text-cyan-600">Create New Organization</CardTitle>
+              <CardDescription className="text-sm">
+                Start a new organization
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex items-center text-sm text-cyan-600">
+                <ArrowRight className="w-4 h-4 mr-1" />
+                <span>Get started</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Error Display */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert" aria-live="polite">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
-              <div className="w-5 h-5 text-red-500 mr-2" aria-hidden="true">⚠️</div>
+              <div className="w-5 h-5 text-red-500 mr-2">⚠️</div>
               <p className="text-red-700">{error}</p>
             </div>
           </div>
@@ -441,16 +302,15 @@ export default function SelectOrgPage() {
             onClick={handleSelectOrg}
             disabled={!selectedOrgId || loading}
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
-            aria-label={selectedOrgId ? "Continue to dashboard with selected organization" : "Please select an organization first"}
           >
             {loading ? (
               <>
-                <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Processing...
               </>
             ) : (
               <>
-                <ArrowRight className="w-4 h-4 mr-2" aria-hidden="true" />
+                <ArrowRight className="w-4 h-4 mr-2" />
                 Continue to Dashboard
               </>
             )}

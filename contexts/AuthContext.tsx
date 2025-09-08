@@ -1,30 +1,37 @@
-'use client'
+"use client"
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
-import { Organization, OrganizationType, ORGANIZATION_TYPES } from '@/types'
-import { getTerminologyByOrgType, getDefaultSettingsByOrgType } from '@/lib/content-system'
+import type React from "react"
+
+import { createContext, useContext, useEffect, useState } from "react"
+import type { User } from "@supabase/supabase-js"
+import { supabase } from "@/lib/supabase"
+import type { Nonprofit, OrganizationType } from "@/types"
+import { useAchievements } from "@/components/ui/achievement-system"
 
 interface AuthContextType {
   user: User | null
-  org: Organization | null
+  org: Nonprofit | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, orgName: string, website?: string, orgType?: OrganizationType) => Promise<void>
+  signUp: (
+    email: string,
+    password: string,
+    orgName: string,
+    website?: string,
+    orgType?: OrganizationType,
+    additionalData?: Record<string, any>,
+  ) => Promise<void>
   signOut: () => Promise<void>
-  setOrg: (org: Organization | null) => void
-  getOrgType: () => OrganizationType | null
-  getTerminology: () => Record<string, string>
-  getDefaultSettings: () => Record<string, any>
+  setOrg: (org: Nonprofit | null) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [org, setOrg] = useState<Organization | null>(null)
+  const [org, setOrg] = useState<Nonprofit | null>(null)
   const [loading, setLoading] = useState(true)
+  const { updateAchievement } = useAchievements()
 
   useEffect(() => {
     // Get initial session
@@ -38,18 +45,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          // Don't automatically fetch org - let user select
-          setLoading(false)
-        } else {
-          setOrg(null)
-          setLoading(false)
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        // Don't automatically fetch org - let user select
+        setLoading(false)
+      } else {
+        setOrg(null)
+        setLoading(false)
       }
-    )
+    })
 
     return () => subscription.unsubscribe()
   }, [])
@@ -57,32 +64,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchOrg = async (userId: string) => {
     try {
       // Get user's org_id from their metadata
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       const orgId = user?.user_metadata?.org_id
 
-      console.log('Fetching org for user:', userId, 'orgId:', orgId)
+      console.log("Fetching org for user:", userId, "orgId:", orgId)
 
       if (orgId) {
-        const { data, error } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('id', orgId)
-          .single()
+        const { data, error } = await supabase.from("nonprofits").select("*").eq("id", orgId).single()
 
-        console.log('Org fetch result:', { data, error })
+        console.log("Org fetch result:", { data, error })
 
         if (!error && data) {
           setOrg(data)
-          console.log('Organization set:', data)
+          console.log("Organization set:", data)
         } else {
-          console.error('Organization not found or error:', error)
+          console.error("Organization not found or error:", error)
           // Don't set org if it doesn't exist, but don't get stuck loading
         }
       } else {
-        console.log('No org_id found in user metadata')
+        console.log("No org_id found in user metadata")
       }
     } catch (error) {
-      console.error('Error fetching org:', error)
+      console.error("Error fetching org:", error)
     } finally {
       setLoading(false)
     }
@@ -94,29 +99,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     })
     if (error) throw error
-    
+
     // Trigger first login achievement
     if (data.user) {
-      try {
-        const { useAchievements } = await import('@/components/ui/achievement-system')
-        const { updateAchievement } = useAchievements()
-        updateAchievement('first-login', 1)
-      } catch (err) {
-        console.log('Achievement system not available:', err)
-      }
+      updateAchievement("first-login", 1)
     }
   }
 
-  const signUp = async (email: string, password: string, orgName: string, website?: string, orgType: OrganizationType = 'nonprofit') => {
-    console.log('AuthContext signUp called with:', { email, orgName, website, orgType })
+  const signUp = async (
+    email: string,
+    password: string,
+    orgName: string,
+    website?: string,
+    orgType: OrganizationType = "nonprofit",
+    additionalData?: Record<string, any>,
+  ) => {
+    console.log("AuthContext signUp called with:", { email, orgName, website, orgType, additionalData })
     try {
-      console.log('Starting signup process...')
-      
-      // Get default settings for organization type
-      const defaultSettings = getDefaultSettingsByOrgType(orgType)
-      
-      // First create the user account
-      console.log('Creating user account...')
+      console.log("Starting signup process...")
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -124,56 +125,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           data: {
             org_name: orgName,
             website: website || null,
-            org_type: orgType,
-            role: 'admin'
-          }
-        }
+            organization_type: orgType,
+            role: "admin",
+            ...additionalData,
+          },
+        },
       })
 
       if (error) {
-        console.error('Auth signup error:', error)
+        console.error("Auth signup error:", error)
         throw error
       }
 
-      console.log('Signup successful:', data)
-      
-      // Check if email confirmation is required
+      console.log("Signup successful:", data)
+
       if (data.user && !data.session) {
-        console.log('Email confirmation required. Please check your email.')
-        // Don't throw an error, just inform the user
+        console.log("Email confirmation required. Please check your email.")
         return
       }
-      
-      // If user is immediately authenticated, create the organization
+
       if (data.user && data.session) {
-        console.log('User authenticated, creating organization...')
-        const { data: org, error: orgError } = await supabase
-          .from('organizations')
-          .insert({
-            name: orgName,
-            website: website || null,
-            organization_type: orgType,
-            brand_color: '#3B82F6',
-            show_powered_by: defaultSettings.showPoweredBy,
-            metadata: {
-              // Add type-specific metadata
-              ...(orgType === 'nonprofit' && { tax_exempt_status: false }),
-              ...(orgType === 'business' && { industry: 'General' }),
-              ...(orgType === 'grassroots' && { community_focus: 'General' })
-            }
-          })
-          .select()
-          .single()
+        console.log("User authenticated, creating organization...")
+        const orgData: any = {
+          name: orgName,
+          website: website || null,
+          organization_type: orgType,
+          brand_color: "#3B82F6",
+          is_active: true,
+        }
+
+        // Add type-specific fields
+        if (additionalData) {
+          if (orgType === "nonprofit") {
+            if (additionalData.einNumber) orgData.ein_number = additionalData.einNumber
+            if (additionalData.fiscalSponsor) orgData.fiscal_sponsor = additionalData.fiscalSponsor
+            orgData.tax_exempt_status = additionalData.taxExemptStatus || false
+          } else if (orgType === "business") {
+            if (additionalData.industry) orgData.industry = additionalData.industry
+            if (additionalData.businessRegistration) orgData.business_registration = additionalData.businessRegistration
+            if (additionalData.csrFocusAreas) orgData.csr_focus_areas = additionalData.csrFocusAreas
+          }
+        }
+
+        const { data: org, error: orgError } = await supabase.from("nonprofits").insert(orgData).select().single()
 
         if (orgError) {
-          console.error('Org creation error:', orgError)
+          console.error("Org creation error:", orgError)
           throw orgError
         }
 
-        console.log('Organization created:', org)
+        console.log("Organization created:", org)
       }
     } catch (error) {
-      console.error('Signup error:', error)
+      console.error("Signup error:", error)
       throw error
     }
   }
@@ -181,23 +185,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
-  }
-
-  // Helper functions for organization type management
-  const getOrgType = (): OrganizationType | null => {
-    return org?.organization_type || null
-  }
-
-  const getTerminology = (): Record<string, string> => {
-    const orgType = getOrgType()
-    if (!orgType) return {}
-    return getTerminologyByOrgType(orgType)
-  }
-
-  const getDefaultSettings = (): Record<string, any> => {
-    const orgType = getOrgType()
-    if (!orgType) return {}
-    return getDefaultSettingsByOrgType(orgType)
   }
 
   const value = {
@@ -208,22 +195,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     setOrg,
-    getOrgType,
-    getTerminology,
-    getDefaultSettings,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider")
   }
   return context
 }

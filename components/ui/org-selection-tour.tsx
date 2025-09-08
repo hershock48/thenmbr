@@ -97,14 +97,6 @@ export function OrgSelectionTour({ isOpen, onClose, onComplete }: OrgSelectionTo
     if (currentStep < orgTourSteps.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
-      // Trigger tour completion achievement
-      try {
-        const { useAchievements } = require('@/components/ui/achievement-system')
-        const { updateAchievement } = useAchievements()
-        updateAchievement('tour-completed', 1)
-      } catch (err) {
-        console.log('Achievement system not available:', err)
-      }
       onComplete()
     }
   }
@@ -221,7 +213,7 @@ export function OrgSelectionTour({ isOpen, onClose, onComplete }: OrgSelectionTo
 
       {/* Highlight Overlay for Current Step */}
       {currentStepData && (
-        <div className="fixed inset-0 z-40 pointer-events-none">
+        <div className="fixed inset-0 z-45 pointer-events-none">
           {(() => {
             const element = document.querySelector(`[data-tour="${currentStepData.target}"]`)
             if (element) {

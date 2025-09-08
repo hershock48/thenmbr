@@ -13,7 +13,6 @@ import {
   Shield,
   Clock,
   Users,
-  Zap,
   CreditCard,
   Smartphone,
   X,
@@ -29,6 +28,67 @@ interface DonationFlowProps {
   onBack: () => void
 }
 
+const getDonationContext = (orgType: "nonprofit" | "grassroots" | "business" = "nonprofit") => {
+  const contexts = {
+    nonprofit: {
+      actionLabel: "Donate",
+      actionVerb: "donated",
+      supportLabel: "supporters",
+      impactTitle: "Your Impact",
+      followLabel: "Follow Story",
+      donateLabel: "Donate & Follow Story",
+      connectionTitle: "Stay Connected to Your Story",
+      connectionDescription:
+        "Get exclusive updates - see how your support is making a real difference in someone's life.",
+      benefitsList: [
+        "• Exclusive updates on this specific story's progress",
+        "• Photos and videos showing your impact in action",
+        "• Milestone celebrations when goals are reached",
+        "• Direct connection to the person you're helping",
+      ],
+      urgencyMessage: "left to reach our goal!",
+      recentActivity: "Recent Donations",
+    },
+    grassroots: {
+      actionLabel: "Support",
+      actionVerb: "contributed",
+      supportLabel: "supporters",
+      impactTitle: "Your Community Impact",
+      followLabel: "Follow Project",
+      donateLabel: "Support & Follow Project",
+      connectionTitle: "Stay Connected to Your Project",
+      connectionDescription: "Get exclusive updates - see how your community support is building something amazing.",
+      benefitsList: [
+        "• Exclusive updates on this community project's progress",
+        "• Photos and videos of the project in action",
+        "• Milestone celebrations when goals are reached",
+        "• Direct connection to your local community impact",
+      ],
+      urgencyMessage: "left to complete our community goal!",
+      recentActivity: "Recent Community Support",
+    },
+    business: {
+      actionLabel: "Contribute",
+      actionVerb: "contributed",
+      supportLabel: "customers",
+      impactTitle: "Your Purchase Impact",
+      followLabel: "Follow Impact",
+      donateLabel: "Contribute & Follow Impact",
+      connectionTitle: "Track Your Impact Story",
+      connectionDescription: "Get exclusive updates - see how your purchase is creating positive change in the world.",
+      benefitsList: [
+        "• Exclusive updates on this impact story's progress",
+        "• Photos and videos showing change in action",
+        "• Milestone celebrations when goals are reached",
+        "• Direct connection to the positive change you're creating",
+      ],
+      urgencyMessage: "left to reach our impact goal!",
+      recentActivity: "Recent Customer Contributions",
+    },
+  }
+  return contexts[orgType]
+}
+
 export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, onBack }: DonationFlowProps) {
   const [donationAmount, setDonationAmount] = useState("")
   const [subscriberData, setSubscriberData] = useState({ email: "", firstName: "" })
@@ -39,6 +99,8 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
     { name: "Michael R.", amount: 25, time: "5 minutes ago" },
     { name: "Jennifer L.", amount: 100, time: "8 minutes ago" },
   ])
+
+  const context = getDonationContext(organization.organizationType)
 
   const getSmartAmounts = () => {
     const remaining = selectedNmbr.goal - selectedNmbr.raised
@@ -57,20 +119,39 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
   }
 
   const getImpactMessage = (amount: number) => {
-    const impactMap = {
-      15: "Provides clean water for 1 family for 1 week",
-      25: "Supplies school materials for 2 children",
-      35: "Funds medical supplies for 5 patients",
-      50: "Supports 1 family's basic needs for 1 month",
-      75: "Provides educational resources for 10 students",
-      100: "Funds clean water access for 2 families permanently",
+    const impactMaps = {
+      nonprofit: {
+        15: "Provides clean water for 1 family for 1 week",
+        25: "Supplies school materials for 2 children",
+        35: "Funds medical supplies for 5 patients",
+        50: "Supports 1 family's basic needs for 1 month",
+        75: "Provides educational resources for 10 students",
+        100: "Funds clean water access for 2 families permanently",
+      },
+      grassroots: {
+        15: "Supports 1 community garden plot for 1 month",
+        25: "Funds materials for 2 community workshops",
+        35: "Provides supplies for 5 local volunteers",
+        50: "Supports 1 community event for 100 people",
+        75: "Funds equipment for 10 community members",
+        100: "Supports 2 community projects permanently",
+      },
+      business: {
+        15: "Plants 3 trees through our reforestation partner",
+        25: "Provides 5 meals through our food security program",
+        35: "Funds clean energy for 1 household for 1 month",
+        50: "Supports 1 entrepreneur in developing communities",
+        75: "Provides educational resources for 10 students",
+        100: "Funds sustainable livelihood for 2 families",
+      },
     }
 
+    const impactMap = impactMaps[organization.organizationType || "nonprofit"]
     const closestAmount = Object.keys(impactMap).reduce((prev, curr) =>
       Math.abs(Number(curr) - amount) < Math.abs(Number(prev) - amount) ? curr : prev,
     )
 
-    return impactMap[closestAmount as unknown as keyof typeof impactMap] || "Makes a meaningful impact on lives"
+    return impactMap[closestAmount as keyof typeof impactMap] || "Makes a meaningful impact"
   }
 
   useEffect(() => {
@@ -87,54 +168,54 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
   const handleSubscribe = async () => {
     try {
       // Subscribe the user to the story
-      const subscriptionResponse = await fetch('/api/subscribers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const subscriptionResponse = await fetch("/api/subscribers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: subscriberData.email,
           firstName: subscriberData.firstName,
-          lastName: (subscriberData as any).lastName || '',
+          lastName: subscriberData.lastName || "",
           storyId: selectedNmbr.id,
           orgId: organization.id,
-          source: 'widget'
-        })
+          source: "widget",
+        }),
       })
 
       const subscriptionResult = await subscriptionResponse.json()
-      
+
       if (!subscriptionResult.success) {
-        throw new Error(subscriptionResult.error || 'Failed to subscribe to story updates')
+        throw new Error(subscriptionResult.error || "Failed to subscribe to story updates")
       }
 
       // Show success message
-      alert('Successfully subscribed! You\'ll receive updates about this story.')
+      alert("Successfully subscribed! You'll receive updates about this story.")
       onSuccess()
     } catch (error) {
-      console.error('Subscription error:', error)
-      alert('There was an error subscribing you. Please try again.')
+      console.error("Subscription error:", error)
+      alert("There was an error subscribing you. Please try again.")
     }
   }
 
   const handleDonate = async () => {
     try {
       // First, subscribe the user to the story
-      const subscriptionResponse = await fetch('/api/subscribers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const subscriptionResponse = await fetch("/api/subscribers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: subscriberData.email,
           firstName: subscriberData.firstName,
-          lastName: (subscriberData as any).lastName || '',
+          lastName: subscriberData.lastName || "",
           storyId: selectedNmbr.id,
           orgId: organization.id,
-          source: 'widget'
-        })
+          source: "widget",
+        }),
       })
 
       const subscriptionResult = await subscriptionResponse.json()
-      
+
       if (!subscriptionResult.success) {
-        throw new Error(subscriptionResult.error || 'Failed to subscribe to story updates')
+        throw new Error(subscriptionResult.error || "Failed to subscribe to story updates")
       }
 
       // Then process the donation
@@ -143,19 +224,19 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         paymentMethod,
         subscriber: subscriberData,
         nmbrId: selectedNmbr.id,
-        subscriptionId: subscriptionResult.subscriber.id
+        subscriptionId: subscriptionResult.subscriber.id,
       })
 
       // Simulate donation processing
       await new Promise((resolve) => setTimeout(resolve, 2000))
-      
+
       // In a real implementation, this would integrate with Stripe
       // and update the subscriber's donation stats
-      
+
       onSuccess()
     } catch (error) {
-      console.error('Donation error:', error)
-      alert('There was an error processing your donation. Please try again.')
+      console.error("Donation error:", error)
+      alert("There was an error processing your donation. Please try again.")
     }
   }
 
@@ -173,10 +254,10 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
           </div>
           <div>
             <h4 className="font-semibold text-orange-900">
-              Only ${remaining.toLocaleString()} left to reach our goal!
+              Only ${remaining.toLocaleString()} {context.urgencyMessage}
             </h4>
             <p className="text-sm text-orange-700">
-              {Math.round(100 - progress)}% remaining • {selectedNmbr.subscribers} supporters
+              {Math.round(100 - progress)}% remaining • {selectedNmbr.subscribers} {context.supportLabel}
             </p>
           </div>
         </div>
@@ -187,13 +268,13 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
       <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
         <div className="flex items-center gap-2 mb-3">
           <TrendingUp className="w-4 h-4 text-green-600" />
-          <span className="font-medium text-slate-900">Recent Support</span>
+          <span className="font-medium text-slate-900">{context.recentActivity}</span>
         </div>
         <div className="space-y-2">
           {recentDonors.map((donor, index) => (
             <div key={index} className="flex items-center justify-between text-sm">
               <span className="text-slate-700">
-                {donor.name} donated ${donor.amount}
+                {donor.name} {context.actionVerb} ${donor.amount}
               </span>
               <span className="text-slate-500">{donor.time}</span>
             </div>
@@ -201,23 +282,27 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         </div>
       </div>
 
-        {/* Combined Subscribe + Donate Form */}
-        <div className="space-y-6">
-          <div className="text-center space-y-3">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-100 to-purple-100 rounded-2xl flex items-center justify-center mb-4">
-              <Heart className="w-8 h-8 text-cyan-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-slate-900">Stay Connected to Your Story</h3>
-            <p className="text-base text-slate-600 max-w-md mx-auto">
-              Get exclusive updates on <strong>{selectedNmbr.title}</strong> - see how your support is making a real difference in someone's life.
-            </p>
-            <div className="bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-xl p-4">
-              <div className="flex items-center justify-center gap-2 text-sm text-cyan-700 font-medium">
-                <Users className="w-4 h-4" />
-                <span>{selectedNmbr.subscribers} people are already following this story</span>
-              </div>
+      {/* Combined Subscribe + Donate Form */}
+      <div className="space-y-6">
+        <div className="text-center space-y-3">
+          <div className="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-100 to-purple-100 rounded-2xl flex items-center justify-center mb-4">
+            <Heart className="w-8 h-8 text-cyan-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-slate-900">{context.connectionTitle}</h3>
+          <p className="text-base text-slate-600 max-w-md mx-auto">
+            Get exclusive updates on <strong>{selectedNmbr.title}</strong> -{" "}
+            {context.connectionDescription.split(" - ")[1]}
+          </p>
+          <div className="bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-xl p-4">
+            <div className="flex items-center justify-center gap-2 text-sm text-cyan-700 font-medium">
+              <Users className="w-4 h-4" />
+              <span>
+                {selectedNmbr.subscribers} people are already following this{" "}
+                {organization.organizationType === "grassroots" ? "project" : "story"}
+              </span>
             </div>
           </div>
+        </div>
 
         {/* Subscription Benefits */}
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
@@ -226,10 +311,9 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
             What you'll get as a subscriber:
           </h4>
           <ul className="text-sm text-green-700 space-y-1">
-            <li>• Exclusive updates on this specific story's progress</li>
-            <li>• Photos and videos showing your impact in action</li>
-            <li>• Milestone celebrations when goals are reached</li>
-            <li>• Direct connection to the person you're helping</li>
+            {context.benefitsList.map((benefit, index) => (
+              <li key={index}>{benefit}</li>
+            ))}
           </ul>
         </div>
 
@@ -237,7 +321,9 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         <div className="space-y-4">
           <div className="text-center">
             <h4 className="font-semibold text-slate-900 mb-1">Join the Story</h4>
-            <p className="text-sm text-slate-600">We'll send you updates about this specific story, not general newsletters</p>
+            <p className="text-sm text-slate-600">
+              We'll send you updates about this specific story, not general newsletters
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -313,7 +399,9 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
                 <Heart className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-green-900">Your ${donationAmount} Impact</h4>
+                <h4 className="font-semibold text-green-900">
+                  {context.impactTitle}: ${donationAmount}
+                </h4>
                 <p className="text-sm text-green-700">{getImpactMessage(Number(donationAmount))}</p>
               </div>
             </div>
@@ -381,20 +469,21 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         <div className="space-y-4">
           <div className="text-center">
             <p className="text-sm text-slate-600">
-              Choose how you'd like to support this story
+              Choose how you'd like to support this{" "}
+              {organization.organizationType === "grassroots" ? "project" : "story"}
             </p>
           </div>
-          
+
           {/* Subscribe Only Button */}
           <Button
             onClick={handleSubscribe}
             variant="outline"
-            className="w-full h-12 border-2 hover:bg-slate-50 transition-all duration-200"
+            className="w-full h-12 border-2 hover:bg-slate-50 transition-all duration-200 bg-transparent"
             disabled={!subscriberData.email || !subscriberData.firstName}
             style={{ borderColor: organization.primaryColor, color: organization.primaryColor }}
           >
             <Heart className="w-4 h-4 mr-2" />
-            Follow Story (Free Updates)
+            {context.followLabel} (Free Updates)
           </Button>
 
           {/* Donate Button */}
@@ -405,7 +494,7 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
             style={{ backgroundColor: organization.primaryColor }}
           >
             <DollarSign className="w-4 h-4 mr-2" />
-            Donate ${donationAmount} & Follow Story
+            {context.actionLabel} ${donationAmount} & {context.followLabel}
           </Button>
 
           <div className="flex space-x-3">
@@ -413,10 +502,11 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
               Back
             </Button>
           </div>
-          
+
           <div className="text-center">
             <p className="text-xs text-slate-500">
-              You can unsubscribe anytime. We only send updates about stories you're following.
+              You can unsubscribe anytime. We only send updates about{" "}
+              {organization.organizationType === "grassroots" ? "projects" : "stories"} you're following.
             </p>
           </div>
         </div>

@@ -86,4 +86,3 @@ CREATE POLICY "Allow all operations on users" ON users FOR ALL USING (true);
 CREATE POLICY "Allow all operations on nmbrs" ON nmbrs FOR ALL USING (true);
 CREATE POLICY "Allow all operations on subscribers" ON subscribers FOR ALL USING (true);
 CREATE POLICY "Allow all operations on donations" ON donations FOR ALL USING (true);
-

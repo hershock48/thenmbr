@@ -30,4 +30,3 @@ CREATE POLICY "Service role can update organizations" ON nonprofits
 -- Also allow the trigger function to work
 GRANT USAGE ON SCHEMA public TO postgres;
 GRANT ALL ON nonprofits TO postgres;
-

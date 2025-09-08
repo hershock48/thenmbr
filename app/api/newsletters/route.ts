@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { generateNewsletterHTML } from '@/lib/newsletter-templates'
 
 export async function POST(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Using the supabase client from lib/supabase.ts
+    const supabase = createClient()
 
     // Get story details
     const { data: story, error: storyError } = await supabase
@@ -106,8 +106,8 @@ export async function POST(request: NextRequest) {
     await supabase
       .from('email_campaigns')
       .update({
-        content: typeof htmlContent === 'string' ? htmlContent : (htmlContent as any).html || htmlContent,
-        subject: typeof htmlContent === 'string' ? 'Newsletter Update' : (htmlContent as any).subject || 'Newsletter Update'
+        content: htmlContent.html,
+        subject: htmlContent.subject
       })
       .eq('id', campaign.id)
 
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Organization ID required' }, { status: 400 })
     }
 
-    // Using the supabase client from lib/supabase.ts
+    const supabase = createClient()
 
     let query = supabase
       .from('email_campaigns')
@@ -238,7 +238,7 @@ async function sendNewsletterToSubscribers(
           subscriber_id: subscriber.id,
           event_type: 'bounced',
           event_data: {
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error.message,
             failed_at: new Date().toISOString(),
             story_id: story.id
           }

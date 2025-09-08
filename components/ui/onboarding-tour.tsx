@@ -129,14 +129,11 @@ export function OnboardingTour({ isOpen, onClose, onComplete }: OnboardingTourPr
     } else {
       // Mark tour as completed and trigger achievement
       try {
-        // Use static import instead of dynamic import
-        const { useAchievements } = require('@/components/ui/achievement-system')
+        const { useAchievements } = await import('@/components/ui/achievement-system')
         const { updateAchievement } = useAchievements()
         updateAchievement('tour-completed', 1)
       } catch (err) {
         console.log('Achievement system not available:', err)
-        // Fallback: just mark tour as completed in localStorage
-        localStorage.setItem('nmbr-tour-completed', 'true')
       }
       onComplete()
     }

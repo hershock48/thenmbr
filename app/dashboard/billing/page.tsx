@@ -1,5 +1,3 @@
-"use client"
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -15,19 +13,10 @@ import {
   Download,
 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useState, useEffect } from "react"
 
 export default function BillingPage() {
-  // State management
-  const [billingData, setBillingData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState("")
-  const [isDownloading, setIsDownloading] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
-
   // Mock data - in real app this would come from database
-  const mockBillingData = {
+  const billingData = {
     subscription: {
       status: "active",
       plan: "Professional",
@@ -63,132 +52,8 @@ export default function BillingPage() {
     ],
   }
 
-  // Load billing data
-  useEffect(() => {
-    const loadBillingData = async () => {
-      try {
-        setLoading(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        setBillingData(mockBillingData)
-      } catch (err) {
-        setError("Failed to load billing data. Please try again.")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadBillingData()
-  }, [])
-
-  // Helper functions
-  const handleDownloadInvoice = async () => {
-    try {
-      setIsDownloading(true)
-      // Simulate download
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setSuccess("Invoice downloaded successfully!")
-      setTimeout(() => setSuccess(""), 3000)
-    } catch (err) {
-      setError("Failed to download invoice. Please try again.")
-    } finally {
-      setIsDownloading(false)
-    }
-  }
-
-  const handleManageSubscription = () => {
-    // In a real app, this would redirect to subscription management
-    setSuccess("Redirecting to subscription management...")
-    setTimeout(() => setSuccess(""), 3000)
-  }
-
-  const handleSetupPayments = () => {
-    // In a real app, this would redirect to Stripe Connect setup
-    setSuccess("Redirecting to payment setup...")
-    setTimeout(() => setSuccess(""), 3000)
-  }
-
-  const handleUpdatePaymentMethod = () => {
-    // In a real app, this would open payment method update modal
-    setSuccess("Opening payment method update...")
-    setTimeout(() => setSuccess(""), 3000)
-  }
-
-  const handleManageStripe = () => {
-    // In a real app, this would redirect to Stripe dashboard
-    window.open("https://dashboard.stripe.com", "_blank")
-  }
-
-  const handleConnectStripe = () => {
-    // In a real app, this would redirect to Stripe Connect
-    setSuccess("Redirecting to Stripe Connect...")
-    setTimeout(() => setSuccess(""), 3000)
-  }
-
-  const handleSupportAction = (action: string) => {
-    setSuccess(`${action} - Redirecting to support...`)
-    setTimeout(() => setSuccess(""), 3000)
-  }
-
-  // Safe progress calculation
-  const calculateProgress = (current: number, limit: number) => {
-    if (limit === 0) return 0
-    return Math.min((current / limit) * 100, 100)
-  }
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="space-y-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading billing information...</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="space-y-8">
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Error:</strong> {error}
-            <Button 
-              variant="link" 
-              className="p-0 h-auto ml-2"
-              onClick={() => window.location.reload()}
-            >
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-8">
-      {/* Success Message */}
-      {success && (
-        <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-          <div className="w-4 h-4 text-green-500">✅</div>
-          <span className="text-green-700 text-sm">{success}</span>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setSuccess("")}
-            className="ml-auto text-green-500 hover:text-green-700"
-          >
-            ×
-          </Button>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -196,24 +61,11 @@ export default function BillingPage() {
           <p className="text-gray-600">Manage your subscription and payment processing</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline"
-            onClick={handleDownloadInvoice}
-            disabled={isDownloading}
-          >
-            {isDownloading ? (
-              <>
-                <div className="w-4 h-4 mr-2 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                Downloading...
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4 mr-2" />
-                Download Invoice
-              </>
-            )}
+          <Button variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            Download Invoice
           </Button>
-          <Button onClick={handleManageSubscription}>
+          <Button>
             <Settings className="w-4 h-4 mr-2" />
             Manage Subscription
           </Button>
@@ -226,11 +78,7 @@ export default function BillingPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             <strong>Payment processing not set up.</strong> Connect your Stripe account to start receiving donations.
-            <Button 
-              variant="link" 
-              className="p-0 h-auto ml-2"
-              onClick={handleSetupPayments}
-            >
+            <Button variant="link" className="p-0 h-auto ml-2">
               Set up payments
             </Button>
           </AlertDescription>
@@ -274,11 +122,7 @@ export default function BillingPage() {
                   <p className="text-sm text-gray-600">Payment method</p>
                   <p className="font-medium">{billingData.subscription.paymentMethod}</p>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleUpdatePaymentMethod}
-                >
+                <Button variant="outline" size="sm">
                   Update
                 </Button>
               </div>
@@ -301,7 +145,7 @@ export default function BillingPage() {
                     </span>
                   </div>
                   <Progress
-                    value={calculateProgress(billingData.usage.currentPeriod.donations, billingData.usage.limits.donations)}
+                    value={(billingData.usage.currentPeriod.donations / billingData.usage.limits.donations) * 100}
                   />
                 </div>
 
@@ -314,7 +158,9 @@ export default function BillingPage() {
                     </span>
                   </div>
                   <Progress
-                    value={calculateProgress(billingData.usage.currentPeriod.donationVolume, billingData.usage.limits.donationVolume)}
+                    value={
+                      (billingData.usage.currentPeriod.donationVolume / billingData.usage.limits.donationVolume) * 100
+                    }
                   />
                 </div>
 
@@ -326,7 +172,7 @@ export default function BillingPage() {
                     </span>
                   </div>
                   <Progress
-                    value={calculateProgress(billingData.usage.currentPeriod.subscribers, billingData.usage.limits.subscribers)}
+                    value={(billingData.usage.currentPeriod.subscribers / billingData.usage.limits.subscribers) * 100}
                   />
                 </div>
 
@@ -339,7 +185,7 @@ export default function BillingPage() {
                     </span>
                   </div>
                   <Progress
-                    value={calculateProgress(billingData.usage.currentPeriod.widgetViews, billingData.usage.limits.widgetViews)}
+                    value={(billingData.usage.currentPeriod.widgetViews / billingData.usage.limits.widgetViews) * 100}
                   />
                 </div>
               </div>
@@ -422,12 +268,7 @@ export default function BillingPage() {
                       </span>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full bg-transparent"
-                    onClick={handleManageStripe}
-                  >
+                  <Button variant="outline" size="sm" className="w-full bg-transparent">
                     <ExternalLink className="w-4 h-4 mr-2" />
                     Manage in Stripe
                   </Button>
@@ -441,12 +282,7 @@ export default function BillingPage() {
                   <p className="text-sm text-gray-600">
                     Connect your Stripe account to start receiving donations directly.
                   </p>
-                  <Button 
-                    className="w-full"
-                    onClick={handleConnectStripe}
-                  >
-                    Connect Stripe Account
-                  </Button>
+                  <Button className="w-full">Connect Stripe Account</Button>
                 </>
               )}
             </CardContent>
@@ -492,28 +328,13 @@ export default function BillingPage() {
               <CardDescription>Get support with billing and payments</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start bg-transparent"
-                onClick={() => handleSupportAction("View Documentation")}
-              >
+              <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
                 View Documentation
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start bg-transparent"
-                onClick={() => handleSupportAction("Contact Support")}
-              >
+              <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
                 Contact Support
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full justify-start bg-transparent"
-                onClick={() => handleSupportAction("Report an Issue")}
-              >
+              <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
                 Report an Issue
               </Button>
             </CardContent>
