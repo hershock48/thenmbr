@@ -7,105 +7,113 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
-  DollarSign, 
+  Hash, 
   Search, 
   Filter, 
   Eye, 
   Edit, 
   MoreHorizontal,
-  TrendingUp,
+  Building2,
   Calendar,
-  Building2
+  TrendingUp
 } from "lucide-react"
 
-interface RevenueRecord {
+interface NMBR {
   id: string
+  number: string
   organization: string
   organizationType: 'business' | 'nonprofit'
-  plan: 'basic' | 'pro' | 'enterprise'
-  amount: number
-  status: 'paid' | 'pending' | 'failed'
+  story: string
+  status: 'active' | 'inactive' | 'suspended'
   createdAt: string
-  nextBilling: string
-  nmbrCount: number
+  lastSearched: string
+  searchCount: number
+  views: number
 }
 
-const mockRevenue: RevenueRecord[] = [
+const mockNMBRs: NMBR[] = [
   {
     id: '1',
+    number: 'NMBR-001',
     organization: 'Ethiopian Coffee Co.',
     organizationType: 'business',
-    plan: 'pro',
-    amount: 99,
-    status: 'paid',
+    story: 'The Journey of Our Coffee Beans',
+    status: 'active',
     createdAt: '2024-01-15',
-    nextBilling: '2024-02-15',
-    nmbrCount: 12
+    lastSearched: '2024-01-20',
+    searchCount: 45,
+    views: 120
   },
   {
     id: '2',
+    number: 'NMBR-002',
     organization: 'Clean Water Foundation',
     organizationType: 'nonprofit',
-    plan: 'basic',
-    amount: 0,
-    status: 'paid',
+    story: 'Bringing Clean Water to Communities',
+    status: 'active',
     createdAt: '2024-01-10',
-    nextBilling: '2024-02-10',
-    nmbrCount: 15
+    lastSearched: '2024-01-19',
+    searchCount: 78,
+    views: 200
   },
   {
     id: '3',
+    number: 'NMBR-003',
     organization: 'Sustainable Fashion Co.',
     organizationType: 'business',
-    plan: 'enterprise',
-    amount: 299,
-    status: 'paid',
+    story: 'Sustainable Fashion Revolution',
+    status: 'active',
     createdAt: '2024-01-12',
-    nextBilling: '2024-02-12',
-    nmbrCount: 8
+    lastSearched: '2024-01-18',
+    searchCount: 32,
+    views: 85
   },
   {
     id: '4',
+    number: 'NMBR-004',
     organization: 'Local Food Bank',
     organizationType: 'nonprofit',
-    plan: 'basic',
-    amount: 0,
-    status: 'paid',
+    story: 'Fighting Hunger in Our Community',
+    status: 'inactive',
     createdAt: '2024-01-05',
-    nextBilling: '2024-02-05',
-    nmbrCount: 6
+    lastSearched: '2024-01-15',
+    searchCount: 12,
+    views: 30
   },
   {
     id: '5',
+    number: 'NMBR-005',
     organization: 'Tech Startup Inc.',
     organizationType: 'business',
-    plan: 'pro',
-    amount: 99,
-    status: 'pending',
+    story: 'Innovation in Technology',
+    status: 'suspended',
     createdAt: '2024-01-08',
-    nextBilling: '2024-02-08',
-    nmbrCount: 3
+    lastSearched: '2024-01-12',
+    searchCount: 5,
+    views: 15
   }
 ]
 
-export default function RevenuePage() {
+export default function NMBRsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('all')
   const [filterStatus, setFilterStatus] = useState('all')
 
-  const filteredRevenue = mockRevenue.filter(record => {
-    const matchesSearch = record.organization.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = filterType === 'all' || record.organizationType === filterType
-    const matchesStatus = filterStatus === 'all' || record.status === filterStatus
+  const filteredNMBRs = mockNMBRs.filter(nmbr => {
+    const matchesSearch = nmbr.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         nmbr.organization.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         nmbr.story.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === 'all' || nmbr.organizationType === filterType
+    const matchesStatus = filterStatus === 'all' || nmbr.status === filterStatus
     
     return matchesSearch && matchesType && matchesStatus
   })
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800'
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'failed': return 'bg-red-100 text-red-800'
+      case 'active': return 'bg-green-100 text-green-800'
+      case 'inactive': return 'bg-yellow-100 text-yellow-800'
+      case 'suspended': return 'bg-red-100 text-red-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -114,32 +122,19 @@ export default function RevenuePage() {
     return type === 'business' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
   }
 
-  const getPlanColor = (plan: string) => {
-    switch (plan) {
-      case 'basic': return 'bg-gray-100 text-gray-800'
-      case 'pro': return 'bg-blue-100 text-blue-800'
-      case 'enterprise': return 'bg-purple-100 text-purple-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const totalRevenue = mockRevenue.reduce((sum, record) => sum + record.amount, 0)
-  const paidRevenue = mockRevenue.filter(r => r.status === 'paid').reduce((sum, record) => sum + record.amount, 0)
-  const pendingRevenue = mockRevenue.filter(r => r.status === 'pending').reduce((sum, record) => sum + record.amount, 0)
-
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Revenue Management</h1>
-            <p className="text-muted-foreground">Track revenue, subscriptions, and billing</p>
+            <h1 className="text-3xl font-bold text-foreground">NMBR Management</h1>
+            <p className="text-muted-foreground">Track and manage all NMBRs on the platform</p>
           </div>
           <div className="flex items-center gap-4">
-            <Button onClick={() => window.open('/admin/revenue/report', '_blank')}>
-              <DollarSign className="w-4 h-4 mr-2" />
-              Generate Report
+            <Button onClick={() => window.open('/admin/nmbrs/new', '_blank')}>
+              <Hash className="w-4 h-4 mr-2" />
+              Generate NMBR
             </Button>
           </div>
         </div>
@@ -148,47 +143,53 @@ export default function RevenuePage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total NMBRs</CardTitle>
+              <Hash className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">All time</p>
+              <div className="text-2xl font-bold">{mockNMBRs.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {mockNMBRs.filter(nmbr => nmbr.status === 'active').length} active
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Paid Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Searches</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${paidRevenue.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">Confirmed payments</p>
+              <div className="text-2xl font-bold">
+                {mockNMBRs.reduce((sum, nmbr) => sum + nmbr.searchCount, 0)}
+              </div>
+              <p className="text-xs text-muted-foreground">All time searches</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Revenue</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${pendingRevenue.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">Awaiting payment</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
-              <Building2 className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+              <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {mockRevenue.filter(r => r.status === 'paid').length}
+                {mockNMBRs.reduce((sum, nmbr) => sum + nmbr.views, 0)}
               </div>
-              <p className="text-xs text-muted-foreground">Paid subscriptions</p>
+              <p className="text-xs text-muted-foreground">Story page views</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Avg. Searches</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {Math.round(mockNMBRs.reduce((sum, nmbr) => sum + nmbr.searchCount, 0) / mockNMBRs.length)}
+              </div>
+              <p className="text-xs text-muted-foreground">Per NMBR</p>
             </CardContent>
           </Card>
         </div>
@@ -196,9 +197,9 @@ export default function RevenuePage() {
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle>Revenue Records</CardTitle>
+            <CardTitle>NMBR Management</CardTitle>
             <CardDescription>
-              Search and filter revenue records by organization type, status, and other criteria
+              Search and filter NMBRs by organization type, status, and other criteria
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -206,7 +207,7 @@ export default function RevenuePage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search organizations..."
+                  placeholder="Search NMBRs..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -229,77 +230,76 @@ export default function RevenuePage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Revenue Table */}
+            {/* NMBRs Table */}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">NMBR</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Organization</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Type</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Plan</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Amount</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Story</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Status</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">NMBRs</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Searches</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Views</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Created</th>
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Next Billing</th>
                     <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRevenue.map((record) => (
-                    <tr key={record.id} className="border-b border-border hover:bg-muted/50">
+                  {filteredNMBRs.map((nmbr) => (
+                    <tr key={nmbr.id} className="border-b border-border hover:bg-muted/50">
                       <td className="py-3 px-4">
-                        <div className="text-sm text-foreground">{record.organization}</div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <Badge className={getTypeColor(record.organizationType)}>
-                          {record.organizationType === 'business' ? 'Business' : 'Nonprofit'}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4">
-                        <Badge className={getPlanColor(record.plan)}>
-                          {record.plan}
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="font-medium">
-                          {record.amount === 0 ? 'Free' : `$${record.amount}`}
+                        <div className="flex items-center gap-2">
+                          <Hash className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-mono font-medium text-foreground">{nmbr.number}</span>
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <Badge className={getStatusColor(record.status)}>
-                          {record.status}
+                        <div className="text-sm text-foreground">{nmbr.organization}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge className={getTypeColor(nmbr.organizationType)}>
+                          {nmbr.organizationType === 'business' ? 'Business' : 'Nonprofit'}
                         </Badge>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-medium">{record.nmbrCount}</div>
+                        <div className="text-sm text-foreground max-w-xs truncate">{nmbr.story}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge className={getStatusColor(nmbr.status)}>
+                          {nmbr.status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-medium">{nmbr.searchCount}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-medium">{nmbr.views}</div>
                       </td>
                       <td className="py-3 px-4 text-sm text-muted-foreground">
-                        {new Date(record.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-muted-foreground">
-                        {new Date(record.nextBilling).toLocaleDateString()}
+                        {new Date(nmbr.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
                           <Button 
                             variant="ghost" 
                             size="sm"
-                            onClick={() => window.open(`/admin/revenue/${record.id}`, '_blank')}
+                            onClick={() => window.open(`/admin/nmbrs/${nmbr.id}`, '_blank')}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button 
                             variant="ghost" 
                             size="sm"
-                            onClick={() => window.open(`/admin/revenue/${record.id}/edit`, '_blank')}
+                            onClick={() => window.open(`/admin/nmbrs/${nmbr.id}/edit`, '_blank')}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -307,8 +307,8 @@ export default function RevenuePage() {
                             variant="ghost" 
                             size="sm"
                             onClick={() => {
-                              // View payment details
-                              console.log(`View payment details for ${record.id}`)
+                              // Toggle NMBR status
+                              console.log(`Toggle NMBR ${nmbr.id} status`)
                             }}
                           >
                             <MoreHorizontal className="h-4 w-4" />
@@ -321,9 +321,9 @@ export default function RevenuePage() {
               </table>
             </div>
 
-            {filteredRevenue.length === 0 && (
+            {filteredNMBRs.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
-                No revenue records found matching your criteria.
+                No NMBRs found matching your criteria.
               </div>
             )}
           </CardContent>

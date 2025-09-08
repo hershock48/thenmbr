@@ -42,6 +42,7 @@ import {
   RefreshCw
 } from "lucide-react"
 import { useOrganization } from "@/contexts/OrganizationContext"
+import { AIWritingAssistant } from "@/components/ui/ai-writing-assistant"
 
 interface NewsletterBlock {
   id: string
@@ -55,9 +56,14 @@ interface NewsletterBuilderProps {
   organizationId: string
   onSave: (newsletter: any) => void
   onSend: (newsletter: any) => void
+  audience?: {
+    type: 'all' | 'specific'
+    selectedStories: string[]
+    totalRecipients: number
+  }
 }
 
-const blockTypes = [
+const getBlockTypes = (orgType: string) => [
   { 
     type: 'heading', 
     label: 'Heading', 
@@ -139,7 +145,7 @@ const blockTypes = [
   ] : [])
 ]
 
-export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSend }: NewsletterBuilderProps) {
+export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSend, audience }: NewsletterBuilderProps) {
   const { terminology, orgType } = useOrganization()
   const [blocks, setBlocks] = useState<NewsletterBlock[]>([
     {
@@ -381,6 +387,43 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
     processDonation(amount, donationState.donorEmail, donationState.donorName)
   }
 
+  const sendNewsletter = async () => {
+    if (!audience || audience.totalRecipients === 0) {
+      alert('Please select an audience for your newsletter')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/newsletters/audience', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          organizationId,
+          storyIds: audience.type === 'specific' ? audience.selectedStories : [],
+          newsletterContent: {
+            blocks,
+            subject: blocks.find(b => b.type === 'heading')?.content.text || 'Newsletter Update',
+            audience: audience
+          }
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        alert(`Newsletter sent successfully to ${data.recipientCount} recipients!`)
+        onSend({ blocks, audience })
+      } else {
+        throw new Error(data.error || 'Failed to send newsletter')
+      }
+    } catch (error) {
+      console.error('Newsletter send error:', error)
+      alert('Failed to send newsletter. Please try again.')
+    }
+  }
+
   // AI Writing Assistance Functions
   const getWritingPrompts = (blockType: string) => {
     const prompts = {
@@ -553,9 +596,20 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
         const HeadingTag = `h${block.content.level || 2}` as keyof JSX.IntrinsicElements
         return (
           <div>
-            <HeadingTag className="font-bold text-gray-900 mb-2">
-              {block.content.text}
-            </HeadingTag>
+            <div className="flex items-center justify-between mb-2">
+              <HeadingTag className="font-bold text-gray-900 flex-1">
+                {block.content.text}
+              </HeadingTag>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSelectedBlock(selectedBlock === block.id ? null : block.id)}
+                className="ml-2 flex items-center gap-1"
+              >
+                <Wand2 className="h-3 w-3" />
+                AI
+              </Button>
+            </div>
             {selectedBlock === block.id && (
               <div className="space-y-2">
                 <Label>Heading Text</Label>
@@ -585,19 +639,28 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
       case 'text':
         return (
           <div>
-            <p className="text-gray-700 mb-2">
-              {block.content.text}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-700 flex-1">
+                {block.content.text}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSelectedBlock(selectedBlock === block.id ? null : block.id)}
+                className="ml-2 flex items-center gap-1"
+              >
+                <Wand2 className="h-3 w-3" />
+                AI
+              </Button>
+            </div>
             {selectedBlock === block.id && (
-              <div className="space-y-2">
-                <Label>Text Content</Label>
-                <Textarea
-                  value={block.content.text}
-                  onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                  placeholder="Enter your text here..."
-                  rows={4}
-                />
-              </div>
+              <AIWritingAssistant
+                currentText={block.content.text}
+                onTextChange={(text) => updateBlock(block.id, { text })}
+                context="newsletter"
+                placeholder="Enter your text here..."
+                className="mt-2"
+              />
             )}
           </div>
         )
@@ -1128,7 +1191,7 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
       <div className="w-80 bg-gray-50 border-r p-4 overflow-y-auto">
         <h3 className="font-semibold mb-4">Add Content Blocks</h3>
         <div className="space-y-2">
-          {blockTypes.map((blockType) => (
+          {getBlockTypes(orgType || 'business').map((blockType) => (
             <Button
               key={blockType.type}
               variant="outline"
@@ -1170,9 +1233,14 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
               <Save className="h-4 w-4 mr-2" />
               Save Draft
             </Button>
-            <Button size="sm" onClick={() => onSend({ blocks })}>
+            <Button size="sm" onClick={sendNewsletter}>
               <Send className="h-4 w-4 mr-2" />
               Send Newsletter
+              {audience && audience.totalRecipients > 0 && (
+                <span className="ml-2 text-xs bg-primary/20 px-2 py-1 rounded">
+                  to {audience.totalRecipients} people
+                </span>
+              )}
             </Button>
           </div>
         </div>

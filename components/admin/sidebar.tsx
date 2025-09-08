@@ -3,16 +3,16 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Building2, DollarSign, Users, Settings, BarChart3, Shield, AlertTriangle } from "lucide-react"
+import { LayoutDashboard, Building2, DollarSign, Users, Settings, BarChart3, Hash } from "lucide-react"
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Nonprofits", href: "/admin/nonprofits", icon: Building2 },
+  { name: "Analytics", href: "/admin/dashboard", icon: BarChart3 },
+  { name: "Organizations", href: "/admin/organizations", icon: Building2 },
   { name: "Revenue", href: "/admin/revenue", icon: DollarSign },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Users", href: "/admin/users", icon: Users },
-  { name: "Moderation", href: "/admin/moderation", icon: Shield },
-  { name: "System Health", href: "/admin/system", icon: AlertTriangle },
+  { name: "Team", href: "/admin/team", icon: Users },
+  { name: "NMBRs", href: "/admin/nmbrs", icon: Hash },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 

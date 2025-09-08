@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Menu, X, User, LogOut } from "lucide-react"
+import { Search, Menu, X, User, LogOut, Bell } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { useSignOut } from "@/hooks/use-signout"
@@ -52,6 +52,7 @@ export function GlobalHeader({
 
   const authNavigation = user ? [
     { name: 'Dashboard', href: '/dashboard' },
+    { name: 'AI Stories', href: '/dashboard/ai-stories' },
     { name: 'Settings', href: '/dashboard/settings' },
   ] : [
     { name: 'Sign In', href: '/login' },
@@ -101,6 +102,15 @@ export function GlobalHeader({
                 <div className="flex items-center space-x-4">
                   {user ? (
                     <div className="flex items-center space-x-3">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="relative"
+                        onClick={() => router.push('/dashboard/notifications')}
+                      >
+                        <Bell className="h-4 w-4" />
+                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">3</span>
+                      </Button>
                       <span className="text-sm text-gray-700">
                         {org?.name || 'Organization'}
                       </span>
@@ -269,15 +279,27 @@ export function GlobalHeader({
                   <div className="pt-4 border-t border-gray-200">
                     {user ? (
                       <div className="space-y-2">
-                        <div className="text-sm text-gray-700">
+                        <div className="text-sm text-gray-700 mb-3">
                           {user.name || 'User'}
+                        </div>
+                        <div className="space-y-2">
+                          {authNavigation.map((item) => (
+                            <Link
+                              key={item.name}
+                              href={item.href}
+                              className="block text-gray-700 hover:text-cyan-600 transition-colors py-1"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={handleSignOut}
                           disabled={isSigningOut}
-                          className="w-full"
+                          className="w-full mt-3"
                         >
                           {isSigningOut ? 'Signing Out...' : 'Sign Out'}
                         </Button>

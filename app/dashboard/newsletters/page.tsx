@@ -767,10 +767,15 @@ export default function NewslettersPage() {
                 value={block.content.level.toString()}
                 onValueChange={(value) => updateBlock(blockId, { level: parseInt(value) })}
               >
-                <SelectItem value="1">H1</SelectItem>
-                <SelectItem value="2">H2</SelectItem>
-                <SelectItem value="3">H3</SelectItem>
-                <SelectItem value="4">H4</SelectItem>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select heading level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">H1</SelectItem>
+                  <SelectItem value="2">H2</SelectItem>
+                  <SelectItem value="3">H3</SelectItem>
+                  <SelectItem value="4">H4</SelectItem>
+                </SelectContent>
               </Select>
             </div>
           </>
@@ -809,9 +814,14 @@ export default function NewslettersPage() {
                 value={block.content.style}
                 onValueChange={(value) => updateBlock(blockId, { style: value })}
               >
-                <SelectItem value="primary">Primary</SelectItem>
-                <SelectItem value="secondary">Secondary</SelectItem>
-                <SelectItem value="outline">Outline</SelectItem>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select button style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="primary">Primary</SelectItem>
+                  <SelectItem value="secondary">Secondary</SelectItem>
+                  <SelectItem value="outline">Outline</SelectItem>
+                </SelectContent>
               </Select>
             </div>
           </>

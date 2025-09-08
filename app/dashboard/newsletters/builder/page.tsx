@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Save, Send, Eye, Download } from 'lucide-react'
 import { SimpleNewsletterBuilder } from '@/components/dashboard/simple-newsletter-builder'
+import { AudienceTargeting } from '@/components/dashboard/audience-targeting'
 
 export default function NewsletterBuilderPage() {
   const { org } = useAuth()
@@ -14,6 +15,11 @@ export default function NewsletterBuilderPage() {
   const searchParams = useSearchParams()
   const [storyId, setStoryId] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [audience, setAudience] = useState({
+    type: 'all' as 'all' | 'specific',
+    selectedStories: [] as string[],
+    totalRecipients: 0
+  })
 
   useEffect(() => {
     // Get story ID from URL params or use first available story
@@ -32,8 +38,13 @@ export default function NewsletterBuilderPage() {
 
   const handleSend = (newsletter: any) => {
     console.log('Newsletter sent:', newsletter)
+    console.log('Audience:', audience)
     // Show success message
     // Optionally redirect back to newsletters list
+  }
+
+  const handleAudienceChange = (newAudience: any) => {
+    setAudience(newAudience)
   }
 
   const handleBack = () => {
@@ -97,12 +108,26 @@ export default function NewsletterBuilderPage() {
 
       {/* Newsletter Builder */}
       <div className="flex-1">
-        <SimpleNewsletterBuilder
-          storyId={storyId}
-          organizationId={org?.id || ''}
-          onSave={handleSave}
-          onSend={handleSend}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+          {/* Audience Targeting Sidebar */}
+          <div className="lg:col-span-1">
+            <AudienceTargeting
+              organizationId={org?.id || ''}
+              onAudienceChange={handleAudienceChange}
+            />
+          </div>
+          
+          {/* Newsletter Builder */}
+          <div className="lg:col-span-2">
+            <SimpleNewsletterBuilder
+              storyId={storyId}
+              organizationId={org?.id || ''}
+              onSave={handleSave}
+              onSend={handleSend}
+              audience={audience}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useOrganization } from "@/contexts/OrganizationContext"
+import { AIWritingAssistant } from "@/components/ui/ai-writing-assistant"
 
 const industryTemplates = [
   // Business templates
@@ -130,12 +131,23 @@ export default function CreateStoryPage() {
     impactGoal: "",
     fundingGoal: "",
     currentFunding: "",
-    media: [] as { type: string; name: string; url: string }[],
+    media: [] as { type: string; name: string; url: string; file?: File }[],
   })
   const [showPreview, setShowPreview] = useState(false)
   const [nmbrCode, setNmbrCode] = useState<string | null>(null)
 
   const availableTemplates = industryTemplates.filter((template) => template.orgTypes.includes(orgType || "business"))
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      storyData.media.forEach(media => {
+        if (media.url && media.url.startsWith('blob:')) {
+          URL.revokeObjectURL(media.url)
+        }
+      })
+    }
+  }, [])
 
   const handleTemplateSelect = (templateId: string) => {
     const template = availableTemplates.find((t) => t.id === templateId)
@@ -151,23 +163,47 @@ export default function CreateStoryPage() {
   }
 
   const handleMediaUpload = (type: string) => {
-    // Simulate file upload
-    const newMedia = {
-      type,
-      name: `${type}-${Date.now()}.${type === "image" ? "jpg" : type === "video" ? "mp4" : "pdf"}`,
-      url: `/placeholder.svg?height=200&width=300&query=${type} placeholder`,
+    // Create file input element
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = type === 'image' ? 'image/*' : type === 'video' ? 'video/*' : '.pdf,.doc,.docx'
+    input.multiple = true
+    
+    input.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files
+      if (files) {
+        Array.from(files).forEach((file) => {
+          // Create object URL for preview
+          const url = URL.createObjectURL(file)
+          const newMedia = {
+            type,
+            name: file.name,
+            url: url,
+            file: file, // Store the actual file for upload
+          }
+          setStoryData((prev) => ({
+            ...prev,
+            media: [...prev.media, newMedia],
+          }))
+        })
+      }
     }
-    setStoryData((prev) => ({
-      ...prev,
-      media: [...prev.media, newMedia],
-    }))
+    
+    input.click()
   }
 
   const removeMedia = (index: number) => {
-    setStoryData((prev) => ({
-      ...prev,
-      media: prev.media.filter((_, i) => i !== index),
-    }))
+    setStoryData((prev) => {
+      const mediaToRemove = prev.media[index]
+      // Clean up object URL to prevent memory leaks
+      if (mediaToRemove?.url && mediaToRemove.url.startsWith('blob:')) {
+        URL.revokeObjectURL(mediaToRemove.url)
+      }
+      return {
+        ...prev,
+        media: prev.media.filter((_, i) => i !== index),
+      }
+    })
   }
 
   const generateNmbrCode = () => {
@@ -298,20 +334,16 @@ export default function CreateStoryPage() {
                         className="mt-1"
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="content">Story Content</Label>
-                      <Textarea
-                        id="content"
-                        placeholder={
-                          orgType === "nonprofit"
-                            ? "Tell the story of impact and transformation..."
-                            : "Tell the story behind your product..."
-                        }
-                        value={storyData.content}
-                        onChange={(e) => setStoryData((prev) => ({ ...prev, content: e.target.value }))}
-                        className="mt-1 min-h-[200px]"
-                      />
-                    </div>
+                    <AIWritingAssistant
+                      currentText={storyData.content}
+                      onTextChange={(text) => setStoryData((prev) => ({ ...prev, content: text }))}
+                      context="story"
+                      placeholder={
+                        orgType === "nonprofit"
+                          ? "Tell the story of impact and transformation..."
+                          : "Tell the story behind your product..."
+                      }
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -360,10 +392,20 @@ export default function CreateStoryPage() {
                             <div key={index} className="relative group">
                               <Card>
                                 <CardContent className="p-3">
-                                  <div className="aspect-video bg-muted rounded-md mb-2 flex items-center justify-center">
-                                    {media.type === "image" && <ImageIcon className="h-8 w-8 text-muted-foreground" />}
-                                    {media.type === "video" && <Video className="h-8 w-8 text-muted-foreground" />}
-                                    {media.type === "document" && (
+                                  <div className="aspect-video bg-muted rounded-md mb-2 flex items-center justify-center overflow-hidden">
+                                    {media.type === "image" ? (
+                                      <img 
+                                        src={media.url} 
+                                        alt={media.name}
+                                        className="w-full h-full object-cover rounded-md"
+                                      />
+                                    ) : media.type === "video" ? (
+                                      <video 
+                                        src={media.url} 
+                                        className="w-full h-full object-cover rounded-md"
+                                        controls
+                                      />
+                                    ) : (
                                       <FileText className="h-8 w-8 text-muted-foreground" />
                                     )}
                                   </div>
@@ -642,10 +684,22 @@ export default function CreateStoryPage() {
             {storyData.media.length > 0 && (
               <div className="grid grid-cols-2 gap-2">
                 {storyData.media.slice(0, 4).map((media, index) => (
-                  <div key={index} className="aspect-video bg-muted rounded-md flex items-center justify-center">
-                    {media.type === "image" && <ImageIcon className="h-8 w-8 text-muted-foreground" />}
-                    {media.type === "video" && <Video className="h-8 w-8 text-muted-foreground" />}
-                    {media.type === "document" && <FileText className="h-8 w-8 text-muted-foreground" />}
+                  <div key={index} className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
+                    {media.type === "image" ? (
+                      <img 
+                        src={media.url} 
+                        alt={media.name}
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                    ) : media.type === "video" ? (
+                      <video 
+                        src={media.url} 
+                        className="w-full h-full object-cover rounded-md"
+                        controls
+                      />
+                    ) : (
+                      <FileText className="h-8 w-8 text-muted-foreground" />
+                    )}
                   </div>
                 ))}
               </div>

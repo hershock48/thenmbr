@@ -16,7 +16,6 @@ import {
   Zap,
   BarChart3,
   Settings,
-  MoreHorizontal,
   ArrowUpRight,
   ArrowDownRight,
   Sparkles
@@ -340,12 +339,6 @@ export function AnalyticsDashboard({ orgType = 'nonprofit', className = '' }: An
               </div>
             </CardContent>
             
-            {/* Hover tooltip */}
-            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-              <Button size="sm" variant="secondary" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </div>
           </Card>
         ))}
       </div>

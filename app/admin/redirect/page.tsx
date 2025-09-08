@@ -3,11 +3,11 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-export default function AdminPage() {
+export default function AdminRedirectPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check authentication and redirect appropriately
+    // Check if we're on the client side
     if (typeof window === 'undefined') return
 
     const adminSession = localStorage.getItem('admin_session')
@@ -42,7 +42,7 @@ export default function AdminPage() {
       <div className="text-center">
         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
+        </div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Checking Access...</h2>
         <p className="text-gray-600">Please wait while we verify your admin permissions.</p>
       </div>

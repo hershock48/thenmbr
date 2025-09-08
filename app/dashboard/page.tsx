@@ -30,7 +30,6 @@ import { useOrganization } from "@/contexts/OrganizationContext"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { TourTrigger } from "@/components/ui/onboarding-tour"
 import { AnalyticsDashboard } from "@/components/ui/analytics-dashboard"
 
 interface Story {
@@ -286,7 +285,6 @@ export default function DashboardPage() {
               <span className="hidden sm:inline">Switch Organization</span>
               <span className="sm:hidden">Switch</span>
             </Button>
-            <TourTrigger />
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <Plus className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">New {terminology.stories.split(" ")[0]}</span>
@@ -387,7 +385,7 @@ export default function DashboardPage() {
       </div>
 
       {orgType === "business" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
             <CardHeader className="pb-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
@@ -402,6 +400,25 @@ export default function DashboardPage() {
               <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                 <Plus className="w-4 h-4 mr-2" />
                 Create Product Story
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20 cursor-pointer" onClick={() => router.push('/dashboard/ai-stories')}>
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors duration-200">
+                <Sparkles className="w-6 h-6 text-purple-600" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">AI Story Builder</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Generate compelling stories with AI assistance
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Button variant="outline" className="w-full border-purple-200 text-purple-700 hover:bg-purple-50">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Try AI Builder
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </CardContent>
@@ -575,7 +592,7 @@ export default function DashboardPage() {
       </Card>
 
       {orgType !== "business" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-tour="quick-actions">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-tour="quick-actions">
           <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
             <CardHeader className="pb-4">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
@@ -598,6 +615,25 @@ export default function DashboardPage() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20 cursor-pointer" onClick={() => router.push('/dashboard/ai-stories')}>
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors duration-200">
+                <Sparkles className="w-6 h-6 text-purple-600" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">AI Story Builder</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Generate compelling stories with AI assistance
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Button variant="outline" className="w-full border-purple-200 text-purple-700 hover:bg-purple-50">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Try AI Builder
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </CardContent>
           </Card>
 

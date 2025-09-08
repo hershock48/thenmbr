@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Bell, Check, X, Settings, Mail, MessageSquare, TrendingUp, Users, AlertCircle } from "lucide-react"
+import { useOrganization } from "@/contexts/OrganizationContext"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 
 interface Notification {
   id: string
-  type: "story" | "donation" | "analytics" | "system"
+  type: "story" | "donation" | "purchase" | "analytics" | "system"
   title: string
   message: string
   timestamp: string
@@ -19,12 +20,14 @@ interface Notification {
   priority: "low" | "medium" | "high"
 }
 
-const mockNotifications: Notification[] = [
+const getMockNotifications = (orgType: string): Notification[] => [
   {
     id: "1",
-    type: "donation",
-    title: "New Donation Received",
-    message: "Sarah Johnson donated $50 to your Clean Water Project story",
+    type: orgType === "business" ? "donation" : "donation",
+    title: orgType === "business" ? "New Purchase Made" : "New Donation Received",
+    message: orgType === "business" 
+      ? "Sarah Johnson purchased your Coffee Blend #3 for $25"
+      : "Sarah Johnson donated $50 to your Clean Water Project story",
     timestamp: "2 minutes ago",
     read: false,
     priority: "high",
@@ -33,7 +36,9 @@ const mockNotifications: Notification[] = [
     id: "2",
     type: "story",
     title: "Story Performance Update",
-    message: 'Your "Education for All" story reached 1,000 views this week',
+    message: orgType === "business"
+      ? 'Your "Artisan Coffee Journey" story reached 1,000 views this week'
+      : 'Your "Education for All" story reached 1,000 views this week',
     timestamp: "1 hour ago",
     read: false,
     priority: "medium",
@@ -42,7 +47,9 @@ const mockNotifications: Notification[] = [
     id: "3",
     type: "analytics",
     title: "Weekly Analytics Report",
-    message: "Your stories generated $2,450 in donations this week (+15%)",
+    message: orgType === "business"
+      ? "Your stories generated $2,450 in sales this week (+15%)"
+      : "Your stories generated $2,450 in donations this week (+15%)",
     timestamp: "3 hours ago",
     read: true,
     priority: "medium",
@@ -51,7 +58,9 @@ const mockNotifications: Notification[] = [
     id: "4",
     type: "system",
     title: "NMBR Searched",
-    message: "25 people searched your NMBR at the community event",
+    message: orgType === "business"
+      ? "25 people searched your NMBR at the farmers market"
+      : "25 people searched your NMBR at the community event",
     timestamp: "1 day ago",
     read: true,
     priority: "low",
@@ -87,7 +96,8 @@ const getPriorityColor = (priority: string) => {
 }
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(mockNotifications)
+  const { orgType } = useOrganization()
+  const [notifications, setNotifications] = useState(getMockNotifications(orgType || 'business'))
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
     pushNotifications: true,
