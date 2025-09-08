@@ -46,7 +46,7 @@ export default function SelectOrgPage() {
   const [newOrgName, setNewOrgName] = useState('')
   const [newOrgWebsite, setNewOrgWebsite] = useState('')
   const [newOrgColor, setNewOrgColor] = useState('#3B82F6')
-  const [newOrgType, setNewOrgType] = useState<'nonprofit' | 'grassroots' | 'business'>('nonprofit')
+  const [newOrgType, setNewOrgType] = useState<'nonprofit' | 'grassroots' | 'business' | ''>('')
 
   useEffect(() => {
     if (!user) {
@@ -119,6 +119,11 @@ export default function SelectOrgPage() {
       return
     }
 
+    if (!newOrgType) {
+      setError('Please select an organization type')
+      return
+    }
+
     setLoading(true)
     setError('')
     
@@ -155,7 +160,7 @@ export default function SelectOrgPage() {
       setNewOrgName('')
       setNewOrgWebsite('')
       setNewOrgColor('#3B82F6')
-      setNewOrgType('nonprofit')
+      setNewOrgType('')
       
     } catch (err) {
       console.error('Error creating organization:', err)
@@ -434,7 +439,7 @@ export default function SelectOrgPage() {
             </div>
             <div>
               <Label htmlFor="orgType">Organization Type *</Label>
-              <Select value={newOrgType} onValueChange={(value: 'nonprofit' | 'grassroots' | 'business') => setNewOrgType(value)}>
+              <Select value={newOrgType} onValueChange={(value: 'nonprofit' | 'grassroots' | 'business' | '') => setNewOrgType(value)}>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select organization type" />
                 </SelectTrigger>
@@ -486,14 +491,14 @@ export default function SelectOrgPage() {
                   setNewOrgName('')
                   setNewOrgWebsite('')
                   setNewOrgColor('#3B82F6')
-                  setNewOrgType('nonprofit')
+                  setNewOrgType('')
                 }}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateOrg}
-                disabled={!newOrgName.trim() || loading}
+                disabled={!newOrgName.trim() || !newOrgType || loading}
                 className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
               >
                 {loading ? (
