@@ -4,6 +4,10 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { 
   Building2, 
   Plus, 
@@ -17,7 +21,7 @@ import {
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { LoadingSpinner } from "@/components/patterns/loading-states"
 import { supabase } from "@/lib/supabase"
 import { OrgSelectionTour } from "@/components/ui/org-selection-tour"
 
@@ -28,6 +32,7 @@ interface Organization {
   brand_color: string
   is_active: boolean
   created_at: string
+  org_type: 'nonprofit' | 'grassroots' | 'business'
 }
 
 export default function SelectOrgPage() {
@@ -38,6 +43,11 @@ export default function SelectOrgPage() {
   const [error, setError] = useState('')
   const [selectedOrgId, setSelectedOrgId] = useState<string>('')
   const [showOrgTour, setShowOrgTour] = useState(false)
+  const [showCreateOrg, setShowCreateOrg] = useState(false)
+  const [newOrgName, setNewOrgName] = useState('')
+  const [newOrgWebsite, setNewOrgWebsite] = useState('')
+  const [newOrgColor, setNewOrgColor] = useState('#3B82F6')
+  const [newOrgType, setNewOrgType] = useState<'nonprofit' | 'grassroots' | 'business' | ''>('')
 
   useEffect(() => {
     if (!user) {
@@ -104,6 +114,63 @@ export default function SelectOrgPage() {
     }
   }
 
+  const handleCreateOrg = async () => {
+    if (!newOrgName.trim()) {
+      setError('Organization name is required')
+      return
+    }
+
+    if (!newOrgType) {
+      setError('Please select an organization type')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    
+    try {
+      console.log('Creating new organization:', { newOrgName, newOrgWebsite, newOrgColor })
+      
+      const { data: newOrg, error: createError } = await supabase
+        .from('nonprofits')
+        .insert({
+          name: newOrgName.trim(),
+          website: newOrgWebsite.trim() || null,
+          brand_color: newOrgColor,
+          org_type: newOrgType,
+          is_active: true
+        })
+        .select()
+        .single()
+      
+      if (createError) {
+        console.error('Error creating organization:', createError)
+        throw createError
+      }
+      
+      console.log('Created new organization:', newOrg)
+      
+      // Add to organizations list
+      setOrganizations(prev => [newOrg, ...prev])
+      
+      // Select the new organization
+      setSelectedOrgId(newOrg.id)
+      
+      // Close the create form
+      setShowCreateOrg(false)
+      setNewOrgName('')
+      setNewOrgWebsite('')
+      setNewOrgColor('#3B82F6')
+      setNewOrgType('')
+      
+    } catch (err) {
+      console.error('Error creating organization:', err)
+      setError(`Failed to create organization: ${err instanceof Error ? err.message : 'Unknown error'}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSelectOrg = async () => {
     if (!selectedOrgId) {
       setError('Please select an organization first')
@@ -138,7 +205,25 @@ export default function SelectOrgPage() {
       console.log('User metadata updated successfully:', data)
 
       // Set the organization in AuthContext
-      setOrg(selectedOrg)
+      // Convert Organization to Nonprofit format
+      const nonprofitOrg = {
+        id: selectedOrg.id,
+        name: selectedOrg.name,
+        organization_type: selectedOrg.org_type as 'nonprofit' | 'grassroots' | 'business',
+        industry: undefined,
+        ein_number: undefined,
+        tax_exempt_status: undefined,
+        fiscal_sponsor: undefined,
+        business_registration: undefined,
+        csr_focus_areas: undefined,
+        logo_url: undefined,
+        website: selectedOrg.website,
+        brand_color: selectedOrg.brand_color,
+        is_active: selectedOrg.is_active,
+        created_at: selectedOrg.created_at,
+        updated_at: selectedOrg.created_at
+      }
+      setOrg(nonprofitOrg)
       
       // Trigger multi-org achievement if this is not the first org
       try {
@@ -146,14 +231,14 @@ export default function SelectOrgPage() {
         const { updateAchievement } = useAchievements()
         updateAchievement('multi-org', 1)
       } catch (err) {
-        console.log('Achievement system not available:', err)
+        console.log('Achievement system not available:', err instanceof Error ? err.message : 'Unknown error')
       }
       
       console.log('Redirecting to dashboard...')
       router.push('/dashboard')
     } catch (err) {
       console.error('Error selecting organization:', err)
-      setError(`Failed to select organization: ${err.message || 'Unknown error'}`)
+      setError(`Failed to select organization: ${err instanceof Error ? err.message : 'Unknown error'}`)
       setLoading(false)
     }
   }
@@ -267,6 +352,7 @@ export default function SelectOrgPage() {
           <Card 
             className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border-dashed border-2 border-cyan-200 hover:border-cyan-300"
             data-tour="create-new-org"
+            onClick={() => setShowCreateOrg(true)}
           >
             <CardHeader className="pb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl flex items-center justify-center">
@@ -342,6 +428,111 @@ export default function SelectOrgPage() {
         onClose={() => setShowOrgTour(false)}
         onComplete={() => setShowOrgTour(false)}
       />
+
+      {/* Create Organization Modal */}
+      <Dialog open={showCreateOrg} onOpenChange={setShowCreateOrg}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Organization</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="orgName">Organization Name *</Label>
+              <Input
+                id="orgName"
+                value={newOrgName}
+                onChange={(e) => setNewOrgName(e.target.value)}
+                placeholder="Enter organization name"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="orgWebsite">Website (Optional)</Label>
+              <Input
+                id="orgWebsite"
+                value={newOrgWebsite}
+                onChange={(e) => setNewOrgWebsite(e.target.value)}
+                placeholder="https://your-organization.com"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="orgType">Organization Type *</Label>
+              <Select value={newOrgType} onValueChange={(value: 'nonprofit' | 'grassroots' | 'business' | '') => setNewOrgType(value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select organization type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nonprofit">
+                    <div className="flex items-center space-x-2">
+                      <Heart className="w-4 h-4 text-red-500" />
+                      <span>Nonprofit Organization</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="grassroots">
+                    <div className="flex items-center space-x-2">
+                      <Users className="w-4 h-4 text-green-500" />
+                      <span>Grassroots Organization</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="business">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="w-4 h-4 text-blue-500" />
+                      <span>Business</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="orgColor">Brand Color</Label>
+              <div className="flex items-center space-x-2 mt-1">
+                <Input
+                  id="orgColor"
+                  type="color"
+                  value={newOrgColor}
+                  onChange={(e) => setNewOrgColor(e.target.value)}
+                  className="w-12 h-10 p-1"
+                />
+                <Input
+                  value={newOrgColor}
+                  onChange={(e) => setNewOrgColor(e.target.value)}
+                  placeholder="#3B82F6"
+                  className="flex-1"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateOrg(false)
+                  setNewOrgName('')
+                  setNewOrgWebsite('')
+                  setNewOrgColor('#3B82F6')
+                  setNewOrgType('')
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateOrg}
+                disabled={!newOrgName.trim() || !newOrgType || loading}
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Organization'
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
