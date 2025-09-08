@@ -62,18 +62,19 @@ export default function BusinessesPage() {
         <div className="relative max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-full px-3 sm:px-4 py-2 mb-6 sm:mb-8">
             <Building2 className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-700">Chosen by 200+ forward-thinking businesses</span>
+            <span className="text-sm font-medium text-blue-700">Powering story-driven commerce for 200+ brands</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
-            Transform Customers Into
+            Turn Every Product Into a
             <span className="block bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-              Brand Advocates
+              Story-Driven Experience
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-            Connect customers to your brand's authentic impact story. Build meaningful relationships that go beyond
-            transactions and create loyal customers who believe in your mission and values.
+            Embed unique NMBRs in your products. Customers scan QR codes or look up numbers to discover compelling
+            stories about their purchase. Watch customer loyalty and sales increase when buyers see exactly who they're
+            helping.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -102,20 +103,20 @@ export default function BusinessesPage() {
           {/* Trust Indicators */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-2xl font-bold text-blue-600">200+</div>
-              <div className="text-sm text-muted-foreground">Businesses Trust Us</div>
+              <div className="text-2xl font-bold text-blue-600">3x</div>
+              <div className="text-sm text-muted-foreground">Customer Lifetime Value</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-blue-600">$1.8M+</div>
-              <div className="text-sm text-muted-foreground">Customer Engagement Value</div>
+              <div className="text-2xl font-bold text-blue-600">2-5%</div>
+              <div className="text-sm text-muted-foreground">Revenue Share Model</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-blue-600">85K+</div>
-              <div className="text-sm text-muted-foreground">Brand Interactions</div>
+              <div className="text-2xl font-bold text-blue-600">30%+</div>
+              <div className="text-sm text-muted-foreground">Story Engagement Rate</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-blue-600">2.8x</div>
-              <div className="text-sm text-muted-foreground">Customer Loyalty Increase</div>
+              <div className="text-2xl font-bold text-blue-600">15%+</div>
+              <div className="text-sm text-muted-foreground">Story-to-Purchase Rate</div>
             </div>
           </div>
         </div>
@@ -125,10 +126,9 @@ export default function BusinessesPage() {
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Built for Modern Businesses</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Story-Driven Commerce Platform</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Powerful storytelling tools designed for businesses who want to build authentic connections with their
-              customers
+              Everything you need to embed stories in products and track the sales impact of customer engagement
             </p>
           </div>
 
@@ -138,10 +138,36 @@ export default function BusinessesPage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <CardTitle className="text-xl text-foreground">Brand Storytelling</CardTitle>
+                <CardTitle className="text-xl text-foreground">Product Story Embedding</CardTitle>
                 <CardDescription className="text-base text-muted-foreground">
-                  Craft compelling narratives that showcase your company's authentic impact and connect with customers
-                  on a deeper level.
+                  Generate unique QR codes and numbers for each product. Customers scan to discover the authentic story
+                  behind their purchase.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-border hover:border-blue-200">
+              <CardHeader>
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <TrendingUp className="w-6 h-6 text-white" />
+                </div>
+                <CardTitle className="text-xl text-foreground">Story-Driven Sales Tracking</CardTitle>
+                <CardDescription className="text-base text-muted-foreground">
+                  Track which customers engage with stories and measure the direct sales impact. We only succeed when
+                  your sales increase.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-border hover:border-blue-200">
+              <CardHeader>
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <CardTitle className="text-xl text-foreground">Customer Journey Analytics</CardTitle>
+                <CardDescription className="text-base text-muted-foreground">
+                  See the complete path from product scan to story engagement to repeat purchase. Identify your most
+                  valuable story customers.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -155,31 +181,6 @@ export default function BusinessesPage() {
                 <CardDescription className="text-base text-muted-foreground">
                   Build lasting relationships with customers through transparent storytelling about your products and
                   social impact.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-border hover:border-blue-200">
-              <CardHeader>
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <TrendingUp className="w-6 h-6 text-white" />
-                </div>
-                <CardTitle className="text-xl text-foreground">Impact Metrics</CardTitle>
-                <CardDescription className="text-base text-muted-foreground">
-                  Track customer engagement, brand sentiment, and the business impact of your storytelling efforts.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-border hover:border-blue-200">
-              <CardHeader>
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <BarChart3 className="w-6 h-6 text-white" />
-                </div>
-                <CardTitle className="text-xl text-foreground">Customer Analytics</CardTitle>
-                <CardDescription className="text-base text-muted-foreground">
-                  Deep insights into customer behavior, preferences, and engagement patterns to optimize your
-                  storytelling strategy.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -217,11 +218,10 @@ export default function BusinessesPage() {
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Success Stories from Forward-Thinking Brands
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Real Brands, Real Results</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              See how businesses are building stronger customer relationships through authentic impact storytelling
+              See how businesses are using product-embedded stories to increase customer lifetime value and drive repeat
+              sales
             </p>
           </div>
 
@@ -233,63 +233,25 @@ export default function BusinessesPage() {
                     <Building2 className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg">EcoTech Solutions</CardTitle>
-                    <CardDescription>Sustainable technology company</CardDescription>
+                    <CardTitle className="text-lg">Artisan Coffee Co.</CardTitle>
+                    <CardDescription>Premium coffee roaster</CardDescription>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">340%</div>
-                    <div className="text-sm text-muted-foreground">Customer Engagement</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">2.1x</div>
+                    <div className="text-2xl font-bold text-blue-600">3x</div>
                     <div className="text-sm text-muted-foreground">Customer Lifetime Value</div>
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <blockquote className="text-muted-foreground italic">
-                  "The NMBR helped us show customers the real environmental impact of their purchases. Each product now
-                  connects to specific sustainability projects, creating emotional investment in our brand mission."
-                </blockquote>
-                <div className="flex items-center mt-4">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <span className="ml-2 text-sm text-muted-foreground">Alex Chen, CMO</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-              <CardHeader>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-15 h-15 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                    <Handshake className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">Artisan Coffee Co.</CardTitle>
-                    <CardDescription>Fair-trade coffee roaster</CardDescription>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">$450K</div>
-                    <div className="text-sm text-muted-foreground">Additional Revenue</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">89%</div>
-                    <div className="text-sm text-muted-foreground">Customer Retention</div>
+                    <div className="text-2xl font-bold text-blue-600">$120K</div>
+                    <div className="text-sm text-muted-foreground">Monthly Story-Driven Sales</div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <blockquote className="text-muted-foreground italic">
-                  "Customers can now follow the specific farming families their coffee purchases support. This personal
-                  connection transformed one-time buyers into loyal brand advocates who share our story."
+                  "Every coffee bag has a QR code. Customers scan to learn about the specific farmer their purchase
+                  supports. This personal connection turned one-time buyers into monthly subscribers."
                 </blockquote>
                 <div className="flex items-center mt-4">
                   <div className="flex text-yellow-400">
@@ -301,27 +263,65 @@ export default function BusinessesPage() {
                 </div>
               </CardContent>
             </Card>
+
+            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+              <CardHeader>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-15 h-15 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                    <Handshake className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">EcoWear Apparel</CardTitle>
+                    <CardDescription>Sustainable fashion brand</CardDescription>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">35%</div>
+                    <div className="text-sm text-muted-foreground">Story Engagement Rate</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">18%</div>
+                    <div className="text-sm text-muted-foreground">Story-to-Purchase Rate</div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <blockquote className="text-muted-foreground italic">
+                  "Each garment has a unique number. Customers look it up to see the sustainable materials and ethical
+                  manufacturing story. Our repeat purchase rate increased 240%."
+                </blockquote>
+                <div className="flex items-center mt-4">
+                  <div className="flex text-yellow-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-current" />
+                    ))}
+                  </div>
+                  <span className="ml-2 text-sm text-muted-foreground">Alex Chen, CMO</span>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Additional Success Metrics */}
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-8 text-white text-center">
-            <h3 className="text-2xl font-bold mb-6">Join the Brand Revolution</h3>
+            <h3 className="text-2xl font-bold mb-6">We Only Win When You Win</h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
-                <div className="text-3xl font-bold">94%</div>
-                <div className="text-blue-100">of businesses see improved brand loyalty</div>
+                <div className="text-3xl font-bold">2-5%</div>
+                <div className="text-blue-100">revenue share on story-driven sales</div>
               </div>
               <div>
-                <div className="text-3xl font-bold">2.8x</div>
-                <div className="text-blue-100">average customer engagement increase</div>
+                <div className="text-3xl font-bold">3x</div>
+                <div className="text-blue-100">average customer lifetime value increase</div>
               </div>
               <div>
-                <div className="text-3xl font-bold">67%</div>
-                <div className="text-blue-100">increase in customer lifetime value</div>
+                <div className="text-3xl font-bold">30%+</div>
+                <div className="text-blue-100">of customers engage with product stories</div>
               </div>
               <div>
-                <div className="text-3xl font-bold">$1.8M+</div>
-                <div className="text-blue-100">in additional customer value created</div>
+                <div className="text-3xl font-bold">$31.5B</div>
+                <div className="text-blue-100">story-driven commerce market opportunity</div>
               </div>
             </div>
           </div>

@@ -17,11 +17,11 @@ import {
   BarChart3,
   ArrowRight,
   Building2,
-  ShoppingCart,
   QrCode,
   TrendingUp,
   DollarSign,
   Package,
+  Zap,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
@@ -149,20 +149,54 @@ export default function DashboardPage() {
       },
       {
         key: "conversion",
-        name: "Conversion Rate",
-        description: "Story viewers to customers",
+        name: "Story Conversion",
+        description: "Scan to purchase rate",
         icon: TrendingUp,
       },
       {
-        key: "avg-order",
-        name: "Avg Order Value",
-        description: "Revenue per story-driven sale",
-        icon: Package,
+        key: "revenue-share",
+        name: "Revenue Share",
+        description: "Your platform earnings",
+        icon: Zap,
       },
     ]
   }
 
-  const metrics = getBusinessMetrics()
+  const getNonprofitMetrics = () => {
+    return [
+      {
+        key: "donations",
+        name: "Total Donations",
+        description: "Funds raised through stories",
+        icon: DollarSign,
+      },
+      {
+        key: "donors",
+        name: "Active Donors",
+        description: "Engaged supporters",
+        icon: Users,
+      },
+      {
+        key: "stories",
+        name: "Impact Stories",
+        description: "Published story connections",
+        icon: Heart,
+      },
+      {
+        key: "engagement",
+        name: "Story Engagement",
+        description: "Donor interaction rate",
+        icon: TrendingUp,
+      },
+    ]
+  }
+
+  const metrics =
+    orgType === "business"
+      ? getBusinessMetrics()
+      : orgType === "nonprofit"
+        ? getNonprofitMetrics()
+        : getMetricsForType()
 
   if (!user) {
     return (
@@ -234,14 +268,14 @@ export default function DashboardPage() {
       <div className="space-y-4" data-tour="tour-welcome">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl lg:text-4xl font-bold text-slate-900">Welcome back, {org?.name || "Team"}</h1>
-            <p className="text-slate-600 text-lg max-w-2xl">{getWelcomeMessage()}</p>
+            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Welcome back, {org?.name || "Team"}</h1>
+            <p className="text-muted-foreground text-lg max-w-2xl">{getWelcomeMessage()}</p>
           </div>
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => router.push("/select-org")}
-              className="flex items-center space-x-2 border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="flex items-center space-x-2"
               data-tour="switch-org-button"
             >
               <Building2 className="w-4 h-4" />
@@ -250,7 +284,7 @@ export default function DashboardPage() {
             </Button>
             <AchievementSystem />
             <TourTrigger />
-            <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <Plus className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">New {terminology.stories.split(" ")[0]}</span>
               <span className="sm:hidden">New</span>
@@ -268,56 +302,79 @@ export default function DashboardPage() {
           const IconComponent = metric.icon
           let value: string | number = "0"
 
-          // Map metric keys to actual stats
-          switch (metric.key) {
-            case "donations":
-            case "support":
-            case "sales":
-              value = `$${stats.totalRaised.toLocaleString()}`
-              break
-            case "story-sales":
-              value = `$${businessMetrics.storyDrivenSales.toLocaleString()}`
-              break
-            case "qr-scans":
-              value = businessMetrics.qrCodeScans.toLocaleString()
-              break
-            case "conversion":
-              value = `${businessMetrics.conversionRate}%`
-              break
-            case "avg-order":
-              value = `$${businessMetrics.avgOrderValue}`
-              break
-            case "donors":
-            case "supporters":
-            case "customers":
-              value = stats.totalSubscribers
-              break
-            case "campaigns":
-            case "projects":
-              value = stats.activeStories
-              break
-            case "stories":
-            case "updates":
-              value = stats.totalStories
-              break
-            default:
-              value = index === 3 ? "87%" : stats.activeStories
+          if (orgType === "business") {
+            switch (metric.key) {
+              case "story-sales":
+                value = `$${businessMetrics.storyDrivenSales.toLocaleString()}`
+                break
+              case "qr-scans":
+                value = businessMetrics.qrCodeScans.toLocaleString()
+                break
+              case "conversion":
+                value = `${businessMetrics.conversionRate}%`
+                break
+              case "revenue-share":
+                value = `$${businessMetrics.revenueShare.toLocaleString()}`
+                break
+              default:
+                value = businessMetrics.activeProducts
+            }
+          } else if (orgType === "nonprofit") {
+            switch (metric.key) {
+              case "donations":
+                value = `$${nonprofitMetrics.totalDonations.toLocaleString()}`
+                break
+              case "donors":
+                value = nonprofitMetrics.activeDonors.toLocaleString()
+                break
+              case "stories":
+                value = nonprofitMetrics.impactStories
+                break
+              case "engagement":
+                value = `${nonprofitMetrics.storyEngagement}%`
+                break
+              default:
+                value = stats.activeStories
+            }
+          } else {
+            switch (metric.key) {
+              case "donations":
+              case "support":
+              case "sales":
+                value = `$${stats.totalRaised.toLocaleString()}`
+                break
+              case "donors":
+              case "supporters":
+              case "customers":
+                value = stats.totalSubscribers
+                break
+              case "campaigns":
+              case "projects":
+                value = stats.activeStories
+                break
+              case "stories":
+              case "updates":
+                value = stats.totalStories
+                break
+              default:
+                value = index === 3 ? "87%" : stats.activeStories
+            }
           }
 
           return (
             <Card
               key={metric.key}
-              className="group hover:shadow-md transition-all duration-200 border-slate-200 hover:border-slate-300"
+              className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20"
             >
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-600 truncate">{metric.name}</p>
-                    <p className="text-2xl font-bold text-slate-900 mt-1">{value}</p>
-                    <p className="text-xs text-slate-500 mt-1">{metric.description}</p>
+                    <p className="text-sm font-medium text-muted-foreground truncate">{metric.name}</p>
+                    <p className="text-2xl font-bold text-card-foreground mt-1">{value}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{metric.description}</p>
                   </div>
-                  <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-slate-200 transition-colors duration-200 flex-shrink-0">
-                    <IconComponent className="w-6 h-6 text-slate-700" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-200 flex-shrink-0">
+                    <IconComponent className="w-6 h-6 text-primary" />
                   </div>
                 </div>
               </CardContent>
@@ -326,31 +383,103 @@ export default function DashboardPage() {
         })}
       </div>
 
-      <Card className="group hover:shadow-md transition-all duration-200 border-slate-200" data-tour="stories-section">
-        <CardHeader className="border-b border-slate-100">
+      {orgType === "business" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
+                <Package className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">Add Product Stories</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Create compelling stories for your products with embedded QR codes
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Product Story
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
+                <QrCode className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">Generate QR Codes</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Create unique QR codes for product packaging and marketing materials
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Button
+                variant="outline"
+                className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
+              >
+                <QrCode className="w-4 h-4 mr-2" />
+                Generate Codes
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
+                <TrendingUp className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">ROI Analytics</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Track story-driven sales performance and revenue sharing
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Link href="/dashboard/analytics">
+                <Button
+                  variant="outline"
+                  className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  View ROI Dashboard
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <Card
+        className="group hover:shadow-md transition-all duration-200 bg-card border-border"
+        data-tour="stories-section"
+      >
+        <CardHeader className="border-b border-border">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                <Target className="w-6 h-6 text-slate-700" />
+              <CardTitle className="text-2xl font-bold text-card-foreground flex items-center gap-2">
+                <Target className="w-6 h-6 text-primary" />
                 Your {terminology.stories}
               </CardTitle>
-              <CardDescription className="text-slate-600">
+              <CardDescription className="text-muted-foreground">
                 {orgType === "nonprofit"
-                  ? `Manage and track your personalized impact stories that connect ${terminology.subscribers.toLowerCase()} to the people they help`
+                  ? "Manage and track your personalized impact stories that connect donors to the people they help"
                   : orgType === "grassroots"
                     ? "Manage and track your community project stories that connect supporters to local initiatives"
-                    : "Manage and track your brand stories that connect customers to your company's impact"}
+                    : "Manage and track your product stories that drive customer engagement and sales"}
               </CardDescription>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard/nmbrs">
-                <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm">
+              <Link href="/dashboard/stories/create">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                   <Plus className="w-4 h-4 mr-2" />
                   Create New {terminology.stories.split(" ")[0]}
                 </Button>
               </Link>
-              <Link href="/dashboard/nmbrs">
-                <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 bg-transparent">
+              <Link href="/dashboard/stories">
+                <Button variant="outline" className="border-border text-card-foreground hover:bg-muted bg-transparent">
                   <Eye className="w-4 h-4 mr-2" />
                   View All
                 </Button>
@@ -361,19 +490,21 @@ export default function DashboardPage() {
         <CardContent className="p-6">
           {stories.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-slate-600" />
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No {terminology.stories.toLowerCase()} yet</h3>
-              <p className="text-slate-600 mb-6 max-w-md mx-auto">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">
+                No {terminology.stories.toLowerCase()} yet
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                 {orgType === "nonprofit"
-                  ? `Create your first impact story to start connecting ${terminology.subscribers.toLowerCase()} with the people they help`
+                  ? "Create your first impact story to start connecting donors with the people they help"
                   : orgType === "grassroots"
                     ? "Create your first project story to start connecting supporters with your community initiatives"
-                    : "Create your first brand story to start connecting customers with your company's impact"}
+                    : "Create your first product story to start driving customer engagement and sales"}
               </p>
-              <Link href="/dashboard/nmbrs">
-                <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm">
+              <Link href="/dashboard/stories/create">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                   <Sparkles className="w-4 h-4 mr-2" />
                   Create Your First {terminology.stories.split(" ")[0]}
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -385,23 +516,23 @@ export default function DashboardPage() {
               {stories.slice(0, 3).map((story, index) => (
                 <div
                   key={story.id}
-                  className="flex items-center justify-between p-6 border border-slate-200 rounded-xl group hover:shadow-sm transition-all duration-200 hover:border-slate-300"
+                  className="flex items-center justify-between p-6 border border-border rounded-xl group hover:shadow-sm transition-all duration-200 hover:border-primary/20"
                   data-tour={index === 0 ? "story-card-example" : undefined}
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="w-14 h-14 bg-slate-900 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg">
                       {story.nmbr_code}
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-lg font-semibold text-slate-900">{story.title}</h3>
-                      <p className="text-sm text-slate-600 line-clamp-2">{story.description}</p>
+                      <h3 className="text-lg font-semibold text-card-foreground">{story.title}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{story.description}</p>
                       {story.goal_amount && (
                         <div className="flex items-center space-x-2">
                           <Progress
                             value={((story.current_amount || 0) / story.goal_amount) * 100}
                             className="w-32 h-2"
                           />
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-muted-foreground">
                             ${story.current_amount || 0} / ${story.goal_amount}
                           </span>
                         </div>
@@ -410,7 +541,11 @@ export default function DashboardPage() {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-500 hover:text-slate-700">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-card-foreground"
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -436,84 +571,86 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-tour="quick-actions">
-        <Card className="group hover:shadow-md transition-all duration-200 border-slate-200 hover:border-slate-300">
-          <CardHeader className="pb-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-slate-200 transition-colors duration-200">
-              <Target className="w-6 h-6 text-slate-700" />
-            </div>
-            <CardTitle className="text-xl text-slate-900">Create New {terminology.stories.split(" ")[0]}</CardTitle>
-            <CardDescription className="text-slate-600">
-              {orgType === "nonprofit"
-                ? `Add a new impact story to connect ${terminology.subscribers.toLowerCase()} with the people they help`
-                : orgType === "grassroots"
-                  ? "Add a new project story to connect supporters with community initiatives"
-                  : "Add a new brand story to connect customers with your company's impact"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <Link href="/dashboard/nmbrs">
-              <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Start Creating
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      {orgType !== "business" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" data-tour="quick-actions">
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
+                <Target className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">
+                Create New {terminology.stories.split(" ")[0]}
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                {orgType === "nonprofit"
+                  ? "Add a new impact story to connect donors with the people they help"
+                  : "Add a new project story to connect supporters with community initiatives"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Link href="/dashboard/stories/create">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Start Creating
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
 
-        <Card className="group hover:shadow-md transition-all duration-200 border-slate-200 hover:border-slate-300">
-          <CardHeader className="pb-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-slate-200 transition-colors duration-200">
-              <BarChart3 className="w-6 h-6 text-slate-700" />
-            </div>
-            <CardTitle className="text-xl text-slate-900">View {terminology.analytics}</CardTitle>
-            <CardDescription className="text-slate-600">
-              {orgType === "nonprofit"
-                ? `See how your stories are performing and track your ${terminology.fundraising.toLowerCase()} impact`
-                : orgType === "grassroots"
-                  ? "See how your projects are performing and track community engagement"
-                  : "See how your stories are performing and track customer engagement"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <Link href="/dashboard/analytics">
-              <Button
-                variant="outline"
-                className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 bg-transparent"
-              >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                View Reports
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
+                <BarChart3 className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">View {terminology.analytics}</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                {orgType === "nonprofit"
+                  ? "See how your stories are performing and track your fundraising impact"
+                  : "See how your projects are performing and track community engagement"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Link href="/dashboard/analytics">
+                <Button
+                  variant="outline"
+                  className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
+                >
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  View Reports
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
 
-        <Card className="group hover:shadow-md transition-all duration-200 border-slate-200 hover:border-slate-300">
-          <CardHeader className="pb-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-slate-200 transition-colors duration-200">
-              <ShoppingCart className="w-6 h-6 text-slate-700" />
-            </div>
-            <CardTitle className="text-xl text-slate-900">Order Merchandise</CardTitle>
-            <CardDescription className="text-slate-600">
-              Create custom numbered merchandise for your {terminology.supporters.toLowerCase()}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <Link href="/marketplace">
-              <Button
-                variant="outline"
-                className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 bg-transparent"
-              >
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Visit Marketplace
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
+                <Eye className="w-6 h-6 text-primary" />
+              </div>
+              <CardTitle className="text-xl text-card-foreground">Manage Stories</CardTitle>
+              <CardDescription className="text-muted-foreground">
+                {orgType === "nonprofit"
+                  ? "View and manage all your impact stories in one place"
+                  : "View and manage all your project stories in one place"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Link href="/dashboard/stories">
+                <Button
+                  variant="outline"
+                  className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Manage Stories
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

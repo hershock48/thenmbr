@@ -25,78 +25,14 @@ import {
   Image,
   Settings,
   Download,
-  Upload,
-  SortAsc,
-  SortDesc,
-  X,
-  Check,
-  ArrowUpDown,
-  Hash,
-  Tag,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  Star,
-  Heart,
-  Zap,
-  Target,
-  Award,
-  Globe,
-  Shield,
-  Lightbulb,
-  Rocket,
-  Diamond,
-  Crown,
-  Flame,
-  Sun,
-  Moon,
-  Cloud,
-  Leaf,
-  Flower,
-  Tree,
-  Mountain,
-  Ocean,
-  Fire,
-  Water,
-  Earth,
-  Air,
-  Space,
-  Galaxy,
-  Planet,
-  Sparkles,
-  Gift,
-  Award as AwardIcon,
-  Target as TargetIcon,
-  Globe as GlobeIcon,
-  Shield as ShieldIcon,
-  Lightbulb as LightbulbIcon,
-  Rocket as RocketIcon,
-  Diamond as DiamondIcon,
-  Crown as CrownIcon,
-  Flame as FlameIcon,
-  Sun as SunIcon,
-  Moon as MoonIcon,
-  Cloud as CloudIcon,
-  Leaf as LeafIcon,
-  Flower as FlowerIcon,
-  Tree as TreeIcon,
-  Mountain as MountainIcon,
-  Ocean as OceanIcon,
-  Fire as FireIcon,
-  Water as WaterIcon,
-  Earth as EarthIcon,
-  Air as AirIcon,
-  Space as SpaceIcon,
-  Galaxy as GalaxyIcon,
-  Planet as PlanetIcon,
-  Sparkles as SparklesIcon,
-  Gift as GiftIcon
+  Upload
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { NewsletterBuilder } from "@/components/dashboard/newsletter-builder"
 import { MediaUpload } from "@/components/dashboard/media-upload"
 import { newsletterTemplates, newsletterThemes } from "@/lib/newsletter-templates"
 
@@ -348,14 +284,32 @@ export default function NewslettersPage() {
                 />
               </DialogContent>
             </Dialog>
-            <Button 
-              className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg text-sm"
-              onClick={() => router.push(`/dashboard/newsletters/builder?storyId=${selectedStory || stories[0]?.id || ''}`)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Create Newsletter</span>
-              <span className="sm:hidden">Create</span>
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg text-sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Create Newsletter</span>
+                  <span className="sm:hidden">Create</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-7xl h-[90vh]">
+                <DialogHeader>
+                  <DialogTitle>Newsletter Builder</DialogTitle>
+                </DialogHeader>
+                <NewsletterBuilder 
+                  storyId={selectedStory || stories[0]?.id || ''}
+                  organizationId={org?.id || ''}
+                  onSave={(newsletter) => {
+                    console.log('Newsletter saved:', newsletter)
+                    fetchNewsletters()
+                  }}
+                  onSend={(newsletter) => {
+                    console.log('Newsletter sent:', newsletter)
+                    fetchNewsletters()
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>

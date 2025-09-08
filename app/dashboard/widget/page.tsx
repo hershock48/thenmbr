@@ -78,15 +78,15 @@ export default function WidgetPage() {
                     <div className="space-y-2">
                       <Label htmlFor="primary-color">Primary Color</Label>
                       <div className="flex items-center space-x-2">
-                        <Input id="primary-color" type="color" defaultValue="#2563eb" className="w-12 h-10 p-1" />
-                        <Input defaultValue="#2563eb" className="flex-1" readOnly />
+                        <Input id="primary-color" type="color" value="#2563eb" className="w-12 h-10 p-1" />
+                        <Input value="#2563eb" className="flex-1" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="secondary-color">Secondary Color</Label>
                       <div className="flex items-center space-x-2">
-                        <Input id="secondary-color" type="color" defaultValue="#ffffff" className="w-12 h-10 p-1" />
-                        <Input defaultValue="#ffffff" className="flex-1" readOnly />
+                        <Input id="secondary-color" type="color" value="#ffffff" className="w-12 h-10 p-1" />
+                        <Input value="#ffffff" className="flex-1" />
                       </div>
                     </div>
                   </div>

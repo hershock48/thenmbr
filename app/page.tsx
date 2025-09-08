@@ -259,7 +259,6 @@ export default function HomePage() {
                 .map(([key, content]) => {
                   const audienceKey = key as AudienceType
                   const isSelected = selectedAudience === audienceKey
-                  const tabColors = getAudienceColors(audienceKey)
                   return (
                     <button
                       key={key}
@@ -269,8 +268,10 @@ export default function HomePage() {
                       }}
                       className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                         isSelected
-                          ? `${tabColors.tabSelected} text-white shadow-sm`
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                          ? audienceKey === "nonprofit"
+                            ? "bg-rose-100 text-rose-800 shadow-sm border border-rose-200"
+                            : "bg-blue-100 text-blue-800 shadow-sm border border-blue-200"
+                          : "text-slate-700 hover:text-slate-900 hover:bg-slate-50 border border-transparent"
                       }`}
                     >
                       {audienceKey === "nonprofit"
@@ -460,7 +461,7 @@ export default function HomePage() {
                     <span className="text-white font-bold text-sm">N</span>
                   </div>
                   <div
-                    className={`absolute -top-1 -right-1 w-3 h-3 ${colors.hashColor} rounded-full flex items-center justify-center`}
+                    className={`absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 ${colors.hashColor} rounded-full flex items-center justify-center`}
                   >
                     <span className="text-white font-bold text-xs">#</span>
                   </div>
