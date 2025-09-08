@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { 
   Building2, 
@@ -45,6 +46,7 @@ export default function SelectOrgPage() {
   const [newOrgName, setNewOrgName] = useState('')
   const [newOrgWebsite, setNewOrgWebsite] = useState('')
   const [newOrgColor, setNewOrgColor] = useState('#3B82F6')
+  const [newOrgType, setNewOrgType] = useState<'nonprofit' | 'grassroots' | 'business'>('nonprofit')
 
   useEffect(() => {
     if (!user) {
@@ -129,6 +131,7 @@ export default function SelectOrgPage() {
           name: newOrgName.trim(),
           website: newOrgWebsite.trim() || null,
           brand_color: newOrgColor,
+          org_type: newOrgType,
           is_active: true
         })
         .select()
@@ -152,6 +155,7 @@ export default function SelectOrgPage() {
       setNewOrgName('')
       setNewOrgWebsite('')
       setNewOrgColor('#3B82F6')
+      setNewOrgType('nonprofit')
       
     } catch (err) {
       console.error('Error creating organization:', err)
@@ -429,6 +433,34 @@ export default function SelectOrgPage() {
               />
             </div>
             <div>
+              <Label htmlFor="orgType">Organization Type *</Label>
+              <Select value={newOrgType} onValueChange={(value: 'nonprofit' | 'grassroots' | 'business') => setNewOrgType(value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select organization type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="nonprofit">
+                    <div className="flex items-center space-x-2">
+                      <Heart className="w-4 h-4 text-red-500" />
+                      <span>Nonprofit Organization</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="grassroots">
+                    <div className="flex items-center space-x-2">
+                      <Users className="w-4 h-4 text-green-500" />
+                      <span>Grassroots Organization</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="business">
+                    <div className="flex items-center space-x-2">
+                      <Building2 className="w-4 h-4 text-blue-500" />
+                      <span>Business</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label htmlFor="orgColor">Brand Color</Label>
               <div className="flex items-center space-x-2 mt-1">
                 <Input
@@ -454,6 +486,7 @@ export default function SelectOrgPage() {
                   setNewOrgName('')
                   setNewOrgWebsite('')
                   setNewOrgColor('#3B82F6')
+                  setNewOrgType('nonprofit')
                 }}
               >
                 Cancel
