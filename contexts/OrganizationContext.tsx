@@ -22,6 +22,7 @@ import {
   FolderOpen,
   QrCode,
   MessageSquare,
+  ShoppingCart,
 } from "lucide-react"
 
 interface OrganizationTerminology {
@@ -89,6 +90,7 @@ const organizationConfigs = {
       { name: "Donors", href: "/dashboard/subscribers", icon: Users, description: "Manage your donor relationships" },
       { name: "Newsletters", href: "/dashboard/newsletters", icon: Mail, description: "Send updates to your donors" },
       { name: "Communications", href: "/dashboard/communications", icon: MessageSquare, description: "Multi-channel communication tools" },
+      { name: "Commerce", href: "/dashboard/commerce", icon: ShoppingCart, description: "Track sales and revenue from stories" },
       {
         name: "Fundraising Analytics",
         href: "/dashboard/analytics",
@@ -184,6 +186,7 @@ const organizationConfigs = {
         description: "Send project updates to supporters",
       },
       { name: "Communications", href: "/dashboard/communications", icon: MessageSquare, description: "Multi-channel communication tools" },
+      { name: "Commerce", href: "/dashboard/commerce", icon: ShoppingCart, description: "Track sales and revenue from stories" },
       {
         name: "Community Analytics",
         href: "/dashboard/analytics",
@@ -274,6 +277,7 @@ const organizationConfigs = {
         description: "Send campaigns to your customers",
       },
       { name: "Communications", href: "/dashboard/communications", icon: MessageSquare, description: "Multi-channel communication tools" },
+      { name: "Commerce", href: "/dashboard/commerce", icon: ShoppingCart, description: "Track sales and revenue from stories" },
       {
         name: "Customer Analytics",
         href: "/dashboard/analytics",

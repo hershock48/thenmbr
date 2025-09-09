@@ -1,569 +1,460 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
-  ShoppingCart, 
+  Search, 
+  Filter, 
   Heart, 
-  Palette, 
-  Hash, 
-  Image, 
-  Plus, 
-  Minus, 
-  CheckCircle,
-  Star,
-  Truck,
-  Shield,
-  RotateCcw,
-  ArrowRight
+  Star, 
+  Hash,
+  ExternalLink,
+  Globe,
+  Users,
+  DollarSign,
+  MapPin,
+  TrendingUp,
+  Award
 } from "lucide-react"
-import { useAuth } from "@/contexts/AuthContext"
+import Link from "next/link"
+import Image from "next/image"
+import { Product, ProductStoryLink } from "@/types/commerce"
 
-interface BraceletDesign {
-  id: string
-  name: string
-  description: string
-  basePrice: number
-  colors: string[]
-  image: string
-  popular: boolean
-}
-
-interface Customization {
-  quantity: number
-  color: string
-  numbers: string[]
-  logoOption: 'number-only' | 'logo-number' | 'custom-text'
-  customText?: string
-  logoFile?: File
-}
-
-const braceletDesigns: BraceletDesign[] = [
+// Mock data - in real app, this would come from API
+const mockProducts: (Product & { org: { name: string; logo: string; country: string } })[] = [
   {
-    id: 'classic-silicone',
-    name: 'Classic Silicone',
-    description: 'Soft, durable silicone bracelet perfect for everyday wear',
-    basePrice: 2.99,
-    colors: ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#000000', '#FFFFFF'],
-    image: '/placeholder.svg',
-    popular: true
+    id: '1',
+    orgId: 'org-1',
+    title: "Maria's Co-op Roast",
+    slug: 'marias-coop-roast',
+    description: "Premium coffee beans from Maria's cooperative, supporting local farmers and sustainable agriculture.",
+    price: 18.00,
+    currency: 'USD',
+    variants: [
+      { id: 'v1', name: '12oz Bag', price: 18.00, sku: 'COFFEE-12OZ', stock: 50, attributes: { size: '12oz' } }
+    ],
+    stock: 50,
+    media: [
+      { id: 'm1', type: 'image', url: '/images/coffee-bag.jpg', alt: 'Coffee bag', order: 0 }
+    ],
+    status: 'active',
+    fulfillmentMode: 'physical',
+    createdAt: '2024-01-15T00:00:00Z',
+    updatedAt: '2024-01-15T00:00:00Z',
+    org: {
+      name: 'Green Thumbs Initiative',
+      logo: '/logos/green-thumbs.png',
+      country: 'Guatemala'
+    }
   },
   {
-    id: 'premium-leather',
-    name: 'Premium Leather',
-    description: 'High-quality leather band with engraved numbers',
-    basePrice: 8.99,
-    colors: ['#8B4513', '#654321', '#D2691E', '#A0522D', '#000000'],
-    image: '/placeholder.svg',
-    popular: false
+    id: '2',
+    orgId: 'org-2',
+    title: "Handwoven Textiles",
+    slug: 'handwoven-textiles',
+    description: "Beautiful handwoven textiles made by women artisans in rural communities.",
+    price: 45.00,
+    currency: 'USD',
+    variants: [
+      { id: 'v2', name: 'Scarf', price: 45.00, sku: 'TEXTILE-SCARF', stock: 30, attributes: { type: 'Scarf' } }
+    ],
+    stock: 30,
+    media: [
+      { id: 'm2', type: 'image', url: '/images/textile-scarf.jpg', alt: 'Handwoven scarf', order: 0 }
+    ],
+    status: 'active',
+    fulfillmentMode: 'physical',
+    createdAt: '2024-01-10T00:00:00Z',
+    updatedAt: '2024-01-10T00:00:00Z',
+    org: {
+      name: 'Women Weavers Collective',
+      logo: '/logos/weavers.png',
+      country: 'Peru'
+    }
   },
   {
-    id: 'stainless-steel',
-    name: 'Stainless Steel',
-    description: 'Durable metal bracelet with laser-engraved numbers',
-    basePrice: 12.99,
-    colors: ['#C0C0C0', '#FFD700', '#CD7F32', '#000000'],
-    image: '/placeholder.svg',
-    popular: true
-  },
-  {
-    id: 'wooden-beads',
-    name: 'Wooden Beads',
-    description: 'Eco-friendly wooden beads with carved numbers',
-    basePrice: 6.99,
-    colors: ['#8B4513', '#D2691E', '#DEB887', '#F4A460'],
-    image: '/placeholder.svg',
-    popular: false
+    id: '3',
+    orgId: 'org-3',
+    title: "Artisan Pottery",
+    slug: 'artisan-pottery',
+    description: "Traditional pottery made by master craftsmen using centuries-old techniques.",
+    price: 65.00,
+    currency: 'USD',
+    variants: [
+      { id: 'v3', name: 'Vase', price: 65.00, sku: 'POTTERY-VASE', stock: 20, attributes: { type: 'Vase' } }
+    ],
+    stock: 20,
+    media: [
+      { id: 'm3', type: 'image', url: '/images/pottery-vase.jpg', alt: 'Artisan vase', order: 0 }
+    ],
+    status: 'active',
+    fulfillmentMode: 'physical',
+    createdAt: '2024-01-05T00:00:00Z',
+    updatedAt: '2024-01-05T00:00:00Z',
+    org: {
+      name: 'Craft Heritage Foundation',
+      logo: '/logos/craft-heritage.png',
+      country: 'Mexico'
+    }
   }
 ]
 
-const logoOptions = [
-  { value: 'number-only', label: 'Number Only', description: 'Just the engraved number' },
-  { value: 'logo-number', label: 'Logo + Number', description: 'Your logo with the number' },
-  { value: 'custom-text', label: 'Custom Text', description: 'Custom text with number' }
+const mockStoryLinks: ProductStoryLink[] = [
+  { id: '1', productId: '1', nmbrId: 'nmbr-4', priority: 10, createdAt: '2024-01-15T00:00:00Z' },
+  { id: '2', productId: '2', nmbrId: 'nmbr-7', priority: 8, createdAt: '2024-01-10T00:00:00Z' },
+  { id: '3', productId: '3', nmbrId: 'nmbr-12', priority: 9, createdAt: '2024-01-05T00:00:00Z' }
+]
+
+const categories = [
+  { id: 'all', name: 'All Products', count: 150 },
+  { id: 'food', name: 'Food & Beverages', count: 45 },
+  { id: 'textiles', name: 'Textiles & Clothing', count: 32 },
+  { id: 'crafts', name: 'Handicrafts', count: 28 },
+  { id: 'jewelry', name: 'Jewelry', count: 20 },
+  { id: 'home', name: 'Home & Garden', count: 25 }
+]
+
+const countries = [
+  'All Countries',
+  'Guatemala',
+  'Peru',
+  'Mexico',
+  'India',
+  'Kenya',
+  'Nepal'
 ]
 
 export default function MarketplacePage() {
-  const { org } = useAuth()
-  const [selectedDesign, setSelectedDesign] = useState<BraceletDesign | null>(null)
-  const [customization, setCustomization] = useState<Customization>({
-    quantity: 1,
-    color: '',
-    numbers: [''],
-    logoOption: 'number-only'
-  })
-  const [cart, setCart] = useState<any[]>([])
-  const [showCart, setShowCart] = useState(false)
-  const [currentStep, setCurrentStep] = useState<'designs' | 'customize' | 'cart'>('designs')
+  const [products, setProducts] = useState(mockProducts)
+  const [filteredProducts, setFilteredProducts] = useState(mockProducts)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedCountry, setSelectedCountry] = useState('All Countries')
+  const [sortBy, setSortBy] = useState('featured')
+  const [activeTab, setActiveTab] = useState('products')
 
-  const handleDesignSelect = (design: BraceletDesign) => {
-    setSelectedDesign(design)
-    setCustomization(prev => ({
-      ...prev,
-      color: design.colors[0] || ''
-    }))
-    // Automatically advance to customization step
-    setCurrentStep('customize')
-  }
+  useEffect(() => {
+    let filtered = products
 
-  const handleQuantityChange = (change: number) => {
-    setCustomization(prev => ({
-      ...prev,
-      quantity: Math.max(1, prev.quantity + change)
-    }))
-  }
-
-  const handleNumberChange = (index: number, value: string) => {
-    setCustomization(prev => ({
-      ...prev,
-      numbers: prev.numbers.map((num, i) => i === index ? value : num)
-    }))
-  }
-
-  const addNumberField = () => {
-    setCustomization(prev => ({
-      ...prev,
-      numbers: [...prev.numbers, '']
-    }))
-  }
-
-  const removeNumberField = (index: number) => {
-    if (customization.numbers.length > 1) {
-      setCustomization(prev => ({
-        ...prev,
-        numbers: prev.numbers.filter((_, i) => i !== index)
-      }))
-    }
-  }
-
-  const addToCart = () => {
-    if (!selectedDesign) return
-
-    const item = {
-      id: `${selectedDesign.id}-${Date.now()}`,
-      design: selectedDesign,
-      customization: { ...customization },
-      totalPrice: selectedDesign.basePrice * customization.quantity
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(product => 
+        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.org.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     }
 
-    setCart(prev => [...prev, item])
-    setShowCart(true)
-    // Automatically advance to cart step
-    setCurrentStep('cart')
-  }
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      // In real app, this would filter by actual category data
+      filtered = filtered // Placeholder
+    }
 
-  const calculateTotal = () => {
-    return cart.reduce((sum, item) => sum + item.totalPrice, 0)
+    // Filter by country
+    if (selectedCountry !== 'All Countries') {
+      filtered = filtered.filter(product => product.org.country === selectedCountry)
+    }
+
+    // Sort products
+    switch (sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price)
+        break
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price)
+        break
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        break
+      case 'featured':
+        // Sort by story link priority
+        filtered.sort((a, b) => {
+          const aPriority = mockStoryLinks.find(link => link.productId === a.id)?.priority || 0
+          const bPriority = mockStoryLinks.find(link => link.productId === b.id)?.priority || 0
+          return bPriority - aPriority
+        })
+        break
+    }
+
+    setFilteredProducts(filtered)
+  }, [products, searchTerm, selectedCategory, selectedCountry, sortBy])
+
+  const getProductStory = (productId: string) => {
+    const storyLink = mockStoryLinks.find(link => link.productId === productId)
+    if (!storyLink) return null
+    
+    // Mock story data
+    return {
+      id: storyLink.nmbrId,
+      title: "Artisan Story",
+      excerpt: "Learn about the craftspeople behind this product...",
+      image: '/images/story-placeholder.jpg'
+    }
   }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-r from-cyan-600 to-purple-600 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="border-b bg-card">
+        <div className="container mx-auto px-4 py-6">
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">NMBR Marketplace</h1>
-            <p className="text-xl text-cyan-100 max-w-3xl mx-auto">
-              Create custom numbered bracelets that connect your supporters to the people they help. 
-              Each bracelet tells a story and makes a real impact.
+            <h1 className="text-4xl font-bold mb-2">NMBR Marketplace</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover products with stories. Every purchase supports real people and communities around the world.
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs value={currentStep} onValueChange={(value) => setCurrentStep(value as any)} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="designs">Choose Design</TabsTrigger>
-            <TabsTrigger value="customize" disabled={!selectedDesign}>Customize</TabsTrigger>
-            <TabsTrigger value="cart">Cart ({cart.length})</TabsTrigger>
+      {/* Stats */}
+      <section className="py-8 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary">150+</div>
+              <div className="text-sm text-muted-foreground">Products</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary">25</div>
+              <div className="text-sm text-muted-foreground">Organizations</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary">12</div>
+              <div className="text-sm text-muted-foreground">Countries</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary">$50K+</div>
+              <div className="text-sm text-muted-foreground">Raised</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="organizations">Organizations</TabsTrigger>
           </TabsList>
 
-          {/* Design Selection */}
-          <TabsContent value="designs" className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-4">Choose Your Bracelet Design</h2>
-              <p className="text-muted-foreground text-lg">
-                Select the perfect style for your organization's numbered bracelets
-              </p>
+          <TabsContent value="products" className="space-y-6">
+            {/* Search and Filters */}
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+              <div className="flex-1 max-w-md">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Search products, organizations, or stories..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map(country => (
+                      <SelectItem key={country} value={country}>{country}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="featured">Featured</SelectItem>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Button variant="outline">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {braceletDesigns.map((design) => (
-                <Card 
-                  key={design.id}
-                  className={`cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 ${
-                    selectedDesign?.id === design.id 
-                      ? 'ring-2 ring-cyan-500 border-cyan-200' 
-                      : 'hover:border-cyan-200'
-                  }`}
-                  onClick={() => handleDesignSelect(design)}
+            {/* Category Tabs */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map(category => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category.id)}
                 >
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl flex items-center justify-center">
-                        <Heart className="w-8 h-8 text-cyan-600" />
-                      </div>
-                      {design.popular && (
-                        <Badge className="bg-orange-500 text-white">
-                          <Star className="w-3 h-3 mr-1" />
-                          Popular
-                        </Badge>
-                      )}
-                    </div>
-                    <CardTitle className="text-lg">{design.name}</CardTitle>
-                    <CardDescription className="text-sm">
-                      {design.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        {design.colors.slice(0, 4).map((color, index) => (
-                          <div
-                            key={index}
-                            className="w-6 h-6 rounded-full border-2 border-gray-200"
-                            style={{ backgroundColor: color }}
-                          />
-                        ))}
-                        {design.colors.length > 4 && (
-                          <div className="w-6 h-6 rounded-full border-2 border-gray-200 bg-gray-100 flex items-center justify-center text-xs">
-                            +{design.colors.length - 4}
+                  {category.name} ({category.count})
+                </Button>
+              ))}
+            </div>
+
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => {
+                const story = getProductStory(product.id)
+                
+                return (
+                  <Card key={product.id} className="group hover:shadow-lg transition-shadow">
+                    <CardHeader className="p-0">
+                      <div className="relative aspect-square overflow-hidden rounded-t-lg">
+                        <Image
+                          src={product.media[0]?.url || '/placeholder-product.jpg'}
+                          alt={product.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {story && (
+                          <div className="absolute top-2 left-2">
+                            <Badge className="bg-primary/90 text-primary-foreground">
+                              <Hash className="w-3 h-3 mr-1" />
+                              Story
+                            </Badge>
                           </div>
                         )}
+                        <div className="absolute top-2 right-2">
+                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0 bg-white/80 hover:bg-white">
+                            <Heart className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-foreground">
-                          ${design.basePrice}
-                        </span>
-                        <span className="text-sm text-muted-foreground">each</span>
+                    </CardHeader>
+                    
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div>
+                          <h3 className="font-semibold text-lg line-clamp-2">{product.title}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Image
+                              src={product.org.logo}
+                              alt={product.org.name}
+                              width={16}
+                              height={16}
+                              className="rounded-full"
+                            />
+                            <span className="text-sm text-muted-foreground">{product.org.name}</span>
+                            <MapPin className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">{product.org.country}</span>
+                          </div>
+                        </div>
+                        
+                        {/* Story Card */}
+                        {story && (
+                          <div className="p-2 bg-muted/50 rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src={story.image}
+                                alt={story.title}
+                                width={20}
+                                height={20}
+                                className="rounded-full"
+                              />
+                              <span className="text-xs font-medium">{story.title}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-1">{story.excerpt}</p>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="text-xl font-bold">${product.price}</div>
+                          <Button size="sm" asChild>
+                            <Link href={`/marketplace/${product.slug}`}>
+                              View
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="organizations" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  name: 'Green Thumbs Initiative',
+                  logo: '/logos/green-thumbs.png',
+                  country: 'Guatemala',
+                  products: 12,
+                  raised: 15000,
+                  description: 'Supporting sustainable agriculture and community development'
+                },
+                {
+                  name: 'Women Weavers Collective',
+                  logo: '/logos/weavers.png',
+                  country: 'Peru',
+                  products: 8,
+                  raised: 8500,
+                  description: 'Empowering women artisans through traditional weaving'
+                },
+                {
+                  name: 'Craft Heritage Foundation',
+                  logo: '/logos/craft-heritage.png',
+                  country: 'Mexico',
+                  products: 15,
+                  raised: 22000,
+                  description: 'Preserving traditional crafts and supporting artisans'
+                }
+              ].map((org, index) => (
+                <Card key={index} className="group hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Image
+                        src={org.logo}
+                        alt={org.name}
+                        width={48}
+                        height={48}
+                        className="rounded-lg"
+                      />
+                      <div>
+                        <h3 className="font-semibold">{org.name}</h3>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <MapPin className="w-3 h-3" />
+                          {org.country}
+                        </div>
                       </div>
                     </div>
+                    
+                    <p className="text-sm text-muted-foreground mb-4">{org.description}</p>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="text-center p-2 bg-muted/50 rounded">
+                        <div className="text-lg font-bold">{org.products}</div>
+                        <div className="text-xs text-muted-foreground">Products</div>
+                      </div>
+                      <div className="text-center p-2 bg-muted/50 rounded">
+                        <div className="text-lg font-bold">${org.raised.toLocaleString()}</div>
+                        <div className="text-xs text-muted-foreground">Raised</div>
+                      </div>
+                    </div>
+                    
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href={`/org/${org.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                        View Organization
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
             </div>
-
-            {/* Continue Button */}
-            {selectedDesign && (
-              <div className="text-center mt-8">
-                <Button 
-                  onClick={() => setCurrentStep('customize')}
-                  className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white px-8 py-3 text-lg"
-                >
-                  Continue to Customization
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Customization */}
-          <TabsContent value="customize" className="space-y-6">
-            {selectedDesign && (
-              <>
-                <div className="text-center mb-8">
-                  <div className="flex items-center justify-center mb-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setCurrentStep('designs')}
-                      className="mr-4"
-                    >
-                      ← Back to Designs
-                    </Button>
-                    <div className="flex-1">
-                      <h2 className="text-3xl font-bold text-foreground mb-2">Customize Your Bracelets</h2>
-                      <p className="text-muted-foreground text-lg">
-                        Personalize your {selectedDesign.name} bracelets
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Customization Form */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Palette className="w-5 h-5" />
-                        Customization Options
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      {/* Quantity */}
-                      <div className="space-y-2">
-                        <Label htmlFor="quantity">Quantity</Label>
-                        <div className="flex items-center space-x-3">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleQuantityChange(-1)}
-                            disabled={customization.quantity <= 1}
-                          >
-                            <Minus className="w-4 h-4" />
-                          </Button>
-                          <Input
-                            id="quantity"
-                            type="number"
-                            value={customization.quantity}
-                            onChange={(e) => setCustomization(prev => ({
-                              ...prev,
-                              quantity: Math.max(1, parseInt(e.target.value) || 1)
-                            }))}
-                            className="w-20 text-center"
-                          />
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleQuantityChange(1)}
-                          >
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Color Selection */}
-                      <div className="space-y-2">
-                        <Label>Color</Label>
-                        <div className="grid grid-cols-4 gap-2">
-                          {selectedDesign.colors.map((color, index) => (
-                            <button
-                              key={index}
-                              className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                                customization.color === color
-                                  ? 'border-cyan-500 ring-2 ring-cyan-200'
-                                  : 'border-gray-200 hover:border-gray-300'
-                              }`}
-                              style={{ backgroundColor: color }}
-                              onClick={() => setCustomization(prev => ({
-                                ...prev,
-                                color
-                              }))}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Logo Option */}
-                      <div className="space-y-2">
-                        <Label>Engraving Option</Label>
-                        <Select
-                          value={customization.logoOption}
-                          onValueChange={(value: any) => setCustomization(prev => ({
-                            ...prev,
-                            logoOption: value
-                          }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {logoOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                <div>
-                                  <div className="font-medium">{option.label}</div>
-                                  <div className="text-sm text-muted-foreground">{option.description}</div>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Custom Text */}
-                      {customization.logoOption === 'custom-text' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="customText">Custom Text</Label>
-                          <Input
-                            id="customText"
-                            placeholder="Enter custom text..."
-                            value={customization.customText || ''}
-                            onChange={(e) => setCustomization(prev => ({
-                              ...prev,
-                              customText: e.target.value
-                            }))}
-                          />
-                        </div>
-                      )}
-
-                      {/* Numbers */}
-                      <div className="space-y-2">
-                        <Label>Numbers to Engrave</Label>
-                        <div className="space-y-2">
-                          {customization.numbers.map((number, index) => (
-                            <div key={index} className="flex items-center space-x-2">
-                              <Input
-                                placeholder={`Number ${index + 1}`}
-                                value={number}
-                                onChange={(e) => handleNumberChange(index, e.target.value)}
-                                className="flex-1"
-                              />
-                              {customization.numbers.length > 1 && (
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => removeNumberField(index)}
-                                >
-                                  <Minus className="w-4 h-4" />
-                                </Button>
-                              )}
-                            </div>
-                          ))}
-                          <Button
-                            variant="outline"
-                            onClick={addNumberField}
-                            className="w-full"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Another Number
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Preview & Summary */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Hash className="w-5 h-5" />
-                        Preview & Summary
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      {/* Preview */}
-                      <div className="text-center">
-                        <div className="w-32 h-32 mx-auto bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
-                          <Heart className="w-16 h-16 text-cyan-600" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">Preview coming soon</p>
-                      </div>
-
-                      {/* Summary */}
-                      <div className="space-y-4">
-                        <div className="flex justify-between">
-                          <span>Design:</span>
-                          <span className="font-medium">{selectedDesign.name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Color:</span>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-4 h-4 rounded-full border"
-                              style={{ backgroundColor: customization.color }}
-                            />
-                            <span className="font-medium">Selected</span>
-                          </div>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Quantity:</span>
-                          <span className="font-medium">{customization.quantity}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Numbers:</span>
-                          <span className="font-medium">{customization.numbers.filter(n => n).length}</span>
-                        </div>
-                        <div className="border-t pt-4">
-                          <div className="flex justify-between text-lg font-bold">
-                            <span>Total:</span>
-                            <span>${(selectedDesign.basePrice * customization.quantity).toFixed(2)}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <Button 
-                        onClick={addToCart}
-                        className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
-                      >
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        Add to Cart
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-              </>
-            )}
-          </TabsContent>
-
-          {/* Cart */}
-          <TabsContent value="cart" className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-4">Your Cart</h2>
-              <p className="text-muted-foreground text-lg">
-                Review your order before checkout
-              </p>
-            </div>
-
-            {cart.length === 0 ? (
-              <Card className="text-center py-12">
-                <ShoppingCart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Your cart is empty</h3>
-                <p className="text-muted-foreground">Start by selecting a bracelet design</p>
-              </Card>
-            ) : (
-              <div className="space-y-6">
-                {cart.map((item, index) => (
-                  <Card key={item.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-xl flex items-center justify-center">
-                            <Heart className="w-8 h-8 text-cyan-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold">{item.design.name}</h3>
-                            <p className="text-sm text-muted-foreground">
-                              {item.customization.quantity} × ${item.design.basePrice}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Color: {item.customization.color}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold">${item.totalPrice.toFixed(2)}</div>
-                          <Button variant="outline" size="sm" className="mt-2">
-                            Remove
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-center text-xl font-bold">
-                      <span>Total:</span>
-                      <span>${calculateTotal().toFixed(2)}</span>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      <Button className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700">
-                        <Truck className="w-4 h-4 mr-2" />
-                        Proceed to Checkout
-                      </Button>
-                      <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <Shield className="w-4 h-4 mr-1" />
-                          Secure Checkout
-                        </div>
-                        <div className="flex items-center">
-                          <RotateCcw className="w-4 h-4 mr-1" />
-                          30-day Returns
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
           </TabsContent>
         </Tabs>
       </div>

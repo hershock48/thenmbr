@@ -39,16 +39,18 @@ import {
   Lightbulb,
   Wand2,
   MessageSquare,
-  RefreshCw
+  RefreshCw,
+  ShoppingCart
 } from "lucide-react"
 import { useOrganization } from "@/contexts/OrganizationContext"
 import { useSubscription } from "@/contexts/SubscriptionContext"
 import { AIWritingAssistant } from "@/components/ui/ai-writing-assistant"
+import { ProductBlock, ProductBlockEditor, ProductGrid } from "@/components/ui/product-blocks"
 import { WhiteLabelPrompt } from "@/components/ui/tier-upgrade-prompt"
 
 interface NewsletterBlock {
   id: string
-  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation' | 'action' | 'product' | 'sale'
+  type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation' | 'action' | 'product' | 'sale' | 'product_block'
   content: any
   order: number
 }
@@ -143,6 +145,13 @@ const getBlockTypes = (orgType: string) => [
       icon: DollarSign, 
       color: 'bg-orange-500',
       description: 'Promote sales and special offers'
+    },
+    { 
+      type: 'product_block', 
+      label: 'Product Block', 
+      icon: ShoppingCart, 
+      color: 'bg-purple-500',
+      description: 'Feature a product with story link'
     }
   ] : [])
 ]
@@ -1178,6 +1187,37 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                     />
                   </div>
                 </div>
+              </div>
+            )}
+          </div>
+        )
+
+      case 'product_block':
+        return (
+          <div>
+            <ProductBlock
+              product={block.content.product}
+              story={block.content.story}
+              attribution={{
+                nmbrId: storyId,
+                updateId: `update-${Date.now()}`,
+                campaignId: `campaign-${Date.now()}`,
+                recipientId: 'recipient-hash'
+              }}
+              orgSlug="demo-org"
+              isPreview={false}
+              onEdit={() => setSelectedBlock(selectedBlock === block.id ? null : block.id)}
+              onDelete={() => removeBlock(block.id)}
+            />
+            {selectedBlock === block.id && (
+              <div className="mt-4">
+                <ProductBlockEditor
+                  onSave={(product, story) => {
+                    updateBlock(block.id, { product, story })
+                    setSelectedBlock(null)
+                  }}
+                  onCancel={() => setSelectedBlock(null)}
+                />
               </div>
             )}
           </div>
