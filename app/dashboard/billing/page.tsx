@@ -1,346 +1,288 @@
+"use client"
+
+import React, { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import {
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { 
+  CheckCircle, 
+  Crown, 
+  Zap, 
+  BarChart3, 
+  Shield, 
+  ArrowRight,
   CreditCard,
-  DollarSign,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle,
-  ExternalLink,
-  Settings,
-  Download,
+  Calendar,
+  Users,
+  Hash,
+  DollarSign
 } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useSubscription } from "@/contexts/SubscriptionContext"
+import { useOrganization } from "@/contexts/OrganizationContext"
+import Link from "next/link"
+
+const TIER_INFO = {
+  starter: {
+    name: "Starter",
+    monthlyPrice: 99,
+    annualPrice: 990,
+    icon: Crown,
+    color: "from-rose-500 to-pink-600",
+    features: ["1-3 active NMBRs", "Basic analytics", "CSV exports", "Basic branding", "2 team seats"]
+  },
+  growth: {
+    name: "Growth", 
+    monthlyPrice: 199,
+    annualPrice: 1990,
+    icon: Zap,
+    color: "from-blue-500 to-indigo-600",
+    features: ["5 active NMBRs", "Advanced branding", "Integrations", "Marketplace", "Unlimited seats"]
+  },
+  professional: {
+    name: "Professional",
+    monthlyPrice: 399, 
+    annualPrice: 3990,
+    icon: BarChart3,
+    color: "from-emerald-500 to-teal-600",
+    features: ["10 active NMBRs", "White-label", "API access", "Built-in email", "Team roles"]
+  },
+  enterprise: {
+    name: "Enterprise",
+    monthlyPrice: 750,
+    annualPrice: 9000,
+    icon: Shield,
+    color: "from-purple-500 to-violet-600", 
+    features: ["Unlimited NMBRs", "SSO", "Advanced security", "Dedicated support"]
+  }
+}
 
 export default function BillingPage() {
-  // Mock data - in real app this would come from database
-  const billingData = {
-    subscription: {
-      status: "active",
-      plan: "Professional",
-      amount: 99,
-      currency: "USD",
-      nextBilling: "2025-02-15",
-      paymentMethod: "**** 4242",
-    },
-    stripeConnect: {
-      connected: true,
-      accountId: "acct_1234567890",
-      status: "complete",
-      payoutsEnabled: true,
-    },
-    usage: {
-      currentPeriod: {
-        donations: 47,
-        donationVolume: 12450,
-        subscribers: 89,
-        widgetViews: 1247,
-      },
-      limits: {
-        donations: 100,
-        donationVolume: 25000,
-        subscribers: 200,
-        widgetViews: 5000,
-      },
-    },
-    recentTransactions: [
-      { id: "1", type: "donation", amount: 50, date: "2025-01-10", donor: "John D." },
-      { id: "2", type: "donation", amount: 25, date: "2025-01-09", donor: "Sarah M." },
-      { id: "3", type: "subscription", amount: -99, date: "2025-01-01", description: "Monthly subscription" },
-    ],
+  const { subscription, tier, purchaseSubscription, upgradeSubscription } = useSubscription()
+  const { orgType } = useOrganization()
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('annual')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleUpgrade = async (tierId: string) => {
+    setIsLoading(true)
+    try {
+      await purchaseSubscription(tierId, billingPeriod)
+      // Show success message
+    } catch (error) {
+      console.error('Upgrade failed:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
+  const getTierIcon = (tierId: string) => {
+    switch (tierId) {
+      case 'starter': return Crown
+      case 'growth': return Zap
+      case 'professional': return BarChart3
+      case 'enterprise': return Shield
+      default: return Crown
+    }
+  }
+
+  const getTierColor = (tierId: string) => {
+    switch (tierId) {
+      case 'starter': return 'from-rose-500 to-pink-600'
+      case 'growth': return 'from-blue-500 to-indigo-600'
+      case 'professional': return 'from-emerald-500 to-teal-600'
+      case 'enterprise': return 'from-purple-500 to-violet-600'
+      default: return 'from-gray-500 to-gray-600'
+    }
+  }
+
+  const currentTierId = tier?.id || 'starter'
+  const availableTiers = Object.entries(TIER_INFO).filter(([id]) => id !== currentTierId)
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Billing & Payments</h1>
-          <p className="text-gray-600">Manage your subscription and payment processing</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Download Invoice
-          </Button>
-          <Button>
-            <Settings className="w-4 h-4 mr-2" />
-            Manage Subscription
-          </Button>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Billing & Subscription</h1>
+        <p className="text-muted-foreground">Manage your subscription and billing settings</p>
       </div>
 
-      {/* Stripe Connect Status */}
-      {!billingData.stripeConnect.connected && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Payment processing not set up.</strong> Connect your Stripe account to start receiving donations.
-            <Button variant="link" className="p-0 h-auto ml-2">
-              Set up payments
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
+      <Tabs defaultValue="current" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="current">Current Plan</TabsTrigger>
+          <TabsTrigger value="upgrade">Upgrade Plan</TabsTrigger>
+          <TabsTrigger value="billing">Billing History</TabsTrigger>
+        </TabsList>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Left Column */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Subscription Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5" />
-                Subscription
-              </CardTitle>
-              <CardDescription>Your current plan and billing information</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold">{billingData.subscription.plan} Plan</span>
-                    <Badge variant="secondary">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      {billingData.subscription.status}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    ${billingData.subscription.amount}/{billingData.subscription.currency} per month
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">Next billing</p>
-                  <p className="font-medium">{billingData.subscription.nextBilling}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-4 border-t">
-                <div>
-                  <p className="text-sm text-gray-600">Payment method</p>
-                  <p className="font-medium">{billingData.subscription.paymentMethod}</p>
-                </div>
-                <Button variant="outline" size="sm">
-                  Update
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Usage & Limits */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Usage This Month</CardTitle>
-              <CardDescription>Track your plan usage and limits</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Donations</span>
-                    <span>
-                      {billingData.usage.currentPeriod.donations} / {billingData.usage.limits.donations}
-                    </span>
-                  </div>
-                  <Progress
-                    value={(billingData.usage.currentPeriod.donations / billingData.usage.limits.donations) * 100}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Donation Volume</span>
-                    <span>
-                      ${billingData.usage.currentPeriod.donationVolume.toLocaleString()} / $
-                      {billingData.usage.limits.donationVolume.toLocaleString()}
-                    </span>
-                  </div>
-                  <Progress
-                    value={
-                      (billingData.usage.currentPeriod.donationVolume / billingData.usage.limits.donationVolume) * 100
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Subscribers</span>
-                    <span>
-                      {billingData.usage.currentPeriod.subscribers} / {billingData.usage.limits.subscribers}
-                    </span>
-                  </div>
-                  <Progress
-                    value={(billingData.usage.currentPeriod.subscribers / billingData.usage.limits.subscribers) * 100}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Widget Views</span>
-                    <span>
-                      {billingData.usage.currentPeriod.widgetViews.toLocaleString()} /{" "}
-                      {billingData.usage.limits.widgetViews.toLocaleString()}
-                    </span>
-                  </div>
-                  <Progress
-                    value={(billingData.usage.currentPeriod.widgetViews / billingData.usage.limits.widgetViews) * 100}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Transactions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>Your latest donations and charges</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {billingData.recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between py-2">
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          transaction.type === "donation" ? "bg-green-100" : "bg-blue-100"
-                        }`}
-                      >
-                        {transaction.type === "donation" ? (
-                          <DollarSign className="w-4 h-4 text-green-600" />
-                        ) : (
-                          <CreditCard className="w-4 h-4 text-blue-600" />
-                        )}
+        <TabsContent value="current" className="space-y-6">
+          {/* Current Subscription */}
+          {tier && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className={`w-8 h-8 bg-gradient-to-br ${getTierColor(tier.id)} rounded-lg flex items-center justify-center`}>
+                        {React.createElement(getTierIcon(tier.id), { className: "w-4 h-4 text-white" })}
                       </div>
-                      <div>
-                        <p className="font-medium">
-                          {transaction.type === "donation"
-                            ? `Donation from ${transaction.donor}`
-                            : transaction.description}
-                        </p>
-                        <p className="text-sm text-gray-600">{transaction.date}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className={`font-medium ${transaction.amount > 0 ? "text-green-600" : "text-gray-900"}`}>
-                        {transaction.amount > 0 ? "+" : ""}${Math.abs(transaction.amount)}
-                      </p>
-                    </div>
+                      {tier.name} Plan
+                    </CardTitle>
+                    <CardDescription>
+                      {subscription?.status === 'trial' ? 'Free Trial' : 'Active Subscription'}
+                    </CardDescription>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Stripe Connect Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">S</span>
+                  <Badge variant={subscription?.status === 'trial' ? 'secondary' : 'default'}>
+                    {subscription?.status === 'trial' ? 'Trial' : 'Active'}
+                  </Badge>
                 </div>
-                Stripe Connect
-              </CardTitle>
-              <CardDescription>Payment processing status</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {billingData.stripeConnect.connected ? (
-                <>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-sm font-medium">Connected</span>
-                    <Badge variant="secondary">Active</Badge>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-primary">${tier.monthlyPrice}</div>
+                    <div className="text-sm text-muted-foreground">per month</div>
                   </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Account ID</span>
-                      <span className="font-mono">{billingData.stripeConnect.accountId}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Payouts</span>
-                      <span className={billingData.stripeConnect.payoutsEnabled ? "text-green-600" : "text-red-600"}>
-                        {billingData.stripeConnect.payoutsEnabled ? "Enabled" : "Disabled"}
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-primary">{tier.activeNmbrs === -1 ? 'Unlimited' : tier.activeNmbrs}</div>
+                    <div className="text-sm text-muted-foreground">active NMBRs</div>
+                  </div>
+                  <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-2xl font-bold text-primary">{tier.platformFee}%</div>
+                    <div className="text-sm text-muted-foreground">platform fee</div>
+                  </div>
+                </div>
+
+                {subscription?.trialEndsAt && (
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-900">
+                        Trial ends {new Date(subscription.trialEndsAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full bg-transparent">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Manage in Stripe
+                )}
+
+                <div className="flex gap-2">
+                  <Button variant="outline" asChild>
+                    <Link href="/pricing">View All Plans</Link>
                   </Button>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-orange-600" />
-                    <span className="text-sm font-medium">Not Connected</span>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Connect your Stripe account to start receiving donations directly.
-                  </p>
-                  <Button className="w-full">Connect Stripe Account</Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
+                  <Button variant="outline">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Update Payment Method
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
-          {/* Quick Stats */}
+        <TabsContent value="upgrade" className="space-y-6">
+          {/* Billing Period Toggle */}
+          <div className="flex items-center justify-center space-x-1 bg-muted rounded-lg p-1 max-w-sm mx-auto">
+            <button
+              onClick={() => setBillingPeriod("monthly")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                billingPeriod === "monthly"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod("annual")}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                billingPeriod === "annual"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Annual (2 months free)
+            </button>
+          </div>
+
+          {/* Available Tiers */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {availableTiers.map(([tierId, tierInfo]) => {
+              const IconComponent = tierInfo.icon
+              const displayPrice = billingPeriod === "annual" ? tierInfo.annualPrice : tierInfo.monthlyPrice
+              const isRecommended = tierId === 'growth'
+
+              return (
+                <Card key={tierId} className={`relative ${isRecommended ? 'ring-2 ring-primary border-primary/20' : ''}`}>
+                  {isRecommended && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <Badge className="bg-primary text-primary-foreground">Recommended</Badge>
+                    </div>
+                  )}
+
+                  <CardHeader className="text-center">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${tierInfo.color} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    <CardTitle className="text-2xl font-bold">{tierInfo.name}</CardTitle>
+                    <CardDescription>
+                      {orgType === "nonprofit" 
+                        ? "Perfect for growing nonprofits and impact organizations"
+                        : "Ideal for businesses scaling their customer engagement"
+                      }
+                    </CardDescription>
+
+                    <div className="mt-4">
+                      <div className="flex items-baseline justify-center">
+                        <span className="text-4xl font-bold text-foreground">${displayPrice}</span>
+                        <span className="text-muted-foreground ml-1">/{billingPeriod === 'annual' ? 'year' : 'month'}</span>
+                      </div>
+                      {billingPeriod === 'annual' && (
+                        <Badge variant="secondary" className="mt-2">
+                          Save 2 months
+                        </Badge>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-6">
+                    <ul className="space-y-3">
+                      {tierInfo.features.map((feature, index) => (
+                        <li key={index} className="flex items-start space-x-3">
+                          <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-muted-foreground">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button 
+                      className={`w-full h-12 bg-gradient-to-r ${tierInfo.color} hover:opacity-90 text-white font-semibold transition-all duration-300`}
+                      onClick={() => handleUpgrade(tierId)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Processing...' : `Upgrade to ${tierInfo.name}`}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="billing" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>This Month</CardTitle>
-              <CardDescription>Key metrics for your account</CardDescription>
+              <CardTitle>Billing History</CardTitle>
+              <CardDescription>View your past invoices and payments</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-green-600" />
-                  <span className="text-sm">Total Donations</span>
-                </div>
-                <span className="font-semibold">
-                  ${billingData.usage.currentPeriod.donationVolume.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm">New Subscribers</span>
-                </div>
-                <span className="font-semibold">{billingData.usage.currentPeriod.subscribers}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-purple-600 rounded-full" />
-                  <span className="text-sm">Widget Views</span>
-                </div>
-                <span className="font-semibold">{billingData.usage.currentPeriod.widgetViews.toLocaleString()}</span>
+            <CardContent>
+              <div className="text-center py-8">
+                <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No billing history yet</h3>
+                <p className="text-muted-foreground">
+                  Your invoices and payment history will appear here once you start your subscription.
+                </p>
               </div>
             </CardContent>
           </Card>
-
-          {/* Support */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Need Help?</CardTitle>
-              <CardDescription>Get support with billing and payments</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
-                View Documentation
-              </Button>
-              <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
-                Contact Support
-              </Button>
-              <Button variant="outline" size="sm" className="w-full justify-start bg-transparent">
-                Report an Issue
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

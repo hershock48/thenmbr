@@ -27,6 +27,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 import { useAuth } from "@/contexts/AuthContext"
 import { useOrganization } from "@/contexts/OrganizationContext"
+import { useSubscription } from "@/contexts/SubscriptionContext"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -54,6 +55,7 @@ interface Stats {
 export default function DashboardPage() {
   const { user, org } = useAuth()
   const { terminology, orgType, getMetricsForType } = useOrganization()
+  const { tier, getRemainingNmbrs, getRemainingSeats, canCreateNmbr } = useSubscription()
   const router = useRouter()
   const [stories, setStories] = useState<Story[]>([])
   const [stats, setStats] = useState<Stats>({
@@ -297,6 +299,29 @@ export default function DashboardPage() {
       <div className="mb-6" data-tour="analytics-dashboard">
         <AnalyticsDashboard orgType={orgType} />
       </div>
+
+      {/* Tier Status Card */}
+      {tier && (
+        <div className="mb-6">
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Current Plan: {tier.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {getRemainingNmbrs() === -1 ? 'Unlimited' : `${getRemainingNmbrs()} remaining`} NMBRs • 
+                    {getRemainingSeats() === -1 ? 'Unlimited' : `${getRemainingSeats()} remaining`} team seats
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-primary">${tier.monthlyPrice}/mo</div>
+                  <div className="text-sm text-muted-foreground">{tier.platformFee}% platform fee</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-tour="stats-cards">
         {metrics.map((metric, index) => {

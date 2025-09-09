@@ -28,7 +28,9 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useOrganization } from "@/contexts/OrganizationContext"
+import { useSubscription } from "@/contexts/SubscriptionContext"
 import { AIWritingAssistant } from "@/components/ui/ai-writing-assistant"
+import { NmbrLimitReachedPrompt } from "@/components/ui/tier-upgrade-prompt"
 
 const industryTemplates = [
   // Business templates
@@ -120,6 +122,7 @@ const industryTemplates = [
 
 export default function CreateStoryPage() {
   const { orgType } = useOrganization()
+  const { canCreateNmbr, incrementNmbrUsage, getRemainingNmbrs, tier } = useSubscription()
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [storyData, setStoryData] = useState({
     title: "",
@@ -218,8 +221,14 @@ export default function CreateStoryPage() {
   }
 
   const handlePublish = () => {
+    if (!canCreateNmbr()) {
+      // Show upgrade prompt instead of publishing
+      return
+    }
+    
     console.log("[v0] Publishing story:", storyData)
     // Implement publish functionality
+    incrementNmbrUsage() // Increment NMBR usage when published
   }
 
   return (
@@ -253,7 +262,11 @@ export default function CreateStoryPage() {
               <Button variant="outline" onClick={handleSave}>
                 Save Draft
               </Button>
-              <Button onClick={handlePublish}>Publish Story</Button>
+              {canCreateNmbr() ? (
+                <Button onClick={handlePublish}>Publish Story</Button>
+              ) : (
+                <NmbrLimitReachedPrompt />
+              )}
             </div>
           </div>
         </div>
@@ -565,6 +578,18 @@ export default function CreateStoryPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Tier Status */}
+            {tier && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Current Plan</CardTitle>
+                  <CardDescription>
+                    {tier.name} - {getRemainingNmbrs() === -1 ? 'Unlimited' : `${getRemainingNmbrs()} remaining`} NMBRs
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            )}
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

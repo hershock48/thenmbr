@@ -42,7 +42,9 @@ import {
   RefreshCw
 } from "lucide-react"
 import { useOrganization } from "@/contexts/OrganizationContext"
+import { useSubscription } from "@/contexts/SubscriptionContext"
 import { AIWritingAssistant } from "@/components/ui/ai-writing-assistant"
+import { WhiteLabelPrompt } from "@/components/ui/tier-upgrade-prompt"
 
 interface NewsletterBlock {
   id: string
@@ -147,6 +149,7 @@ const getBlockTypes = (orgType: string) => [
 
 export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSend, audience }: NewsletterBuilderProps) {
   const { terminology, orgType } = useOrganization()
+  const { canUseFeature } = useSubscription()
   const [blocks, setBlocks] = useState<NewsletterBlock[]>([
     {
       id: '1',
@@ -1251,6 +1254,23 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
             <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-8">
               <div className="space-y-6">
                 {blocks.map((block, index) => renderBlock(block, index))}
+              </div>
+              
+              {/* Footer with branding */}
+              <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+                {canUseFeature('white_label') ? (
+                  <div>
+                    <p>© 2024 Your Organization. All rights reserved.</p>
+                    <p>Custom branding enabled</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p>© 2024 Your Organization. All rights reserved.</p>
+                    <p className="mt-2">
+                      <WhiteLabelPrompt />
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
