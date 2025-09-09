@@ -41,10 +41,6 @@ function WidgetContent() {
   const nmbrCode = searchParams.get('nmbr')
 
   useEffect(() => {
-    console.log('WidgetContent useEffect triggered')
-    console.log('orgId:', orgId)
-    console.log('widgetType:', widgetType)
-    console.log('nmbrCode:', nmbrCode)
 
     if (orgId) {
       fetchOrg()
@@ -61,7 +57,7 @@ function WidgetContent() {
       const data = await response.json()
       setOrg(data)
     } catch (error) {
-      console.error('Failed to fetch organization:', error)
+      // Failed to fetch organization
     }
   }
 
@@ -117,9 +113,6 @@ function WidgetContent() {
               This widget requires a valid organization ID to work properly.
             </p>
             <div className="text-sm text-muted-foreground space-y-1">
-              <p>Debug: orgId is {orgId === null ? 'null' : orgId}</p>
-              <p>Debug: widgetType is {widgetType}</p>
-              <p>Debug: nmbrCode is {nmbrCode === null ? 'null' : nmbrCode}</p>
             </div>
           </CardContent>
         </Card>
