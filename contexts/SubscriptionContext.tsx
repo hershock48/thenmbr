@@ -59,7 +59,7 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     activeNmbrs: 3,
     platformFee: 5,
     seats: 2,
-    features: ['basic_analytics', 'csv_exports', 'basic_branding'],
+    features: ['basic_analytics', 'csv_exports', 'basic_branding', 'email_campaigns'],
     isActive: true
   },
   {
@@ -70,7 +70,7 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     activeNmbrs: 5,
     platformFee: 3,
     seats: -1, // unlimited
-    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace'],
+    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'email_campaigns', 'sms_updates'],
     isActive: true
   },
   {
@@ -81,7 +81,7 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     activeNmbrs: 10,
     platformFee: 1,
     seats: -1, // unlimited
-    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'white_label', 'api_access', 'built_in_email', 'team_roles'],
+    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'white_label', 'api_access', 'built_in_email', 'team_roles', 'email_campaigns', 'sms_updates', 'push_notifications', 'supporter_feed'],
     isActive: true
   },
   {
@@ -92,7 +92,7 @@ const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
     activeNmbrs: -1, // unlimited
     platformFee: 0,
     seats: -1, // unlimited
-    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'white_label', 'api_access', 'built_in_email', 'team_roles', 'sso', 'advanced_security'],
+    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'white_label', 'api_access', 'built_in_email', 'team_roles', 'sso', 'advanced_security', 'email_campaigns', 'sms_updates', 'push_notifications', 'supporter_feed'],
     isActive: true
   }
 ]
