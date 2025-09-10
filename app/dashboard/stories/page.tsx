@@ -21,479 +21,581 @@ import {
   Users,
   Hash,
   Heart,
+  DollarSign,
+  Target,
+  Calendar,
+  Share2,
+  BarChart3,
 } from "lucide-react"
-import { useOrganization } from "@/contexts/OrganizationContext"
+import Link from "next/link"
 
 interface Story {
   id: string
   title: string
-  product: string
+  beneficiary: string
   category: string
   status: "published" | "draft" | "archived"
   views: number
-  scans: number
-  conversions: number
-  donations?: number
-  fundsRaised?: number
-  beneficiary?: string
+  donations: number
+  fundsRaised: number
+  fundingGoal: number
   createdAt: string
   thumbnail: string
+  description: string
+  location: string
 }
 
 const mockStories: Story[] = [
-  // Business stories
   {
     id: "1",
-    title: "Maria's Coffee Journey",
-    product: "Ethiopian Single Origin",
-    category: "Coffee",
+    title: "Supporting Maria's Education",
+    beneficiary: "Maria Rodriguez",
+    category: "Education",
     status: "published",
     views: 1247,
-    scans: 89,
-    conversions: 23,
-    createdAt: "2024-01-15",
-    thumbnail: "/ethiopian-woman-farmer-portrait.jpg",
+    donations: 34,
+    fundsRaised: 2850,
+    fundingGoal: 5000,
+    createdAt: "2024-01-10",
+    thumbnail: "https://via.placeholder.com/300x200?text=Education+Story",
+    description: "Help Maria complete her nursing degree and serve her community",
+    location: "San Francisco, CA"
   },
   {
     id: "2",
-    title: "Sustainable Tea Farming",
-    product: "Earl Grey Premium",
-    category: "Tea",
+    title: "Medical Care for Ahmed",
+    beneficiary: "Ahmed Hassan",
+    category: "Healthcare",
     status: "published",
     views: 892,
-    scans: 67,
-    conversions: 18,
-    createdAt: "2024-01-12",
-    thumbnail: "/lush-tea-plantation.png",
+    donations: 67,
+    fundsRaised: 5420,
+    fundingGoal: 8000,
+    createdAt: "2024-01-08",
+    thumbnail: "https://via.placeholder.com/300x200?text=Healthcare+Story",
+    description: "Critical surgery needed for Ahmed's recovery",
+    location: "Chicago, IL"
   },
-  // Nonprofit stories
   {
     id: "3",
-    title: "Sarah's Educational Journey",
-    product: "Education Program",
-    beneficiary: "Sarah M.",
-    category: "Education",
-    status: "published",
-    views: 1456,
-    scans: 0,
-    conversions: 0,
-    donations: 34,
-    fundsRaised: 2850,
-    createdAt: "2024-01-10",
-    thumbnail: "/school-children-books.jpg",
+    title: "Community Garden Project",
+    beneficiary: "Westside Community",
+    category: "Community",
+    status: "draft",
+    views: 0,
+    donations: 0,
+    fundsRaised: 0,
+    fundingGoal: 3000,
+    createdAt: "2024-01-15",
+    thumbnail: "https://via.placeholder.com/300x200?text=Community+Story",
+    description: "Building a sustainable community garden for local families",
+    location: "Austin, TX"
   },
   {
     id: "4",
-    title: "Clean Water for Village",
-    product: "Water Access Project",
-    beneficiary: "Riverside Village",
-    category: "Water & Sanitation",
+    title: "Youth Sports Program",
+    beneficiary: "Local Youth",
+    category: "Education",
     status: "published",
-    views: 2103,
-    scans: 0,
-    conversions: 0,
-    donations: 67,
-    fundsRaised: 5420,
-    createdAt: "2024-01-08",
-    thumbnail: "/water-well-village.jpg",
+    views: 456,
+    donations: 23,
+    fundsRaised: 1200,
+    fundingGoal: 2500,
+    createdAt: "2024-01-12",
+    thumbnail: "https://via.placeholder.com/300x200?text=Sports+Story",
+    description: "Providing sports equipment and coaching for underserved youth",
+    location: "Miami, FL"
   },
+  {
+    id: "5",
+    title: "Emergency Relief Fund",
+    beneficiary: "Disaster Victims",
+    category: "Community",
+    status: "archived",
+    views: 2103,
+    donations: 156,
+    fundsRaised: 12500,
+    fundingGoal: 10000,
+    createdAt: "2024-01-05",
+    thumbnail: "https://via.placeholder.com/300x200?text=Emergency+Story",
+    description: "Immediate relief for families affected by natural disaster",
+    location: "Houston, TX"
+  }
 ]
 
+const categories = ["All Categories", "Education", "Healthcare", "Community"]
+const statuses = ["All Status", "Published", "Draft", "Archived"]
+
 export default function StoriesPage() {
-  const { orgType } = useOrganization()
-  const [stories, setStories] = useState<Story[]>(mockStories)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("All Categories")
+  const [selectedStatus, setSelectedStatus] = useState("All Status")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [searchQuery, setSearchQuery] = useState("")
   const [selectedStories, setSelectedStories] = useState<string[]>([])
-  const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [categoryFilter, setCategoryFilter] = useState<string>("all")
 
-  const filteredStories = stories.filter((story) => {
-    const matchesSearch =
-      story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      story.product.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (story.beneficiary && story.beneficiary.toLowerCase().includes(searchQuery.toLowerCase()))
-    const matchesStatus = statusFilter === "all" || story.status === statusFilter
-    const matchesCategory = categoryFilter === "all" || story.category === categoryFilter
-
-    // Show appropriate stories based on org type
-    const matchesOrgType =
-      orgType === "nonprofit"
-        ? story.donations !== undefined // Nonprofit stories have donations field
-        : story.donations === undefined // Business stories don't have donations field
-
-    return matchesSearch && matchesStatus && matchesCategory && matchesOrgType
+  const filteredStories = mockStories.filter(story => {
+    const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         story.beneficiary.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === "All Categories" || story.category === selectedCategory
+    const matchesStatus = selectedStatus === "All Status" || 
+                         story.status === selectedStatus.toLowerCase()
+    
+    return matchesSearch && matchesCategory && matchesStatus
   })
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedStories(filteredStories.map((story) => story.id))
-    } else {
-      setSelectedStories([])
-    }
+  const totalViews = filteredStories.reduce((sum, story) => sum + story.views, 0)
+  const totalDonations = filteredStories.reduce((sum, story) => sum + story.donations, 0)
+  const totalFundsRaised = filteredStories.reduce((sum, story) => sum + story.fundsRaised, 0)
+  const totalFundingGoals = filteredStories.reduce((sum, story) => sum + story.fundingGoal, 0)
+
+  const handleSelectStory = (storyId: string) => {
+    setSelectedStories(prev => 
+      prev.includes(storyId) 
+        ? prev.filter(id => id !== storyId)
+        : [...prev, storyId]
+    )
   }
 
-  const handleSelectStory = (storyId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedStories([...selectedStories, storyId])
+  const handleSelectAll = () => {
+    if (selectedStories.length === filteredStories.length) {
+      setSelectedStories([])
     } else {
-      setSelectedStories(selectedStories.filter((id) => id !== storyId))
+      setSelectedStories(filteredStories.map(story => story.id))
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "published":
-        return "bg-primary text-primary-foreground"
-      case "draft":
-        return "bg-muted text-muted-foreground"
-      case "archived":
-        return "bg-destructive text-destructive-foreground"
-      default:
-        return "bg-muted text-muted-foreground"
+      case "published": return "bg-green-100 text-green-800"
+      case "draft": return "bg-yellow-100 text-yellow-800"
+      case "archived": return "bg-gray-100 text-gray-800"
+      default: return "bg-gray-100 text-gray-800"
     }
   }
 
-  const totalViews = filteredStories.reduce((sum, story) => sum + story.views, 0)
-  const totalScans = filteredStories.reduce((sum, story) => sum + story.scans, 0)
-  const totalConversions =
-    orgType === "nonprofit"
-      ? filteredStories.reduce((sum, story) => sum + (story.donations || 0), 0)
-      : filteredStories.reduce((sum, story) => sum + story.conversions, 0)
+  const getProgressPercentage = (raised: number, goal: number) => {
+    return goal > 0 ? Math.min((raised / goal) * 100, 100) : 0
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Story Management</h1>
-          <p className="text-muted-foreground">
-            {orgType === "nonprofit"
-              ? "Manage and track your impact stories and donor engagement"
-              : "Manage and track your product stories"}
-          </p>
-        </div>
-        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Story
-        </Button>
-      </div>
-
-      {/* Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Views</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">{totalViews.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 inline mr-1" />
-              +12% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {orgType === "nonprofit" ? "NMBR Searches" : "NMBR Searches"}
-            </CardTitle>
-            <Hash className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">{totalScans.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 inline mr-1" />
-              +8% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {orgType === "nonprofit" ? "Total Donations" : "Conversions"}
-            </CardTitle>
-            {orgType === "nonprofit" ? (
-              <Heart className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <Users className="h-4 w-4 text-muted-foreground" />
-            )}
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-foreground">{totalConversions.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 inline mr-1" />
-              +15% from last month
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="flex flex-1 items-center space-x-2">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search stories..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-input border-border"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {orgType === "nonprofit" ? (
-                <>
-                  <SelectItem value="Education">Education</SelectItem>
-                  <SelectItem value="Healthcare">Healthcare</SelectItem>
-                  <SelectItem value="Water & Sanitation">Water & Sanitation</SelectItem>
-                  <SelectItem value="Housing">Housing</SelectItem>
-                  <SelectItem value="Community">Community</SelectItem>
-                </>
-              ) : (
-                // Business categories
-                <>
-                  <SelectItem value="Coffee">Coffee</SelectItem>
-                  <SelectItem value="Tea">Tea</SelectItem>
-                  <SelectItem value="Chocolate">Chocolate</SelectItem>
-                  <SelectItem value="Fashion">Fashion</SelectItem>
-                </>
-              )}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant={viewMode === "grid" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grid")}>
-            <Grid3X3 className="h-4 w-4" />
-          </Button>
-          <Button variant={viewMode === "list" ? "default" : "outline"} size="sm" onClick={() => setViewMode("list")}>
-            <List className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Bulk Actions */}
-      {selectedStories.length > 0 && (
-        <Card className="p-4">
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">{selectedStories.length} stories selected</span>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                Archive Selected
-              </Button>
-              <Button variant="destructive" size="sm">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected
-              </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Impact Stories</h1>
+              <p className="text-muted-foreground mt-1">
+                Manage and track your impact stories and donor engagement
+              </p>
             </div>
+            <Link href="/dashboard/stories/create">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Story
+              </Button>
+            </Link>
           </div>
-        </Card>
-      )}
+        </div>
+      </div>
 
-      {/* Stories Grid/List */}
-      {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredStories.map((story) => (
-            <Card key={story.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="relative">
-                <img
-                  src={story.thumbnail || "/placeholder.svg"}
-                  alt={story.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute top-2 left-2">
-                  <Checkbox
-                    checked={selectedStories.includes(story.id)}
-                    onCheckedChange={(checked) => handleSelectStory(story.id, checked as boolean)}
-                    className="bg-background"
+      <div className="container mx-auto px-4 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Views
+                  </CardTitle>
+                  <div className="text-2xl font-bold text-foreground">
+                    {totalViews.toLocaleString()}
+                  </div>
+                </div>
+                <Eye className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Total Donations
+                  </CardTitle>
+                  <div className="text-2xl font-bold text-foreground">
+                    {totalDonations.toLocaleString()}
+                  </div>
+                </div>
+                <Heart className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Funds Raised
+                  </CardTitle>
+                  <div className="text-2xl font-bold text-foreground">
+                    ${totalFundsRaised.toLocaleString()}
+                  </div>
+                </div>
+                <DollarSign className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Goal Progress
+                  </CardTitle>
+                  <div className="text-2xl font-bold text-foreground">
+                    {totalFundingGoals > 0 ? Math.round((totalFundsRaised / totalFundingGoals) * 100) : 0}%
+                  </div>
+                </div>
+                <Target className="h-8 w-8 text-muted-foreground" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters and Controls */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search stories or beneficiaries..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
                   />
                 </div>
-                <div className="absolute top-2 right-2">
-                  <Badge className={getStatusColor(story.status)}>{story.status}</Badge>
+              </div>
+              
+              <div className="flex gap-4">
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map(category => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statuses.map(status => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="flex border rounded-md">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    className="rounded-r-none"
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className="rounded-l-none"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-foreground mb-1">{story.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  {orgType === "nonprofit" && story.beneficiary ? story.beneficiary : story.product}
-                </p>
-                <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground mb-3">
-                  <div>
-                    <div className="font-medium text-foreground">{story.views}</div>
-                    <div>Views</div>
-                  </div>
-                  {orgType === "nonprofit" ? (
-                    <>
-                      <div>
-                        <div className="font-medium text-foreground">{story.donations || 0}</div>
-                        <div>Donations</div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-foreground">${story.fundsRaised || 0}</div>
-                        <div>Raised</div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <div className="font-medium text-foreground">{story.scans}</div>
-                        <div>Scans</div>
-                      </div>
-                      <div>
-                        <div className="font-medium text-foreground">{story.conversions}</div>
-                        <div>Conversions</div>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{story.createdAt}</span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Story
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit Story
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Story
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b border-border">
-                  <tr>
-                    <th className="text-left p-4">
-                      <Checkbox
-                        checked={selectedStories.length === filteredStories.length}
-                        onCheckedChange={handleSelectAll}
-                      />
-                    </th>
-                    <th className="text-left p-4 font-medium text-muted-foreground">Story</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground">
-                      {orgType === "nonprofit" ? "Beneficiary" : "Product"}
-                    </th>
-                    <th className="text-left p-4 font-medium text-muted-foreground">Status</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground">Views</th>
-                    {orgType === "nonprofit" ? (
-                      <>
-                        <th className="text-left p-4 font-medium text-muted-foreground">Donations</th>
-                        <th className="text-left p-4 font-medium text-muted-foreground">Funds Raised</th>
-                      </>
-                    ) : (
-                      <>
-                        <th className="text-left p-4 font-medium text-muted-foreground">Scans</th>
-                        <th className="text-left p-4 font-medium text-muted-foreground">Conversions</th>
-                      </>
-                    )}
-                    <th className="text-left p-4 font-medium text-muted-foreground">Created</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredStories.map((story) => (
-                    <tr key={story.id} className="border-b border-border hover:bg-muted/50">
-                      <td className="p-4">
-                        <Checkbox
-                          checked={selectedStories.includes(story.id)}
-                          onCheckedChange={(checked) => handleSelectStory(story.id, checked as boolean)}
-                        />
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-3">
-                          <img
-                            src={story.thumbnail || "/placeholder.svg"}
-                            alt={story.title}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                          <span className="font-medium text-foreground">{story.title}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 text-muted-foreground">
-                        {orgType === "nonprofit" && story.beneficiary ? story.beneficiary : story.product}
-                      </td>
-                      <td className="p-4">
-                        <Badge className={getStatusColor(story.status)}>{story.status}</Badge>
-                      </td>
-                      <td className="p-4 text-foreground">{story.views}</td>
-                      {orgType === "nonprofit" ? (
-                        <>
-                          <td className="p-4 text-foreground">{story.donations || 0}</td>
-                          <td className="p-4 text-foreground">${story.fundsRaised || 0}</td>
-                        </>
-                      ) : (
-                        <>
-                          <td className="p-4 text-foreground">{story.scans}</td>
-                          <td className="p-4 text-foreground">{story.conversions}</td>
-                        </>
-                      )}
-                      <td className="p-4 text-muted-foreground">{story.createdAt}</td>
-                      <td className="p-4">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Story
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit Story
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete Story
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </CardContent>
         </Card>
-      )}
+
+        {/* Stories List */}
+        {filteredStories.length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <div className="space-y-4">
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                  <Heart className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">No stories found</h3>
+                  <p className="text-muted-foreground">
+                    {searchTerm || selectedCategory !== "All Categories" || selectedStatus !== "All Status"
+                      ? "Try adjusting your filters to see more stories"
+                      : "Create your first impact story to get started"
+                    }
+                  </p>
+                </div>
+                {!searchTerm && selectedCategory === "All Categories" && selectedStatus === "All Status" && (
+                  <Link href="/dashboard/stories/create">
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Your First Story
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredStories.map((story) => (
+              <Card key={story.id} className="group hover:shadow-lg transition-shadow">
+                <div className="relative">
+                  <img
+                    src={story.thumbnail}
+                    alt={story.title}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <Badge className={getStatusColor(story.status)}>
+                      {story.status}
+                    </Badge>
+                  </div>
+                  <div className="absolute top-3 left-3">
+                    <Checkbox
+                      checked={selectedStories.includes(story.id)}
+                      onCheckedChange={() => handleSelectStory(story.id)}
+                    />
+                  </div>
+                </div>
+                
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold text-lg text-foreground mb-1">
+                        {story.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Beneficiary: {story.beneficiary}
+                      </p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {story.description}
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Funding Progress</span>
+                        <span className="font-medium">
+                          ${story.fundsRaised.toLocaleString()} / ${story.fundingGoal.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2">
+                        <div
+                          className="bg-primary h-2 rounded-full transition-all"
+                          style={{ width: `${getProgressPercentage(story.fundsRaised, story.fundingGoal)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <div className="font-semibold text-foreground">{story.views}</div>
+                        <div className="text-xs text-muted-foreground">Views</div>
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground">{story.donations}</div>
+                        <div className="text-xs text-muted-foreground">Donations</div>
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground">
+                          {getProgressPercentage(story.fundsRaised, story.fundingGoal)}%
+                        </div>
+                        <div className="text-xs text-muted-foreground">Complete</div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-4 border-t">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(story.createdAt).toLocaleDateString()}
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Share2 className="h-4 w-4 mr-2" />
+                            Share
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b">
+                    <tr>
+                      <th className="text-left p-4">
+                        <Checkbox
+                          checked={selectedStories.length === filteredStories.length && filteredStories.length > 0}
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Story</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Beneficiary</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Status</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Views</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Donations</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Funds Raised</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Progress</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredStories.map((story) => (
+                      <tr key={story.id} className="border-b hover:bg-muted/50">
+                        <td className="p-4">
+                          <Checkbox
+                            checked={selectedStories.includes(story.id)}
+                            onCheckedChange={() => handleSelectStory(story.id)}
+                          />
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={story.thumbnail}
+                              alt={story.title}
+                              className="w-12 h-12 object-cover rounded-md"
+                            />
+                            <div>
+                              <div className="font-medium text-foreground">{story.title}</div>
+                              <div className="text-sm text-muted-foreground">{story.category}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4 text-foreground">{story.beneficiary}</td>
+                        <td className="p-4">
+                          <Badge className={getStatusColor(story.status)}>
+                            {story.status}
+                          </Badge>
+                        </td>
+                        <td className="p-4 text-foreground">{story.views}</td>
+                        <td className="p-4 text-foreground">{story.donations}</td>
+                        <td className="p-4 text-foreground">${story.fundsRaised.toLocaleString()}</td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 bg-muted rounded-full h-2">
+                              <div
+                                className="bg-primary h-2 rounded-full"
+                                style={{ width: `${getProgressPercentage(story.fundsRaised, story.fundingGoal)}%` }}
+                              />
+                            </div>
+                            <span className="text-sm text-muted-foreground">
+                              {getProgressPercentage(story.fundsRaised, story.fundingGoal)}%
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Eye className="h-4 w-4 mr-2" />
+                                View
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Share2 className="h-4 w-4 mr-2" />
+                                Share
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Bulk Actions */}
+        {selectedStories.length > 0 && (
+          <Card className="mt-6">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">
+                  {selectedStories.length} story{selectedStories.length !== 1 ? 'ies' : ''} selected
+                </span>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    View Analytics
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share Selected
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Selected
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   )
 }
