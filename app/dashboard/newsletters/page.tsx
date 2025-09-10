@@ -2385,10 +2385,30 @@ export default function NewslettersPage() {
                     <Sparkles className="w-8 h-8 text-purple-600" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">What is AI Review?</h3>
-                  <p className="text-muted-foreground">
-                    I'll analyze your newsletter like a professional editor, highlighting areas for improvement 
-                    and suggesting changes to increase engagement and impact.
+                  <p className="text-muted-foreground mb-4">
+                    AI Review analyzes your newsletter content using advanced AI to provide professional editing suggestions 
+                    that increase donor engagement and fundraising effectiveness.
                   </p>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold text-blue-900 mb-2">What it checks:</h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• <strong>Tone & Voice:</strong> Ensures donor-friendly, compelling messaging</li>
+                      <li>• <strong>Clarity:</strong> Removes jargon and improves readability</li>
+                      <li>• <strong>Engagement:</strong> Suggests emotional hooks and storytelling</li>
+                      <li>• <strong>Call-to-Actions:</strong> Optimizes donation buttons and links</li>
+                      <li>• <strong>Subject Lines:</strong> Improves email open rates</li>
+                    </ul>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-amber-900 mb-2">Setup Required:</h4>
+                    <p className="text-sm text-amber-800 mb-2">
+                      Add your OpenAI API key to enable AI Review. Without it, you'll get basic suggestions.
+                    </p>
+                    <Button size="sm" variant="outline" className="text-amber-700 border-amber-300">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Setup Instructions
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
