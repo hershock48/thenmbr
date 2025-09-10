@@ -3,16 +3,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Badge } from "@/components/ui/badge"
 import {
   Users,
   Heart,
   Plus,
-  MoreHorizontal,
   Eye,
   Edit,
   Share2,
-  Sparkles,
   Target,
   BarChart3,
   ArrowRight,
@@ -20,21 +18,20 @@ import {
   Hash,
   TrendingUp,
   DollarSign,
-  Package,
+  Mail,
+  MessageSquare,
+  Globe,
+  Clock,
+  CheckCircle,
   Zap,
   Loader2,
 } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
 import { useAuth } from "@/contexts/AuthContext"
 import { useOrganization } from "@/contexts/OrganizationContext"
 import { useSubscription } from "@/contexts/SubscriptionContext"
-import { useEffect, useState, Suspense, lazy } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-
-// Lazy load heavy analytics component
-const AnalyticsDashboard = lazy(() => import("@/components/ui/analytics-dashboard").then(module => ({ default: module.AnalyticsDashboard })))
 
 interface Story {
   id: string
@@ -44,51 +41,41 @@ interface Story {
   photo_url?: string
   goal_amount?: number
   current_amount?: number
-  status: string
+  status: "active" | "completed" | "draft"
   created_at: string
+  donations_count: number
+  engagement_rate: number
 }
 
-interface Stats {
+interface DashboardStats {
   totalStories: number
-  totalSubscribers: number
-  totalRaised: number
-  activeStories: number
+  totalDonations: number
+  activeDonors: number
+  avgDonation: number
+  monthlyGrowth: number
+  completionRate: number
 }
 
 export default function DashboardPage() {
   const { user, org } = useAuth()
-  const { terminology, orgType, getMetricsForType } = useOrganization()
-  const { tier, getRemainingNmbrs, getRemainingSeats, canCreateNmbr } = useSubscription()
+  const { terminology } = useOrganization()
+  const { tier } = useSubscription()
   const router = useRouter()
+  
   const [stories, setStories] = useState<Story[]>([])
-  const [stats, setStats] = useState<Stats>({
+  const [stats, setStats] = useState<DashboardStats>({
     totalStories: 0,
-    totalSubscribers: 0,
-    totalRaised: 0,
-    activeStories: 0,
+    totalDonations: 0,
+    activeDonors: 0,
+    avgDonation: 0,
+    monthlyGrowth: 0,
+    completionRate: 0,
   })
   const [loading, setLoading] = useState(true)
-  const [businessMetrics, setBusinessMetrics] = useState({
-    storyDrivenSales: 47250,
-    nmbrSearches: 1847,
-    conversionRate: 12.4,
-    avgOrderValue: 89.5,
-    revenueShare: 2365,
-    activeProducts: 23,
-  })
-  const [nonprofitMetrics, setNonprofitMetrics] = useState({
-    totalDonations: 15750,
-    activeDonors: 342,
-    impactStories: 28,
-    avgDonation: 46.05,
-    donorRetention: 78.5,
-    storyEngagement: 92.3,
-  })
 
   useEffect(() => {
     if (org?.id) {
-      fetchStories()
-      fetchStats()
+      fetchDashboardData()
     } else if (user && !org) {
       router.push("/select-org")
     } else if (!user) {
@@ -96,115 +83,65 @@ export default function DashboardPage() {
     }
   }, [org, user, router])
 
-  const fetchStories = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await fetch(`/api/stories?org=${org?.id}`)
-      const data = await response.json()
-      setStories(data.stories || [])
-    } catch (error) {
-      console.error("Failed to fetch stories:", error)
-    }
-  }
+      // Simulate API calls with realistic nonprofit data
+      const mockStories: Story[] = [
+        {
+          id: "1",
+          nmbr_code: "NMBR001",
+          title: "Maria's Education Fund",
+          description: "Supporting Maria's journey through university with a focus on environmental science",
+          goal_amount: 5000,
+          current_amount: 3200,
+          status: "active",
+          created_at: "2024-01-15",
+          donations_count: 23,
+          engagement_rate: 87.5
+        },
+        {
+          id: "2", 
+          nmbr_code: "NMBR002",
+          title: "Clean Water Initiative",
+          description: "Bringing clean water access to 200 families in rural communities",
+          goal_amount: 8000,
+          current_amount: 8000,
+          status: "completed",
+          created_at: "2024-01-10",
+          donations_count: 45,
+          engagement_rate: 92.3
+        },
+        {
+          id: "3",
+          nmbr_code: "NMBR003", 
+          title: "Medical Care Program",
+          description: "Providing essential medical care for children in underserved areas",
+          goal_amount: 3000,
+          current_amount: 1200,
+          status: "active",
+          created_at: "2024-01-20",
+          donations_count: 12,
+          engagement_rate: 78.9
+        }
+      ]
 
-  const fetchStats = async () => {
-    try {
-      setStats({
-        totalStories: stories.length,
-        totalSubscribers: orgType === "nonprofit" ? nonprofitMetrics.activeDonors : 42,
-        totalRaised: orgType === "nonprofit" ? nonprofitMetrics.totalDonations : 15750,
-        activeStories: stories.filter((s) => s.status === "active").length,
-      })
+      const mockStats: DashboardStats = {
+        totalStories: mockStories.length,
+        totalDonations: 12400,
+        activeDonors: 80,
+        avgDonation: 155,
+        monthlyGrowth: 23.5,
+        completionRate: 33.3
+      }
+
+      setStories(mockStories)
+      setStats(mockStats)
     } catch (error) {
-      console.error("Failed to fetch stats:", error)
+      console.error("Failed to fetch dashboard data:", error)
     } finally {
       setLoading(false)
     }
   }
-
-  const getWelcomeMessage = () => {
-    switch (orgType) {
-      case "nonprofit":
-        return "Ready to create more amazing impact stories? Let's see how your fundraising is doing."
-      case "grassroots":
-        return "Ready to share more community project updates? Let's see how your projects are progressing."
-      case "business":
-        return "Ready to boost your story-driven sales? Let's see how your product stories are converting customers."
-      default:
-        return "Ready to create more amazing stories? Let's see how things are going."
-    }
-  }
-
-  const getBusinessMetrics = () => {
-    if (orgType !== "business") return getMetricsForType()
-
-    return [
-      {
-        key: "story-sales",
-        name: "Story-Driven Sales",
-        description: "Revenue from story engagement",
-        icon: DollarSign,
-      },
-      {
-        key: "nmbr-searches",
-        name: "NMBR Searches",
-        description: "Product story discoveries",
-        icon: Hash,
-      },
-      {
-        key: "conversion",
-        name: "Story Conversion",
-        description: "Scan to purchase rate",
-        icon: TrendingUp,
-      },
-      {
-        key: "revenue-share",
-        name: "Revenue Share",
-        description: "Your platform earnings",
-        icon: Zap,
-      },
-    ]
-  }
-
-  const getNonprofitMetrics = () => {
-    return [
-      {
-        key: "donations",
-        name: "Total Donations",
-        description: "Funds raised through stories",
-        icon: DollarSign,
-      },
-      {
-        key: "donors",
-        name: "Active Donors",
-        description: "Engaged supporters",
-        icon: Users,
-      },
-      {
-        key: "stories",
-        name: "Impact Stories",
-        description: "Published story connections",
-        icon: Heart,
-      },
-      {
-        key: "engagement",
-        name: "Story Engagement",
-        description: "Donor interaction rate",
-        icon: TrendingUp,
-      },
-    ]
-  }
-
-  // Debug logging
-  console.log("Dashboard Debug:", { orgType, org: org?.organization_type, businessMetrics: businessMetrics })
-
-  // Force business metrics if org type is business or if we detect business context
-  const isBusiness = orgType === "business" || org?.organization_type === "business"
-  
-  const metrics = isBusiness
-    ? getBusinessMetrics()
-    : orgType === "nonprofit"
-      ? getNonprofitMetrics()
-      : getMetricsForType()
 
   if (!user) {
     return (
@@ -214,7 +151,7 @@ export default function DashboardPage() {
             <Users className="w-8 h-8 text-slate-600" />
           </div>
           <h3 className="text-2xl font-bold text-slate-900 mb-2">Redirecting to Login</h3>
-          <p className="text-slate-600">Please log in to access your dashboard.</p>
+          <p className="text-slate-600">Please sign in to access your dashboard.</p>
         </div>
       </div>
     )
@@ -224,329 +161,211 @@ export default function DashboardPage() {
     return (
       <div className="space-y-8">
         <div className="space-y-2">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96" />
+          <div className="h-8 w-64 bg-muted animate-pulse rounded" />
+          <div className="h-4 w-96 bg-muted animate-pulse rounded" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="space-y-3 p-6 border rounded-lg">
               <div className="flex justify-between items-start">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="bg-muted h-10 w-10 rounded-xl" />
+                <div className="h-4 w-32 bg-muted animate-pulse rounded" />
+                <div className="h-10 w-10 bg-muted animate-pulse rounded-xl" />
               </div>
-              <Skeleton className="h-8 w-20" />
-              <Skeleton className="h-3 w-24" />
+              <div className="h-8 w-20 bg-muted animate-pulse rounded" />
+              <div className="h-3 w-24 bg-muted animate-pulse rounded" />
             </div>
           ))}
         </div>
-        <div className="space-y-4 p-6 border rounded-lg">
-          <div className="flex justify-between items-center">
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-4 w-64" />
-            </div>
-            <div className="flex gap-3">
-              <Skeleton className="h-10 w-48" />
-              <Skeleton className="h-10 w-32" />
-            </div>
-          </div>
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex items-center justify-between p-6 border rounded-xl">
-                <div className="flex items-center space-x-4">
-                  <Skeleton className="bg-muted w-14 h-14 rounded-xl" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-5 w-48" />
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-64" />
-                  </div>
-                </div>
-                <Skeleton className="h-8 w-8" />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div data-tour="tour-complete" className="hidden" />
       </div>
     )
   }
 
   return (
     <div className="space-y-8">
-      <div className="space-y-4" data-tour="tour-welcome">
+      {/* Welcome Header */}
+      <div className="space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">Welcome back, {org?.name || "Team"}</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl">{getWelcomeMessage()}</p>
+            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
+              Welcome back, {org?.name || "Team"}
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl">
+              Ready to create more amazing impact stories? Let's see how your fundraising is doing.
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => router.push("/select-org")}
               className="flex items-center space-x-2"
-              data-tour="switch-org-button"
             >
               <Building2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Switch Organization</span>
-              <span className="sm:hidden">Switch</span>
+              <span>Switch Organization</span>
             </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Plus className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">New {terminology.stories.split(" ")[0]}</span>
-              <span className="sm:hidden">New</span>
-            </Button>
+            <Link href="/dashboard/stories/create">
+              <Button className="bg-primary hover:bg-primary/90">
+                <Plus className="w-4 h-4 mr-2" />
+                New Story
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
 
-      <div className="mb-6" data-tour="analytics-dashboard">
-        <Suspense fallback={
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2" />
-                Analytics Dashboard
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin" />
-                <span className="ml-2">Loading analytics...</span>
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="group hover:shadow-md transition-all duration-200">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-muted-foreground">Total Donations</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  ${stats.totalDonations.toLocaleString()}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  +{stats.monthlyGrowth}% this month
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        }>
-          <AnalyticsDashboard orgType={orgType} />
-        </Suspense>
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                <DollarSign className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-md transition-all duration-200">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-muted-foreground">Active Donors</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  {stats.activeDonors}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Engaged supporters
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-md transition-all duration-200">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-muted-foreground">Impact Stories</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  {stats.totalStories}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.completionRate}% completed
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                <Heart className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-md transition-all duration-200">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-start">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-muted-foreground">Avg Donation</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  ${stats.avgDonation}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Per donation
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                <TrendingUp className="w-6 h-6 text-orange-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Tier Status Card */}
-      {tier && (
-        <div className="mb-6">
-          <Card className="border-primary/20 bg-primary/5">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">Current Plan: {tier.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {getRemainingNmbrs() === -1 ? 'Unlimited' : `${getRemainingNmbrs()} remaining`} NMBRs • 
-                    {getRemainingSeats() === -1 ? 'Unlimited' : `${getRemainingSeats()} remaining`} team seats
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-primary">${tier.monthlyPrice}/mo</div>
-                  <div className="text-sm text-muted-foreground">{tier.platformFee}% platform fee</div>
-                </div>
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer">
+          <Link href="/dashboard/stories/create">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <Plus className="w-6 h-6 text-primary" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+              <CardTitle className="text-xl">Create Story</CardTitle>
+              <CardDescription>Start a new impact story to engage donors</CardDescription>
+            </CardHeader>
+          </Link>
+        </Card>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-tour="stats-cards">
-        {metrics.map((metric, index) => {
-          const IconComponent = metric.icon
-          let value: string | number = "0"
+        <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer">
+          <Link href="/dashboard/analytics">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                <BarChart3 className="w-6 h-6 text-blue-600" />
+              </div>
+              <CardTitle className="text-xl">Analytics</CardTitle>
+              <CardDescription>View detailed performance metrics</CardDescription>
+            </CardHeader>
+          </Link>
+        </Card>
 
-          if (isBusiness) {
-            switch (metric.key) {
-              case "story-sales":
-                value = `$${businessMetrics.storyDrivenSales.toLocaleString()}`
-                break
-              case "nmbr-searches":
-                value = businessMetrics.nmbrSearches.toLocaleString()
-                break
-              case "conversion":
-                value = `${businessMetrics.conversionRate}%`
-                break
-              case "revenue-share":
-                value = `$${businessMetrics.revenueShare.toLocaleString()}`
-                break
-              default:
-                value = businessMetrics.activeProducts
-            }
-          } else if (orgType === "nonprofit") {
-            switch (metric.key) {
-              case "donations":
-                value = `$${nonprofitMetrics.totalDonations.toLocaleString()}`
-                break
-              case "donors":
-                value = nonprofitMetrics.activeDonors.toLocaleString()
-                break
-              case "stories":
-                value = nonprofitMetrics.impactStories
-                break
-              case "engagement":
-                value = `${nonprofitMetrics.storyEngagement}%`
-                break
-              default:
-                value = stats.activeStories
-            }
-          } else {
-            switch (metric.key) {
-              case "donations":
-              case "support":
-              case "sales":
-                value = `$${stats.totalRaised.toLocaleString()}`
-                break
-              case "donors":
-              case "supporters":
-              case "customers":
-                value = stats.totalSubscribers
-                break
-              case "campaigns":
-              case "projects":
-                value = stats.activeStories
-                break
-              case "stories":
-              case "updates":
-                value = stats.totalStories
-                break
-              default:
-                value = index === 3 ? "87%" : stats.activeStories
-            }
-          }
+        <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer">
+          <Link href="/dashboard/communications">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-200 transition-colors">
+                <Mail className="w-6 h-6 text-green-600" />
+              </div>
+              <CardTitle className="text-xl">Communications</CardTitle>
+              <CardDescription>Send updates to your donors</CardDescription>
+            </CardHeader>
+          </Link>
+        </Card>
 
-          return (
-            <Card
-              key={metric.key}
-              className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20"
-            >
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-muted-foreground truncate">{metric.name}</p>
-                    <p className="text-2xl font-bold text-card-foreground mt-1">{value}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{metric.description}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-200 flex-shrink-0">
-                    <IconComponent className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
+        <Card className="group hover:shadow-md transition-all duration-200 cursor-pointer">
+          <Link href="/dashboard/settings">
+            <CardHeader className="pb-4">
+              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-gray-200 transition-colors">
+                <Globe className="w-6 h-6 text-gray-600" />
+              </div>
+              <CardTitle className="text-xl">Settings</CardTitle>
+              <CardDescription>Customize your organization</CardDescription>
+            </CardHeader>
+          </Link>
+        </Card>
       </div>
 
-      {orgType === "business" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <Package className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">Add Product Stories</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Create compelling stories for your products with unique NMBRs
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Product Story
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20 cursor-pointer" onClick={() => router.push('/dashboard/ai-stories')}>
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors duration-200">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">AI Story Builder</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Generate compelling stories with AI assistance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Button variant="outline" className="w-full border-purple-200 text-purple-700 hover:bg-purple-50">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Try AI Builder
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <Hash className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">Generate NMBRs</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Create unique NMBRs for product packaging and marketing materials
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Button
-                variant="outline"
-                className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
-              >
-                <Hash className="w-4 h-4 mr-2" />
-                Generate NMBRs
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <TrendingUp className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">ROI Analytics</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Track story-driven sales performance and revenue sharing
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Link href="/dashboard/analytics">
-                <Button
-                  variant="outline"
-                  className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
-                >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  View ROI Dashboard
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      <Card
-        className="group hover:shadow-md transition-all duration-200 bg-card border-border"
-        data-tour="stories-section"
-      >
+      {/* Recent Stories */}
+      <Card>
         <CardHeader className="border-b border-border">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold text-card-foreground flex items-center gap-2">
+              <CardTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
                 <Target className="w-6 h-6 text-primary" />
-                Your {terminology.stories}
+                Your Impact Stories
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                {orgType === "nonprofit"
-                  ? "Manage and track your personalized impact stories that connect donors to the people they help"
-                  : orgType === "grassroots"
-                    ? "Manage and track your community project stories that connect supporters to local initiatives"
-                    : "Manage and track your product stories that drive customer engagement and sales"}
+              <CardDescription>
+                Manage and track your fundraising campaigns
               </CardDescription>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard/stories/create">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create New {terminology.stories.split(" ")[0]}
+              <Link href="/dashboard/stories">
+                <Button variant="outline">
+                  View All
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
-              <Link href="/dashboard/stories">
-                <Button variant="outline" className="border-border text-card-foreground hover:bg-muted bg-transparent">
-                  <Eye className="w-4 h-4 mr-2" />
-                  View All
+              <Link href="/dashboard/stories/create">
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Story
                 </Button>
               </Link>
             </div>
@@ -558,39 +377,33 @@ export default function DashboardPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-card-foreground mb-2">
-                No {terminology.stories.toLowerCase()} yet
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                No stories yet
               </h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                {orgType === "nonprofit"
-                  ? "Create your first impact story to start connecting donors with the people they help"
-                  : orgType === "grassroots"
-                    ? "Create your first project story to start connecting supporters with your community initiatives"
-                    : "Create your first product story to start driving customer engagement and sales"}
+                Create your first impact story to start connecting with donors and raising funds for your cause.
               </p>
               <Link href="/dashboard/stories/create">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Create Your First {terminology.stories.split(" ")[0]}
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Your First Story
                 </Button>
               </Link>
             </div>
           ) : (
             <div className="space-y-4">
-              {stories.slice(0, 3).map((story, index) => (
+              {stories.map((story) => (
                 <div
                   key={story.id}
                   className="flex items-center justify-between p-6 border border-border rounded-xl group hover:shadow-sm transition-all duration-200 hover:border-primary/20"
-                  data-tour={index === 0 ? "story-card-example" : undefined}
                 >
                   <div className="flex items-center space-x-4">
                     <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg">
                       {story.nmbr_code}
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-lg font-semibold text-card-foreground">{story.title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{story.description}</p>
+                      <h3 className="text-lg font-semibold text-foreground">{story.title}</h3>
+                      <p className="text-sm text-muted-foreground max-w-md">{story.description}</p>
                       {story.goal_amount && (
                         <div className="flex items-center space-x-2">
                           <Progress
@@ -598,37 +411,30 @@ export default function DashboardPage() {
                             className="w-32 h-2"
                           />
                           <span className="text-xs text-muted-foreground">
-                            ${story.current_amount || 0} / ${story.goal_amount}
+                            ${story.current_amount?.toLocaleString()} / ${story.goal_amount.toLocaleString()}
                           </span>
                         </div>
                       )}
+                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                        <span>{story.donations_count} donations</span>
+                        <span>{story.engagement_rate}% engagement</span>
+                        <Badge variant={story.status === "completed" ? "default" : "secondary"}>
+                          {story.status}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-muted-foreground hover:text-card-foreground"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        View
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Share2 className="mr-2 h-4 w-4" />
-                        Share
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="ghost" size="sm">
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Share2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -636,105 +442,30 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      {orgType !== "business" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" data-tour="quick-actions">
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <Target className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">
-                Create New {terminology.stories.split(" ")[0]}
-              </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                {orgType === "nonprofit"
-                  ? "Add a new impact story to connect donors with the people they help"
-                  : "Add a new project story to connect supporters with community initiatives"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Link href="/dashboard/stories/create">
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Start Creating
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20 cursor-pointer" onClick={() => router.push('/dashboard/ai-stories')}>
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors duration-200">
-                <Sparkles className="w-6 h-6 text-purple-600" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">AI Story Builder</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Generate compelling stories with AI assistance
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Button variant="outline" className="w-full border-purple-200 text-purple-700 hover:bg-purple-50">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Try AI Builder
-                <ArrowRight className="w-4 h-4 ml-2" />
+      {/* Plan Status */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <CheckCircle className="h-5 w-5 mr-2 text-green-600" />
+            Current Plan
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Plan: {tier.name}</h3>
+              <p className="text-sm text-muted-foreground">
+                You're on the {tier.name} plan with access to all core features.
+              </p>
+            </div>
+            <Link href="/dashboard/upgrade">
+              <Button variant="outline">
+                Upgrade Plan
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <BarChart3 className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">View {terminology.analytics}</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                {orgType === "nonprofit"
-                  ? "See how your stories are performing and track your fundraising impact"
-                  : "See how your projects are performing and track community engagement"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Link href="/dashboard/analytics">
-                <Button
-                  variant="outline"
-                  className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
-                >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  View Reports
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-md transition-all duration-200 bg-card border-border hover:border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors duration-200">
-                <Eye className="w-6 h-6 text-primary" />
-              </div>
-              <CardTitle className="text-xl text-card-foreground">Manage Stories</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                {orgType === "nonprofit"
-                  ? "View and manage all your impact stories in one place"
-                  : "View and manage all your project stories in one place"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <Link href="/dashboard/stories">
-                <Button
-                  variant="outline"
-                  className="w-full border-border text-card-foreground hover:bg-muted bg-transparent"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Manage Stories
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
