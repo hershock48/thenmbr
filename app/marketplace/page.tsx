@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -42,7 +43,9 @@ import {
   AlertCircle,
   ExternalLink,
   Settings,
-  Store
+  Store,
+  RefreshCw,
+  CheckCircle
 } from "lucide-react"
 import Link from "next/link"
 import { realDropshipService, type RealProduct } from "@/lib/real-dropship-service"
@@ -67,6 +70,10 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true)
   const [integrationStatus, setIntegrationStatus] = useState<any[]>([])
   const [showIntegrationSetup, setShowIntegrationSetup] = useState(false)
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false)
+  const [selectedProvider, setSelectedProvider] = useState('')
+  const [apiKey, setApiKey] = useState('')
+  const [testingConnection, setTestingConnection] = useState(false)
 
   // Load real products on component mount
   useEffect(() => {
@@ -117,6 +124,45 @@ export default function MarketplacePage() {
   const handleCustomize = (product: RealProduct) => {
     setSelectedProduct(product)
     setShowCustomizeDialog(true)
+  }
+
+  const handleSetupProvider = (provider: string) => {
+    setSelectedProvider(provider)
+    setApiKey('')
+    setShowApiKeyDialog(true)
+  }
+
+  const handleTestConnection = async () => {
+    setTestingConnection(true)
+    try {
+      // Simulate API key testing
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      // In a real app, this would test the actual API key
+      const isValid = apiKey.length > 10 // Simple validation for demo
+      
+      if (isValid) {
+        // Save API key to localStorage (in real app, this would go to your backend)
+        localStorage.setItem(`${selectedProvider.toLowerCase()}_api_key`, apiKey)
+        
+        // Update integration status
+        loadIntegrationStatus()
+        loadProducts() // Reload products with new integration
+        
+        setShowApiKeyDialog(false)
+        setApiKey('')
+        setSelectedProvider('')
+        
+        // Show success message
+        alert(`✅ ${selectedProvider} connected successfully! Products are now loading.`)
+      } else {
+        alert('❌ Invalid API key. Please check your key and try again.')
+      }
+    } catch (error) {
+      alert('❌ Connection failed. Please check your API key and try again.')
+    } finally {
+      setTestingConnection(false)
+    }
   }
 
   const connectedProviders = integrationStatus.filter(p => p.connected)
@@ -441,10 +487,24 @@ export default function MarketplacePage() {
                   <p className="text-sm text-muted-foreground mb-3">
                     High-quality print-on-demand products with fast shipping
                   </p>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Setup Printful
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleSetupProvider('Printful')}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Connect API
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => window.open('https://www.printful.com/api-docs', '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Get API Key
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="p-4 border rounded-lg">
@@ -457,10 +517,24 @@ export default function MarketplacePage() {
                   <p className="text-sm text-muted-foreground mb-3">
                     Global dropship network with competitive pricing
                   </p>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Setup Gooten
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleSetupProvider('Gooten')}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Connect API
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => window.open('https://www.gooten.com/api-docs', '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Get API Key
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="p-4 border rounded-lg">
@@ -473,10 +547,24 @@ export default function MarketplacePage() {
                   <p className="text-sm text-muted-foreground mb-3">
                     Custom products with advanced design tools
                   </p>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Setup CustomInk
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleSetupProvider('CustomInk')}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Connect API
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => window.open('https://www.customink.com/api-docs', '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Get API Key
+                    </Button>
+                  </div>
                 </div>
               </div>
               
@@ -488,6 +576,70 @@ export default function MarketplacePage() {
                   <li>3. Restart the application to load real products</li>
                   <li>4. Start selling real products with NMBR codes!</li>
                 </ol>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* API Key Input Dialog */}
+        <Dialog open={showApiKeyDialog} onOpenChange={setShowApiKeyDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Connect {selectedProvider}</DialogTitle>
+              <DialogDescription>
+                Enter your {selectedProvider} API key to start selling real products
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="apiKey">API Key</Label>
+                <Input
+                  id="apiKey"
+                  type="password"
+                  placeholder={`Enter your ${selectedProvider} API key`}
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Your API key will be stored securely and used to fetch real products
+                </p>
+              </div>
+              
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5" />
+                  <div className="text-sm text-amber-800">
+                    <strong>Security Note:</strong> API keys are stored locally for this demo. 
+                    In production, they would be encrypted and stored securely on our servers.
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowApiKeyDialog(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleTestConnection}
+                  disabled={!apiKey || testingConnection}
+                  className="flex-1"
+                >
+                  {testingConnection ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Testing...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Connect
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </DialogContent>

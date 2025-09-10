@@ -66,10 +66,17 @@ class RealDropshipService {
   }
 
   private initializeProviders() {
-    // In production, these would come from environment variables
+    // Check environment variables first
     this.printfulApiKey = process.env.PRINTFUL_API_KEY || null
     this.gootenApiKey = process.env.GOOTEN_API_KEY || null
     this.customInkApiKey = process.env.CUSTOMINK_API_KEY || null
+    
+    // Check localStorage for demo API keys
+    if (typeof window !== 'undefined') {
+      this.printfulApiKey = this.printfulApiKey || localStorage.getItem('printful_api_key')
+      this.gootenApiKey = this.gootenApiKey || localStorage.getItem('gooten_api_key')
+      this.customInkApiKey = this.customInkApiKey || localStorage.getItem('customink_api_key')
+    }
   }
 
   // Get real products from connected providers
