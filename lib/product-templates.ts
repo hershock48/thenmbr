@@ -596,6 +596,432 @@ export const productTemplates: ProductTemplate[] = [
       { quantity: 250, discount: 35 },
       { quantity: 500, discount: 45 }
     ]
+  },
+
+  // ADDITIONAL APPAREL
+  {
+    id: 'polo-shirt-unisex',
+    name: 'Unisex Polo Shirt',
+    category: 'apparel',
+    subcategory: 'polo-shirts',
+    price: 18.99,
+    description: 'Classic polo shirt perfect for events and professional settings',
+    features: [
+      '100% cotton pique',
+      '3-button placket',
+      'NMBR code on back',
+      'Side vents',
+      'Machine washable'
+    ],
+    specifications: {
+      material: '100% Cotton Pique',
+      weight: '6.1 oz',
+      dimensions: 'Various sizes available'
+    },
+    nmbrIntegration: {
+      placement: 'back',
+      size: 'medium',
+      callToAction: 'Scan to see your impact'
+    },
+    designAreas: {
+      front: { width: 10, height: 12, position: 'center' },
+      back: { width: 10, height: 12, position: 'center' }
+    },
+    colors: ['White', 'Black', 'Navy', 'Forest Green', 'Burgundy'],
+    sizes: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
+    rating: 4.7,
+    reviews: 98,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '3-7 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 10, discount: 8 },
+      { quantity: 25, discount: 12 },
+      { quantity: 50, discount: 18 }
+    ]
+  },
+  {
+    id: 'baseball-cap-embroidered',
+    name: 'Embroidered Baseball Cap',
+    category: 'apparel',
+    subcategory: 'hats',
+    price: 16.99,
+    description: 'Adjustable baseball cap with embroidered design',
+    features: [
+      '100% cotton twill',
+      'Adjustable strap',
+      'NMBR code on back',
+      'Curved bill',
+      'One size fits most'
+    ],
+    specifications: {
+      material: '100% Cotton Twill',
+      weight: '0.3 lbs',
+      dimensions: 'One size fits most'
+    },
+    nmbrIntegration: {
+      placement: 'back',
+      size: 'small',
+      callToAction: 'Scan for impact'
+    },
+    designAreas: {
+      front: { width: 4, height: 2, position: 'center' },
+      back: { width: 2, height: 1, position: 'center' }
+    },
+    colors: ['Black', 'Navy', 'White', 'Forest Green', 'Charcoal'],
+    rating: 4.6,
+    reviews: 76,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '3-7 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 10, discount: 10 },
+      { quantity: 25, discount: 15 },
+      { quantity: 50, discount: 25 }
+    ]
+  },
+
+  // ADDITIONAL DRINKWARE
+  {
+    id: 'coffee-mug-large',
+    name: 'Large Coffee Mug',
+    category: 'drinkware',
+    subcategory: 'mugs',
+    price: 11.99,
+    description: '15oz ceramic mug perfect for coffee lovers',
+    features: [
+      'Dishwasher safe',
+      'Microwave safe',
+      'NMBR code on bottom',
+      'Large capacity',
+      'Comfortable handle'
+    ],
+    specifications: {
+      material: 'Ceramic',
+      weight: '1.5 lbs',
+      dimensions: '5" x 4" x 4"'
+    },
+    nmbrIntegration: {
+      placement: 'bottom',
+      size: 'small',
+      callToAction: 'Scan to see your impact'
+    },
+    designAreas: {
+      front: { width: 9, height: 4, position: 'center' },
+      back: { width: 9, height: 4, position: 'center' }
+    },
+    colors: ['White', 'Black', 'Navy'],
+    rating: 4.8,
+    reviews: 142,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '2-5 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 10, discount: 10 },
+      { quantity: 25, discount: 15 },
+      { quantity: 50, discount: 20 }
+    ]
+  },
+  {
+    id: 'wine-tumbler-16oz',
+    name: '16oz Wine Tumbler',
+    category: 'drinkware',
+    subcategory: 'tumblers',
+    price: 14.99,
+    description: 'Elegant wine tumbler perfect for events and fundraisers',
+    features: [
+      'Double-wall insulation',
+      'Leak-proof lid',
+      'NMBR code on side',
+      'BPA-free',
+      'Hand wash recommended'
+    ],
+    specifications: {
+      material: 'Stainless Steel',
+      weight: '0.7 lbs',
+      dimensions: '8" x 3.5"'
+    },
+    nmbrIntegration: {
+      placement: 'side',
+      size: 'medium',
+      callToAction: 'Scan to follow our impact'
+    },
+    designAreas: {
+      front: { width: 6, height: 7, position: 'center' },
+      back: { width: 6, height: 7, position: 'center' }
+    },
+    colors: ['Rose Gold', 'Gold', 'Silver', 'Black', 'White'],
+    rating: 4.9,
+    reviews: 89,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '3-7 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 10, discount: 8 },
+      { quantity: 25, discount: 12 },
+      { quantity: 50, discount: 18 }
+    ]
+  },
+
+  // ADDITIONAL ACCESSORIES
+  {
+    id: 'phone-case-clear',
+    name: 'Clear Phone Case',
+    category: 'accessories',
+    subcategory: 'phone-cases',
+    price: 12.99,
+    description: 'Clear protective case for iPhone and Android',
+    features: [
+      'Crystal clear design',
+      'Drop protection',
+      'NMBR code on back',
+      'Wireless charging compatible',
+      'Easy installation'
+    ],
+    specifications: {
+      material: 'TPU',
+      weight: '0.2 lbs',
+      dimensions: 'Various phone sizes'
+    },
+    nmbrIntegration: {
+      placement: 'back',
+      size: 'small',
+      callToAction: 'Scan for impact'
+    },
+    designAreas: {
+      back: { width: 2, height: 2, position: 'center' }
+    },
+    colors: ['Clear'],
+    rating: 4.5,
+    reviews: 67,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '2-5 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 10, discount: 15 },
+      { quantity: 25, discount: 20 },
+      { quantity: 50, discount: 30 }
+    ]
+  },
+  {
+    id: 'pin-button-2-inch',
+    name: '2" Pin Button',
+    category: 'accessories',
+    subcategory: 'buttons-pins',
+    price: 2.99,
+    description: '2-inch pin button with custom design',
+    features: [
+      'Metal pin back',
+      'Custom design',
+      'NMBR code on back',
+      'Durable construction',
+      'Easy to attach'
+    ],
+    specifications: {
+      material: 'Metal, Paper',
+      weight: '0.05 lbs',
+      dimensions: '2" diameter'
+    },
+    nmbrIntegration: {
+      placement: 'back',
+      size: 'small',
+      callToAction: 'Scan for impact'
+    },
+    designAreas: {
+      front: { width: 1.8, height: 1.8, position: 'center' }
+    },
+    colors: ['Various'],
+    rating: 4.7,
+    reviews: 123,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '1-3 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 25, discount: 20 },
+      { quantity: 50, discount: 30 },
+      { quantity: 100, discount: 40 }
+    ]
+  },
+
+  // ADDITIONAL OFFICE
+  {
+    id: 'pen-custom',
+    name: 'Custom Pen',
+    category: 'office',
+    subcategory: 'writing',
+    price: 4.99,
+    description: 'Custom pen with organization branding',
+    features: [
+      'Blue ink',
+      'Custom design',
+      'NMBR code on barrel',
+      'Comfortable grip',
+      'Retractable'
+    ],
+    specifications: {
+      material: 'Plastic, Metal',
+      weight: '0.1 lbs',
+      dimensions: '5.5" length'
+    },
+    nmbrIntegration: {
+      placement: 'barrel',
+      size: 'small',
+      callToAction: 'Scan for impact'
+    },
+    designAreas: {
+      barrel: { width: 4, height: 0.5, position: 'center' }
+    },
+    colors: ['Black', 'Blue', 'Red', 'Green'],
+    rating: 4.6,
+    reviews: 89,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '1-3 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 25, discount: 15 },
+      { quantity: 50, discount: 25 },
+      { quantity: 100, discount: 35 }
+    ]
+  },
+  {
+    id: 'desk-calendar',
+    name: 'Desk Calendar',
+    category: 'office',
+    subcategory: 'calendars',
+    price: 8.99,
+    description: '2024 desk calendar with custom cover',
+    features: [
+      '12 months',
+      'Custom cover design',
+      'NMBR code on back',
+      'Spiral binding',
+      'Daily planning space'
+    ],
+    specifications: {
+      material: 'Paper, Cardboard',
+      weight: '0.6 lbs',
+      dimensions: '8.5" x 11"'
+    },
+    nmbrIntegration: {
+      placement: 'back',
+      size: 'medium',
+      callToAction: 'Scan to see your impact'
+    },
+    designAreas: {
+      front: { width: 7, height: 9, position: 'center' },
+      back: { width: 7, height: 9, position: 'center' }
+    },
+    colors: ['White'],
+    rating: 4.7,
+    reviews: 56,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '2-5 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 10, discount: 10 },
+      { quantity: 25, discount: 15 },
+      { quantity: 50, discount: 25 }
+    ]
+  },
+
+  // ADDITIONAL EVENTS
+  {
+    id: 'badge-holder-lanyard',
+    name: 'Badge Holder with Lanyard',
+    category: 'events',
+    subcategory: 'badges',
+    price: 3.99,
+    description: 'Clear badge holder with lanyard for events',
+    features: [
+      'Clear plastic holder',
+      'Adjustable lanyard',
+      'NMBR code on holder',
+      'Breakaway safety',
+      'Standard ID size'
+    ],
+    specifications: {
+      material: 'Plastic, Polyester',
+      weight: '0.1 lbs',
+      dimensions: '3" x 4" holder'
+    },
+    nmbrIntegration: {
+      placement: 'front',
+      size: 'small',
+      callToAction: 'Scan to learn more'
+    },
+    designAreas: {
+      front: { width: 2.5, height: 1, position: 'center' }
+    },
+    colors: ['Clear'],
+    rating: 4.5,
+    reviews: 134,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '1-3 days',
+    minimumOrder: 10,
+    bulkDiscounts: [
+      { quantity: 50, discount: 20 },
+      { quantity: 100, discount: 30 },
+      { quantity: 250, discount: 40 }
+    ]
+  },
+  {
+    id: 'banner-vinyl-3x2',
+    name: '3x2 Vinyl Banner',
+    category: 'events',
+    subcategory: 'banners',
+    price: 24.99,
+    description: 'Vinyl banner perfect for events and displays',
+    features: [
+      'Weather resistant vinyl',
+      'Grommets for hanging',
+      'NMBR code on corner',
+      'Full color printing',
+      'Durable construction'
+    ],
+    specifications: {
+      material: 'Vinyl',
+      weight: '1.5 lbs',
+      dimensions: '3\' x 2\''
+    },
+    nmbrIntegration: {
+      placement: 'corner',
+      size: 'medium',
+      callToAction: 'Scan to see our impact'
+    },
+    designAreas: {
+      front: { width: 30, height: 18, position: 'center' }
+    },
+    colors: ['Various'],
+    rating: 4.8,
+    reviews: 67,
+    bestseller: false,
+    nmbrReady: true,
+    dropshipPartner: 'printful',
+    estimatedFulfillment: '3-7 days',
+    minimumOrder: 1,
+    bulkDiscounts: [
+      { quantity: 5, discount: 15 },
+      { quantity: 10, discount: 25 },
+      { quantity: 25, discount: 35 }
+    ]
   }
 ]
 

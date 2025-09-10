@@ -41,6 +41,7 @@ import {
 } from "lucide-react"
 import { useOrganization } from "@/contexts/OrganizationContext"
 import { productTemplates, type ProductTemplate } from "@/lib/product-templates"
+import { StorefrontBuilder } from "@/components/dashboard/storefront-builder"
 
 interface StorefrontConfig {
   id: string
@@ -70,8 +71,7 @@ export default function StorefrontPage() {
   const { terminology, orgType } = useOrganization()
   const [storefront, setStorefront] = useState<StorefrontConfig | null>(null)
   const [loading, setLoading] = useState(true)
-  const [showSettings, setShowSettings] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
+  const [showBuilder, setShowBuilder] = useState(false)
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
   useEffect(() => {
@@ -120,6 +120,16 @@ export default function StorefrontPage() {
     }
   }
 
+  const handleSaveStorefront = (config: any) => {
+    console.log('Saving storefront config:', config)
+    // TODO: Implement actual save functionality
+  }
+
+  const handlePreviewStorefront = (config: any) => {
+    console.log('Previewing storefront config:', config)
+    // TODO: Implement actual preview functionality
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -139,11 +149,21 @@ export default function StorefrontPage() {
         <p className="text-muted-foreground mb-4">
           Create your first storefront to start selling products with NMBR codes
         </p>
-        <Button>
+        <Button onClick={() => setShowBuilder(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Create Storefront
         </Button>
       </div>
+    )
+  }
+
+  if (showBuilder) {
+    return (
+      <StorefrontBuilder
+        organizationId="org-1"
+        onSave={handleSaveStorefront}
+        onPreview={handlePreviewStorefront}
+      />
     )
   }
 
@@ -158,13 +178,13 @@ export default function StorefrontPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => setShowPreview(true)}>
+          <Button variant="outline" onClick={() => setShowBuilder(true)}>
+            <Edit className="w-4 h-4 mr-2" />
+            Edit Storefront
+          </Button>
+          <Button variant="outline" onClick={() => setShowBuilder(true)}>
             <Eye className="w-4 h-4 mr-2" />
             Preview
-          </Button>
-          <Button variant="outline" onClick={() => setShowSettings(true)}>
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
           </Button>
           <Button onClick={handlePublish} disabled={storefront.isPublished}>
             <Zap className="w-4 h-4 mr-2" />
