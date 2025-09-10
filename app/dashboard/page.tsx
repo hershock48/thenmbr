@@ -85,53 +85,16 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // Simulate API calls with realistic nonprofit data
-      const mockStories: Story[] = [
-        {
-          id: "1",
-          nmbr_code: "NMBR001",
-          title: "Maria's Education Fund",
-          description: "Supporting Maria's journey through university with a focus on environmental science",
-          goal_amount: 5000,
-          current_amount: 3200,
-          status: "active",
-          created_at: "2024-01-15",
-          donations_count: 23,
-          engagement_rate: 87.5
-        },
-        {
-          id: "2", 
-          nmbr_code: "NMBR002",
-          title: "Clean Water Initiative",
-          description: "Bringing clean water access to 200 families in rural communities",
-          goal_amount: 8000,
-          current_amount: 8000,
-          status: "completed",
-          created_at: "2024-01-10",
-          donations_count: 45,
-          engagement_rate: 92.3
-        },
-        {
-          id: "3",
-          nmbr_code: "NMBR003", 
-          title: "Medical Care Program",
-          description: "Providing essential medical care for children in underserved areas",
-          goal_amount: 3000,
-          current_amount: 1200,
-          status: "active",
-          created_at: "2024-01-20",
-          donations_count: 12,
-          engagement_rate: 78.9
-        }
-      ]
+      // Start with empty data - users will create their own content
+      const mockStories: Story[] = []
 
       const mockStats: DashboardStats = {
-        totalStories: mockStories.length,
-        totalDonations: 12400,
-        activeDonors: 80,
-        avgDonation: 155,
-        monthlyGrowth: 23.5,
-        completionRate: 33.3
+        totalStories: 0,
+        totalDonations: 0,
+        activeDonors: 0,
+        avgDonation: 0,
+        monthlyGrowth: 0,
+        completionRate: 0
       }
 
       setStories(mockStories)

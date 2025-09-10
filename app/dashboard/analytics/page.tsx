@@ -42,79 +42,29 @@ import {
 const getNonprofitAnalyticsData = () => {
   return {
     performanceData: [
-      { month: "Jan", views: 8400, engagement: 5200, donations: 840, fundsRaised: 16800 },
-      { month: "Feb", views: 10600, engagement: 6800, donations: 1080, fundsRaised: 21600 },
-      { month: "Mar", views: 12200, engagement: 7900, donations: 1220, fundsRaised: 24400 },
-      { month: "Apr", views: 14800, engagement: 9500, donations: 1480, fundsRaised: 29600 },
-      { month: "May", views: 17400, engagement: 11200, donations: 1740, fundsRaised: 34800 },
-      { month: "Jun", views: 19600, engagement: 12600, donations: 1960, fundsRaised: 39200 },
+      // Start with empty data - will populate as users create content
+      { month: "Jan", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
+      { month: "Feb", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
+      { month: "Mar", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
+      { month: "Apr", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
+      { month: "May", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
+      { month: "Jun", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
     ],
     conversionFunnelData: [
-      { stage: "Story Views", count: 19600, percentage: 100 },
-      { stage: "Engaged Viewers", count: 12600, percentage: 64.3 },
-      { stage: "Donation Page Visits", count: 7800, percentage: 39.8 },
-      { stage: "Donation Attempts", count: 2940, percentage: 15.0 },
-      { stage: "Completed Donations", count: 1960, percentage: 10.0 },
+      { stage: "Story Views", count: 0, percentage: 0 },
+      { stage: "Engaged Viewers", count: 0, percentage: 0 },
+      { stage: "Donation Page Visits", count: 0, percentage: 0 },
+      { stage: "Donation Attempts", count: 0, percentage: 0 },
+      { stage: "Completed Donations", count: 0, percentage: 0 },
     ],
     topStoriesData: [
-      {
-        name: "Maria's Education Journey",
-        views: 4200,
-        engagement: 2800,
-        donations: 420,
-        fundsRaised: 8400,
-        impact: "12 months of school",
-        conversionRate: 10.0
-      },
-      {
-        name: "Ahmed's Medical Care",
-        views: 3800,
-        engagement: 2400,
-        donations: 380,
-        fundsRaised: 7600,
-        impact: "200 people served",
-        conversionRate: 10.0
-      },
-      {
-        name: "Community Garden Project",
-        views: 3400,
-        engagement: 2200,
-        donations: 340,
-        fundsRaised: 6800,
-        impact: "15 children treated",
-        conversionRate: 10.0
-      },
-      {
-        name: "Youth Sports Program",
-        views: 2800,
-        engagement: 1800,
-        donations: 280,
-        fundsRaised: 5600,
-        impact: "50 families fed",
-        conversionRate: 10.0
-      },
-      {
-        name: "Emergency Relief Fund",
-        views: 2200,
-        engagement: 1400,
-        donations: 220,
-        fundsRaised: 4400,
-        impact: "25 homes rebuilt",
-        conversionRate: 10.0
-      }
+      // Empty - will populate as users create stories
     ],
     donorDemographicsData: [
-      { name: "18-24", value: 15, count: 294 },
-      { name: "25-34", value: 25, count: 490 },
-      { name: "35-44", value: 30, count: 588 },
-      { name: "45-54", value: 20, count: 392 },
-      { name: "55+", value: 10, count: 196 },
+      // Empty - will populate as donors engage
     ],
     impactMetricsData: [
-      { category: "Education", fundsRaised: 15000, peopleHelped: 45, stories: 3 },
-      { category: "Healthcare", fundsRaised: 12000, peopleHelped: 200, stories: 2 },
-      { category: "Community", fundsRaised: 8000, peopleHelped: 75, stories: 2 },
-      { category: "Emergency", fundsRaised: 5000, peopleHelped: 25, stories: 1 },
+      // Empty - will populate as users create stories and receive donations
     ]
   }
 }

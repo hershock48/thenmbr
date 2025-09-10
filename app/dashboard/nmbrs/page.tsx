@@ -70,86 +70,24 @@ export default function ImpactStoriesPage() {
   const [sortBy, setSortBy] = useState("newest")
   const [showCreateDialog, setShowCreateDialog] = useState(false)
 
+  // Start with empty array - users will create their own stories
   const impactStories: ImpactStory[] = [
+    // Example story to show what's possible (can be removed after first real story)
     {
-      id: "1",
-      code: "HOPE001",
-      title: "Maria's Education Journey",
-      description: "Supporting Maria's journey through university with a focus on environmental science",
-      beneficiary: "Maria Rodriguez",
+      id: "example",
+      code: "EXAMPLE",
+      title: "Example Impact Story",
+      description: "This is an example story to show you how impact stories work. Create your own story to get started!",
+      beneficiary: "Your Beneficiary",
       category: "Education",
-      donors: 89,
-      fundsRaised: 3250,
-      fundingGoal: 5000,
-      status: "active",
-      image: "/water-well-village.jpg",
-      createdAt: "2024-01-15",
-      impactDescription: "Maria will be the first in her family to attend university, studying environmental science to help her community address climate challenges.",
-      location: "San Francisco, CA"
-    },
-    {
-      id: "2",
-      code: "HOPE002",
-      title: "Ahmed's Medical Treatment",
-      description: "Critical surgery needed for Ahmed's recovery and return to his family",
-      beneficiary: "Ahmed Hassan",
-      category: "Healthcare",
-      donors: 156,
-      fundsRaised: 4800,
-      fundingGoal: 3000,
-      status: "completed",
-      image: "/school-children-books.jpg",
-      createdAt: "2024-01-10",
-      impactDescription: "Ahmed's successful surgery has allowed him to return to work and support his family of five.",
-      location: "Chicago, IL"
-    },
-    {
-      id: "3",
-      code: "HOPE003",
-      title: "Community Garden Project",
-      description: "Building a sustainable community garden to provide fresh food for 200 families",
-      beneficiary: "Westside Community",
-      category: "Community",
-      donors: 203,
-      fundsRaised: 7200,
-      fundingGoal: 10000,
-      status: "active",
-      image: "/medical-equipment-clinic.jpg",
-      createdAt: "2024-01-08",
-      impactDescription: "The community garden will provide fresh, healthy food for 200 families and create a sustainable food source for the neighborhood.",
-      location: "Austin, TX"
-    },
-    {
-      id: "4",
-      code: "HOPE004",
-      title: "Youth Sports Program",
-      description: "Providing sports equipment and coaching for underserved youth in the community",
-      beneficiary: "Local Youth",
-      category: "Education",
-      donors: 67,
-      fundsRaised: 1200,
-      fundingGoal: 2500,
-      status: "active",
+      donors: 0,
+      fundsRaised: 0,
+      fundingGoal: 1000,
+      status: "draft",
       image: "/placeholder.svg",
-      createdAt: "2024-01-20",
-      impactDescription: "This program will provide 50 youth with access to sports equipment, coaching, and positive role models.",
-      location: "Miami, FL"
-    },
-    {
-      id: "5",
-      code: "HOPE005",
-      title: "Emergency Relief Fund",
-      description: "Immediate relief for families affected by natural disaster",
-      beneficiary: "Disaster Victims",
-      category: "Emergency",
-      donors: 234,
-      fundsRaised: 12500,
-      fundingGoal: 10000,
-      status: "completed",
-      image: "/placeholder.svg",
-      createdAt: "2024-01-05",
-      impactDescription: "Emergency relief provided to 25 families, including temporary housing, food, and essential supplies.",
-      location: "Houston, TX"
+      createdAt: new Date().toISOString().split('T')[0],
+      impactDescription: "Replace this with your own impact description.",
+      location: "Your Location"
     }
   ]
 
@@ -511,15 +449,20 @@ export default function ImpactStoriesPage() {
                 <p className="text-muted-foreground">
                   {searchTerm || statusFilter !== "all"
                     ? "Try adjusting your filters to see more stories"
-                    : "Create your first impact story to get started"
+                    : "Create your first impact story to start connecting with donors"
                   }
                 </p>
               </div>
               {!searchTerm && statusFilter === "all" && (
-                <Button onClick={() => setShowCreateDialog(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Story
-                </Button>
+                <div className="space-y-3">
+                  <Button onClick={() => setShowCreateDialog(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Your First Story
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    Impact stories help donors understand your mission and connect with your cause
+                  </p>
+                </div>
               )}
             </div>
           </CardContent>
