@@ -146,7 +146,7 @@ export default function IntegrationsPage() {
       {/* Integration Cards */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-foreground">Available Integrations</h2>
+          <h3 className="text-xl font-semibold text-foreground">Available Integrations</h3>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="w-4 h-4 mr-2" />
             Request Integration

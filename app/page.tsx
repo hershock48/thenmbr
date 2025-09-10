@@ -1,663 +1,1175 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import {
-  Heart,
+  ArrowRight, 
+  CheckCircle, 
+  Star, 
   Users,
+  DollarSign, 
   BarChart3,
-  ArrowRight,
+  ShoppingCart,
+  Mail,
+  MessageSquare,
+  Bell,
+  Globe,
+  Hash,
+  TrendingUp,
   Shield,
   Zap,
-  Sparkles,
   Target,
-  LogOut,
-  ShoppingCart,
-  Building2,
-  Handshake,
-  TrendingUp,
-  QrCode,
-  Smartphone,
-  Globe,
-  CheckCircle,
-  DollarSign,
-  Clock,
-  Code,
-  Store,
+  Award,
   Coffee,
-  Hash,
+  Heart,
+  Building2,
+  Smartphone,
+  ExternalLink,
+  Clock,
+  Store
 } from "lucide-react"
-import Link from "next/link"
-import { useAuth } from "@/contexts/AuthContext"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
 
-type AudienceType = "nonprofit" | "business"
+const pricingTiers = [
+  {
+    name: "Starter",
+    price: 99,
+    annualPrice: 990,
+    description: "Perfect for small nonprofits getting started",
+    features: [
+      "3 NMBRs",
+      "2 team seats", 
+      "Basic analytics",
+      "Email campaigns",
+      "Basic fundraising",
+      "5% platform fee"
+    ],
+    cta: "Start Free Trial",
+    popular: false
+  },
+  {
+    name: "Growth", 
+    price: 199,
+    annualPrice: 1990,
+    description: "For growing nonprofits ready to scale",
+    features: [
+      "5 NMBRs",
+      "Unlimited team seats",
+      "Advanced analytics", 
+      "SMS updates",
+      "White-label donation pages",
+      "3% platform fee"
+    ],
+    cta: "Start Free Trial",
+    popular: true
+  },
+  {
+    name: "Professional",
+    price: 399,
+    annualPrice: 3990,
+    description: "For established nonprofits with complex needs",
+    features: [
+      "10 NMBRs",
+      "Push notifications",
+      "Donor feed",
+      "Fundraising analytics",
+      "Attribution tracking",
+      "1% platform fee"
+    ],
+    cta: "Start Free Trial",
+    popular: false
+  },
+  {
+    name: "Enterprise",
+    price: 750,
+    annualPrice: 9000,
+    description: "For large nonprofits with custom requirements",
+    features: [
+      "Unlimited NMBRs",
+      "Global impact marketplace",
+      "Custom integrations",
+      "Dedicated support",
+      "0% platform fee",
+      "Custom features"
+    ],
+    cta: "Contact Sales",
+    popular: false
+  }
+]
+
 
 export default function HomePage() {
-  const { user, signOut } = useAuth()
-  const router = useRouter()
-  const [selectedAudience, setSelectedAudience] = useState<AudienceType>("nonprofit")
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const audienceParam = urlParams.get("audience") as AudienceType
-    const storedAudience = localStorage.getItem("selectedAudience") as AudienceType
-
-    if (audienceParam && ["nonprofit", "business"].includes(audienceParam)) {
-      setSelectedAudience(audienceParam)
-      localStorage.setItem("selectedAudience", audienceParam)
-    } else if (storedAudience && ["nonprofit", "business"].includes(storedAudience)) {
-      setSelectedAudience(storedAudience)
-    }
-  }, [])
-
-  const handleSignOut = async () => {
-    try {
-      await signOut()
-      router.push("/")
-    } catch (error) {
-      console.error("Error signing out:", error)
-    }
-  }
-
-  const getAudienceContent = () => {
-    if (selectedAudience === "business") {
-      return {
-        heroTitle: "Turn Every Product Into a",
-        heroHighlight: "Personal Story",
-        heroSubtitle: "Give every product a unique number. Customers search that number to discover the story behind it and make more meaningful purchases.",
-        primaryCta: "Start Free Trial",
-        secondaryCta: "See How It Works",
-        icon: ShoppingCart,
-        color: "blue",
-        examples: [
-          {
-            title: "Artisan Coffee",
-            description: "Customer searches NMBR 001 → Follows farmer's journey → Subscribes to coffee club",
-            icon: Coffee,
-          },
-          {
-            title: "Sustainable Fashion",
-            description: "Customer searches NMBR 002 → Learns about materials → Gets notified of new collections",
-            icon: Sparkles,
-          },
-          {
-            title: "Handmade Ceramics",
-            description: "Customer searches NMBR 003 → Meets the artist → Pre-orders limited edition pieces",
-            icon: Target,
-          },
-        ],
-        benefits: [
-          "3x higher customer engagement",
-          "40% increase in repeat purchases", 
-          "25% higher average order value"
-        ],
-        storytellingTypes: [
-          {
-            type: "Factual Stories",
-            description: "Real stories about your farmers, artisans, or manufacturing process",
-            examples: ["Meet the Ethiopian farmer who grows your coffee", "See how our ceramics are hand-thrown", "Follow our sustainable material sourcing"]
-          },
-          {
-            type: "Fictional Stories", 
-            description: "Creative narratives that build brand mythology",
-            examples: ["Adventure series featuring your products", "Comic strips about your brand characters", "Fantasy stories that showcase your values"]
-          }
-        ]
-      }
-    } else {
-      return {
-        heroTitle: "Turn Every Donation Into a",
-        heroHighlight: "Personal Connection",
-        heroSubtitle: "Give every donation a unique number. Donors search that number to follow the specific person or cause they're helping and see real impact.",
-        primaryCta: "Start Free Trial",
-        secondaryCta: "See How It Works",
-        icon: Heart,
-        color: "rose",
-        examples: [
-          {
-            title: "Clean Water Project",
-            description: "Donor searches NMBR 001 → Follows Maria's journey → Donates more",
-            icon: Heart,
-          },
-          {
-            title: "Education Fund",
-            description: "Donor searches NMBR 002 → Tracks student progress → Feels connected",
-            icon: Users,
-          },
-          {
-            title: "Medical Support",
-            description: "Donor searches NMBR 003 → Sees patient recovery → Shares story",
-            icon: Target,
-          },
-        ],
-        benefits: [
-          "5x higher donor retention",
-          "60% increase in average donation",
-          "3x more social sharing"
-        ],
-        storytellingTypes: [
-          {
-            type: "Impact Stories",
-            description: "Real stories about the people and communities you help",
-            examples: ["Follow Maria's journey to clean water", "See how Ahmed's education is progressing", "Watch Sarah's recovery story unfold"]
-          },
-          {
-            type: "Mission Stories", 
-            description: "Narratives that explain your cause and inspire action",
-            examples: ["Why we fight for clean water", "The science behind our medical research", "How your donation creates lasting change"]
-          }
-        ]
-      }
-    }
-  }
-
-  const content = getAudienceContent()
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity">
-              <div className="relative">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-base sm:text-lg">N</span>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <Badge variant="secondary" className="w-fit">
+                  <Zap className="w-4 h-4 mr-2" />
+                  The Complete Story-Driven Fundraising Platform
+                </Badge>
+                <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
+                  Turn Stories Into
+                  <span className="text-primary"> Impact</span>
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-2xl">
+                  The only platform that combines storytelling, multi-channel communications, 
+                  and fundraising to turn your impact stories into sustainable donor relationships and recurring support.
+                </p>
+                
+                {/* Market Timing & Urgency */}
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mt-6">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-2">
+                      <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-green-900 dark:text-green-100 mb-1">
+                        Why Now? Donors Want Connection
+                      </h3>
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        Post-COVID, donors crave authentic connections with causes. 
+                        <strong> 78% of donors</strong> prefer nonprofits that share their impact stories and show real results. 
+                        NMBR helps you build lasting donor relationships in this $2.3T giving market.
+                      </p>
+                    </div>
                 </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-emerald-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">#</span>
                 </div>
               </div>
-              <span className="text-lg sm:text-2xl font-bold text-slate-900 hidden xs:block">The NMBR</span>
-            </Link>
-            
-            <div className="flex items-center space-x-4">
-              {/* Audience Selector */}
-              <div className="flex bg-slate-100 rounded-lg p-1">
-                <button
-                  onClick={() => {
-                    setSelectedAudience("nonprofit")
-                    localStorage.setItem("selectedAudience", "nonprofit")
-                  }}
-                  className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
-                    selectedAudience === "nonprofit"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  Nonprofits
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedAudience("business")
-                    localStorage.setItem("selectedAudience", "business")
-                  }}
-                  className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
-                    selectedAudience === "business"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  Businesses
-                </button>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="text-lg px-8 py-6">
+                  Start Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
+                <Link href="/demo/attribution">
+                  <Smartphone className="w-5 h-5 mr-2" />
+                  View Live Demo
+                  </Link>
+                  </Button>
               </div>
 
-              {user ? (
-                <div className="flex items-center space-x-2">
-                  <Link href="/dashboard">
-                    <Button variant="outline" size="sm">
-                      Dashboard
-                    </Button>
-                  </Link>
-                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </Button>
+              <div className="flex items-center gap-8 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>14-day free trial</span>
                 </div>
-              ) : (
-                <div className="flex items-center space-x-2 sm:space-x-4">
-                  <Link href="/login">
-                    <Button variant="ghost" className="text-slate-600 hover:text-slate-900 hidden sm:inline-flex">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href={`/signup?audience=${selectedAudience}`}>
-                    <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg text-sm sm:text-base px-3 sm:px-4">
-                      <span className="hidden sm:inline">Get Started</span>
-                      <span className="sm:hidden">Start</span>
-                      <ArrowRight className="ml-1 sm:ml-2 w-3 h-3 sm:w-4 sm:h-4" />
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>No credit card required</span>
             </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span>Setup in 5 minutes</span>
           </div>
         </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2 mb-8">
-              <QrCode className="w-4 h-4 text-emerald-600" />
-              <span className="text-sm font-medium text-emerald-700">
-                {selectedAudience === "business" 
-                  ? "Trusted by 200+ businesses worldwide" 
-                  : "Trusted by 500+ nonprofits worldwide"
-                }
-              </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 mb-6">
-              {content.heroTitle}
-              <span className={`block ${content.color === "blue" ? "text-blue-600" : "text-rose-600"}`}>
-                {content.heroHighlight}
-              </span>
-            </h1>
-            
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
-              {selectedAudience === 'business' 
-                ? "We provide the software to track numbers and tell stories. Add NMBRs to your existing products or buy from our marketplace. Customers search those numbers to discover the story behind your products."
-                : "We provide the software to track numbers and tell stories. Add NMBRs to your existing materials or buy from our marketplace. Donors search those numbers to follow the specific person or cause they're helping."
-              }
-            </p>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-3xl"></div>
+              <div className="relative bg-card rounded-3xl p-8 shadow-2xl">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <Hash className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">NMBR-001: Maria's Coffee</h3>
+                      <p className="text-sm text-muted-foreground">Story-driven product sales</p>
+          </div>
+        </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold text-primary">$2,847</div>
+                      <div className="text-sm text-muted-foreground">Revenue this month</div>
+                    </div>
+                    <div className="p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold text-primary">127</div>
+                      <div className="text-sm text-muted-foreground">Orders</div>
+                    </div>
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link href={`/signup?audience=${selectedAudience}`}>
-                <Button
-                  size="lg"
-                  className={`${
-                    content.color === "blue"
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-rose-600 hover:bg-rose-700"
-                  } text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg font-semibold`}
-                >
-                  <content.icon className="w-5 h-5 mr-2" />
-                  {content.primaryCta}
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href={`/demo?audience=${selectedAudience}`}>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className={`border-2 ${
-                    content.color === "blue"
-                      ? "border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
-                      : "border-rose-300 text-rose-700 hover:bg-rose-50 hover:border-rose-400"
-                  } transition-all duration-300 px-8 py-4 text-lg bg-transparent`}
-                >
-                  <Target className="w-5 h-5 mr-2" />
-                  {content.secondaryCta}
-                </Button>
-              </Link>
-            </div>
-
-            {/* Benefits */}
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-600">
-              {content.benefits.map((benefit, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-600" />
-                  <span>{benefit}</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Email Campaign Performance</span>
+                      <span className="text-sm font-medium">4.2% conversion</span>
+          </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '42%' }}></div>
+          </div>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Storytelling Types Section */}
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-              Two Ways to Tell Your Story
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              {selectedAudience === 'business' 
-                ? "Whether you want to share real stories about your process or create engaging fictional content, we give you the tools to build lasting customer relationships."
-                : "Whether you want to share real impact stories or explain your mission, we give you the tools to build lasting donor relationships."
-              }
+      {/* Platform Overview */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h3 className="text-4xl font-bold">The Complete Story-Driven Fundraising Platform</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Everything you need to turn your stories into sustainable donor relationships and recurring support. 
+              No more juggling multiple tools or losing attribution.
+            </p>
+            <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+              <p className="text-lg font-medium text-foreground mb-2">
+                Every donor. Every impact. Every story.
+              </p>
+              <p className="text-muted-foreground">
+                NMBR links donations and support directly to the story behind them. 
+                A donation isn't just money — it's NMBR:004, Maria's education fund in Honduras. 
+                A sponsorship isn't just support — it's NMBR:027, Genesis' journey through school.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                  <Hash className="w-6 h-6 text-primary" />
+                </div>
+                <CardTitle>Story Management</CardTitle>
+                <CardDescription>
+                  Create, manage, and track compelling stories that drive engagement and sales
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Dynamic story creation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>AI-powered content assistance</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Multi-media support</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <ShoppingCart className="w-6 h-6 text-blue-600" />
+                </div>
+                <CardTitle>Fundraising Suite</CardTitle>
+                <CardDescription>
+                  White-label donation pages and global marketplace for story-driven fundraising
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>White-label donation pages</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Global impact marketplace</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Stripe Connect integration</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <MessageSquare className="w-6 h-6 text-green-600" />
+                    </div>
+                <CardTitle>Multi-Channel Communications</CardTitle>
+                <CardDescription>
+                  Email, SMS, push notifications, and donor feeds to engage your supporters
+                    </CardDescription>
+                  </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Email campaigns with impact updates</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>SMS updates and alerts</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Donor feed (story wall)</span>
+                  </li>
+                </ul>
+              </CardContent>
+                </Card>
+
+            <Card className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <BarChart3 className="w-6 h-6 text-purple-600" />
+                </div>
+                <CardTitle>Advanced Analytics</CardTitle>
+                <CardDescription>
+                  Complete attribution tracking from story to donation with detailed insights
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Donations by story and campaign</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Donor journey tracking</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Impact measurement optimization</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-orange-600" />
+                </div>
+                <CardTitle>Donor Targeting</CardTitle>
+                <CardDescription>
+                  Send targeted campaigns to specific NMBR supporters or your entire donor base
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>NMBR-specific campaigns</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Donor behavior segmentation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Personalized impact updates</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-red-600" />
+                </div>
+                <CardTitle>Enterprise Security</CardTitle>
+                <CardDescription>
+                  Bank-level security with role-based access and compliance features
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>SSO and advanced security</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Role-based permissions</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Data encryption</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Competitive Differentiation */}
+      <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <Badge variant="outline" className="w-fit mx-auto">
+              <Award className="w-4 h-4 mr-2" />
+              Why NMBR is Different
+            </Badge>
+            <h3 className="text-4xl font-bold">The Only Platform That Does It All</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              While others focus on single functions, NMBR combines everything you need 
+              in one integrated solution. No more juggling multiple tools or losing attribution.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {content.storytellingTypes.map((storyType, index) => (
-              <Card key={index} className="p-8">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-slate-900 mb-2">
-                    {storyType.type}
-                  </CardTitle>
-                  <CardDescription className="text-lg text-slate-600">
-                    {storyType.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {storyType.examples.map((example, exampleIndex) => (
-                      <div key={exampleIndex} className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                          content.color === "blue" ? "bg-blue-500" : "bg-rose-500"
-                        }`} />
-                        <p className="text-slate-700">{example}</p>
-                      </div>
-                    ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <Hash className="w-6 h-6 text-primary" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div>
+                    <CardTitle className="text-lg">Story-Driven Commerce</CardTitle>
+                    <CardDescription className="text-sm">Unique to NMBR</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  The only platform that seamlessly integrates storytelling with commerce and attribution tracking.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Story-to-sale attribution</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Dynamic product integration</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Revenue forecasting</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-blue-200 hover:border-blue-300 transition-colors">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Target className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Complete Attribution</CardTitle>
+                    <CardDescription className="text-sm">vs. Limited tracking</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Track every interaction from story view to purchase with detailed analytics and ROI measurement.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>End-to-end customer journey</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Campaign performance tracking</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>ROI calculation</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-green-200 hover:border-green-300 transition-colors">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <Globe className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Multi-Channel Platform</CardTitle>
+                    <CardDescription className="text-sm">vs. Single-purpose tools</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Email, SMS, push notifications, and in-platform feed - all in one unified experience.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Unified communication hub</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Cross-channel analytics</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span>Consistent brand experience</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Competitive Comparison */}
+          <div className="mt-16">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold mb-4">How We Compare</h3>
+              <p className="text-muted-foreground">See why organizations switch from single-purpose tools to NMBR</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center p-6 bg-muted/50 rounded-lg">
+                <div className="text-3xl mb-2">💝</div>
+                <h3 className="font-semibold mb-2">Classy</h3>
+                <p className="text-sm text-muted-foreground mb-3">Fundraising platform only</p>
+                <div className="text-xs space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>No story integration</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>Limited attribution</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>No multi-channel</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center p-6 bg-muted/50 rounded-lg">
+                <div className="text-3xl mb-2">💰</div>
+                <h3 className="font-semibold mb-2">Donorbox</h3>
+                <p className="text-sm text-muted-foreground mb-3">Donation processing only</p>
+                <div className="text-xs space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>No fundraising features</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>No story integration</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>Limited attribution</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center p-6 bg-muted/50 rounded-lg">
+                <div className="text-3xl mb-2">🤝</div>
+                <h3 className="font-semibold mb-2">GiveLively</h3>
+                <p className="text-sm text-muted-foreground mb-3">Free fundraising tools</p>
+                <div className="text-xs space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>Limited features</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>No built-in marketing</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500">✗</span>
+                    <span>No story features</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-2 border-primary/20 rounded-lg">
+                <div className="text-3xl mb-2">🎯</div>
+                <h3 className="font-semibold mb-2 text-primary">NMBR</h3>
+                <p className="text-sm text-muted-foreground mb-3">Complete platform</p>
+                <div className="text-xs space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Story-driven fundraising</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Complete attribution</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-500">✓</span>
+                    <span>Multi-channel platform</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Market Timing & Urgency */}
+      <section className="py-20 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <Badge variant="destructive" className="w-fit mx-auto">
+              <Clock className="w-4 h-4 mr-2" />
+              Market Opportunity
+            </Badge>
+            <h3 className="text-4xl font-bold">The Perfect Storm for Story-Driven Fundraising</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Post-COVID market shifts have created unprecedented opportunities for authentic, 
+              story-driven nonprofits. Don't miss this $2.3T giving market transformation.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            <Card className="text-center p-6 border-orange-200 hover:border-orange-300 transition-colors">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-orange-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-orange-600 mb-2">78%</h3>
+              <p className="text-sm text-muted-foreground">of donors prefer nonprofits that share their impact stories and show real results</p>
+            </Card>
+
+            <Card className="text-center p-6 border-blue-200 hover:border-blue-300 transition-colors">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-blue-600 mb-2">$2.3T</h3>
+              <p className="text-sm text-muted-foreground">global giving market opportunity for authentic impact experiences</p>
+            </Card>
+
+            <Card className="text-center p-6 border-green-200 hover:border-green-300 transition-colors">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-green-600 mb-2">300%</h3>
+              <p className="text-sm text-muted-foreground">average donation increase for story-driven nonprofits</p>
+            </Card>
+
+            <Card className="text-center p-6 border-purple-200 hover:border-purple-300 transition-colors">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Smartphone className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 mb-2">4.2%</h3>
+              <p className="text-sm text-muted-foreground">average conversion rate with story-driven fundraising campaigns</p>
+            </Card>
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold mb-4">Why Organizations Are Switching Now</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-red-600 text-sm font-bold">1</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">Donor Behavior Shift</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Post-COVID, donors prioritize authenticity and meaningful connections over traditional fundraising appeals.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-orange-600 text-sm font-bold">2</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">Attribution Crisis</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Traditional tools can't track the full donor journey from story to donation, losing valuable insights.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-green-600 text-sm font-bold">3</span>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">Tool Fragmentation</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Managing multiple platforms creates data silos and operational complexity that hurts performance.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl p-6">
+                <h3 className="font-semibold mb-4 text-center">The NMBR Advantage</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-sm">Complete story-to-donation attribution</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-sm">Unified multi-channel platform</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-sm">AI-powered content optimization</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-sm">Real-time impact forecasting</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <span className="text-sm">Enterprise-grade security</span>
+                  </div>
+                </div>
+                
+                <div className="mt-6 text-center">
+                  <Button size="lg" className="w-full">
+                    Start Your Free Trial
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    No credit card required • 14-day free trial • Setup in 5 minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Marketplace vs Storefront */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h3 className="text-4xl font-bold">Two Ways to Sell Through Stories</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Choose the approach that fits your organization's goals and audience
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            <Card className="p-8 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Store className="w-8 h-8 text-primary" />
+                </div>
+                <h4 className="text-2xl font-bold mb-2">Your Storefront</h4>
+                <p className="text-muted-foreground">
+                  A white-labeled shop, branded as your own, running on NMBR rails
+                </p>
+              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Your domain, your branding, your customers
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Complete control over pricing and inventory
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Direct customer relationships and data
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Full story-to-sale attribution tracking
+                </li>
+              </ul>
+            </Card>
+
+            <Card className="p-8 border-2 border-secondary/20 hover:border-secondary/40 transition-colors">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Globe className="w-8 h-8 text-secondary" />
+                </div>
+                <h4 className="text-2xl font-bold mb-2">The NMBR Marketplace</h4>
+                <p className="text-muted-foreground">
+                  Our global catalog of story-driven goods, where your products can reach new audiences
+                </p>
+              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Access to engaged, story-driven customers
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Cross-promotion with other organizations
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Built-in discovery and recommendation engine
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  You keep your brand. We give you extra reach.
+                </li>
+              </ul>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-              How It Works
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              {selectedAudience === "business" 
-                ? "Three simple steps to give your products unique numbers and compelling stories"
-                : "Three simple steps to give your donations unique numbers and personal connections"
-              }
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h3 className="text-4xl font-bold">How It Works</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              From story creation to revenue generation in three simple steps
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className={`w-16 h-16 ${
-                content.color === "blue" ? "bg-blue-100" : "bg-rose-100"
-              } rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-                <Code className={`w-8 h-8 ${
-                  content.color === "blue" ? "text-blue-600" : "text-rose-600"
-                }`} />
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto">
+                <Hash className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">1. Create Stories</h3>
-              <p className="text-slate-600">
-                {selectedAudience === "business" 
-                  ? "Upload product photos and write compelling stories about the people, process, or impact behind each item."
-                  : "Upload photos and write compelling stories about the people or causes donors will help."
-                }
+              <h3 className="text-xl font-semibold">1. Create Your Stories</h3>
+              <p className="text-muted-foreground">
+                Build compelling stories with AI assistance, link them to products, 
+                and set up your white-label storefront or marketplace presence.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className={`w-16 h-16 ${
-                content.color === "blue" ? "bg-blue-100" : "bg-rose-100"
-              } rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-                <Hash className={`w-8 h-8 ${
-                  content.color === "blue" ? "text-blue-600" : "text-rose-600"
-                }`} />
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto">
+                <Mail className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">2. Generate NMBRs</h3>
-              <p className="text-slate-600">
-                {selectedAudience === "business" 
-                  ? "Get unique numbers (NMBRs) for each product. Add them to your existing packaging, hang tags, or product displays."
-                  : "Get unique numbers (NMBRs) for each story. Add them to your existing donation cards, bracelets, or promotional materials."
-                }
+              <h3 className="text-xl font-semibold">2. Engage Your Audience</h3>
+              <p className="text-muted-foreground">
+                Send targeted campaigns across email, SMS, and push notifications 
+                with dynamic product blocks and attribution tracking.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className={`w-16 h-16 ${
-                content.color === "blue" ? "bg-blue-100" : "bg-rose-100"
-              } rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-                <Globe className={`w-8 h-8 ${
-                  content.color === "blue" ? "text-blue-600" : "text-rose-600"
-                }`} />
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto">
+                <DollarSign className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">3. Embed Widget</h3>
-              <p className="text-slate-600">
-                {selectedAudience === "business" 
-                  ? "Add our widget to your website. Customers search NMBRs to discover stories and make purchases."
-                  : "Add our widget to your website. Donors search NMBRs to follow stories and make donations."
-                }
+              <h3 className="text-xl font-semibold">3. Generate Revenue</h3>
+              <p className="text-muted-foreground">
+                Track every sale back to its source story and campaign. 
+                Optimize based on real data and scale your impact.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Real Examples */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-              Real Examples
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              {selectedAudience === "business" 
-                ? "See how businesses are using stories to increase sales and customer loyalty"
-                : "See how nonprofits are using stories to increase donations and donor retention"
-              }
+      {/* Attribution Tracking */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h3 className="text-4xl font-bold">Track Every Story-to-Sale Journey</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Unlike Shopify or Mailchimp, NMBR captures the full loop from story to revenue
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {content.examples.map((example, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className={`w-12 h-12 ${
-                    content.color === "blue" ? "bg-blue-100" : "bg-rose-100"
-                  } rounded-xl flex items-center justify-center mx-auto mb-4`}>
-                    <example.icon className={`w-6 h-6 ${
-                      content.color === "blue" ? "text-blue-600" : "text-rose-600"
-                    }`} />
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-8 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <h4 className="text-2xl font-bold mb-4">Complete Attribution Tracking</h4>
+                  <p className="text-muted-foreground mb-6">
+                    See exactly how every story moves hearts — and drives action. 
+                    Track which story updates were opened, which products were clicked, 
+                    which NMBR they're tied to, and the final purchase or donation.
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                      Which story update was opened
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                      Which product was clicked
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                      Which NMBR it's tied to
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                      The final purchase or donation
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-muted/50 p-6 rounded-lg">
+                  <div className="text-center mb-4">
+                    <div className="text-3xl font-bold text-primary mb-2">NMBR:004</div>
+                    <div className="text-sm text-muted-foreground">Maria's Co-op Coffee</div>
                   </div>
-                  <CardTitle className="text-lg">{example.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-600">{example.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Integration Options */}
-      <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-              Choose Your Integration
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Two ways to get started - pick what works best for you
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* DIY Integration */}
-            <Card className="p-8 hover:shadow-lg transition-shadow">
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Code className="w-8 h-8 text-slate-600" />
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span>Story Views:</span>
+                      <span className="font-semibold">1,247</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Product Clicks:</span>
+                      <span className="font-semibold">89</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Conversions:</span>
+                      <span className="font-semibold text-green-600">23</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2">
+                      <span>Revenue:</span>
+                      <span className="font-semibold text-green-600">$414</span>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">DIY Integration</h3>
-                <p className="text-slate-600">I have a website and want to add this myself</p>
-              </div>
-              
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>Custom widget for your website</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>Full control over design and branding</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>Advanced analytics and reporting</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>API access for custom integrations</span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-2">$99/month</div>
-                <div className="text-slate-600 mb-4">+ 2% transaction fee</div>
-                <Link href={`/signup?audience=${selectedAudience}&plan=diy`}>
-                  <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white">
-                    Start Free Trial
-                  </Button>
-                </Link>
               </div>
             </Card>
+          </div>
+        </div>
+      </section>
 
-            {/* Marketplace */}
-            <Card className="p-8 hover:shadow-lg transition-shadow border-2 border-emerald-200">
+      {/* Pricing Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h3 className="text-4xl font-bold">Simple, Transparent Pricing</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Choose the plan that fits your organization. All plans include our core platform features.
+            </p>
+          </div>
+
+          <div className="space-y-8">
+            <div className="flex justify-center">
+              <div className="bg-primary/10 text-primary px-6 py-2 rounded-full font-medium">
+                Nonprofit Pricing
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {pricingTiers.map((tier) => (
+                  <Card key={tier.name} className={`relative ${tier.popular ? 'border-primary shadow-lg scale-105' : ''}`}>
+                    {tier.popular && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <Badge className="bg-primary text-primary-foreground px-3 py-1">
+                          Most Popular
+                        </Badge>
+                      </div>
+                    )}
+                    <CardHeader className="text-center pb-4">
+                      <CardTitle className="text-2xl">{tier.name}</CardTitle>
+                      <CardDescription className="text-sm">{tier.description}</CardDescription>
+                      <div className="space-y-1">
+                        <div className="text-4xl font-bold">${tier.price}</div>
+                        <div className="text-sm text-muted-foreground">per month</div>
+                        <div className="text-sm text-green-600 font-medium">
+                          ${tier.annualPrice}/year billed annually (save 17%)
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <ul className="space-y-3">
+                        {tier.features.map((feature, index) => (
+                          <li key={index} className="flex items-center gap-2 text-sm">
+                            <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Button 
+                        className={`w-full ${tier.popular ? 'bg-primary hover:bg-primary/90' : ''}`}
+                        variant={tier.popular ? 'default' : 'outline'}
+                      >
+                        {tier.cta}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-muted-foreground mb-4">
+              All plans include 14-day free trial • No setup fees • Cancel anytime
+            </p>
+            <div className="flex justify-center gap-8 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                <span>Enterprise security</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4" />
+                <span>99.9% uptime SLA</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span>24/7 support</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nonprofit & Business Callout */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-4 mb-16">
+            <h3 className="text-4xl font-bold">One Platform. One Language of Connection.</h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Whether you're a nonprofit or business, NMBR helps you turn stories into sustainable impact
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            <Card className="p-8 border-2 border-blue-200 hover:border-blue-300 transition-colors">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Store className="w-8 h-8 text-emerald-600" />
+                <div className="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-8 h-8 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Marketplace Solutions</h3>
-                <p className="text-slate-600">I want a ready-made solution</p>
-                <div className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-sm font-medium px-3 py-1 rounded-full mt-2">
-                  <Sparkles className="w-4 h-4" />
-                  Most Popular
-                </div>
+                <h4 className="text-2xl font-bold mb-2 text-blue-900">For Nonprofits</h4>
+                <p className="text-muted-foreground">
+                  Turn sponsorships and impact stories into recurring donations
+                </p>
               </div>
-              
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>Pre-built widgets and templates</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>Quick setup in minutes</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>No technical knowledge required</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  <span>Dedicated support and onboarding</span>
-                </div>
-              </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Donation tracking with story attribution
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Sponsor engagement and updates
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Impact campaign management
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Supporter journey tracking
+                </li>
+              </ul>
+            </Card>
 
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-2">$199/month</div>
-                <div className="text-slate-600 mb-4">+ 1% transaction fee</div>
-                <Link href={`/signup?audience=${selectedAudience}&plan=marketplace`}>
-                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
-                    Get Started
-                  </Button>
-                </Link>
+            <Card className="p-8 border-2 border-green-200 hover:border-green-300 transition-colors">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-8 h-8 text-green-600" />
+                </div>
+                <h4 className="text-2xl font-bold mb-2 text-green-900">For Businesses</h4>
+                <p className="text-muted-foreground">
+                  Turn brand stories into customer loyalty and sales
+                </p>
               </div>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Product story integration
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Customer engagement tracking
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Brand advocacy building
+                </li>
+                <li className="flex items-center">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-3" />
+                  Sales attribution analytics
+                </li>
+              </ul>
             </Card>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className={`py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 ${
-        content.color === "blue" 
-          ? "bg-gradient-to-br from-blue-50 to-indigo-100" 
-          : "bg-gradient-to-br from-rose-50 to-pink-100"
-      }`}>
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-            {selectedAudience === "business" 
-              ? "Join hundreds of businesses creating deeper connections with their customers through authentic storytelling."
-              : "Join hundreds of nonprofits creating deeper connections with their donors through personal impact stories."
-            }
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-3xl mx-auto space-y-8">
+            <h3 className="text-4xl font-bold">Ready to Turn Your Stories Into Impact?</h3>
+            <p className="text-xl opacity-90">
+              Join hundreds of nonprofits already using NMBR to create sustainable 
+              donor relationships from their impact stories.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={`/signup?audience=${selectedAudience}`}>
-              <Button
-                size="lg"
-                className={`${
-                  content.color === "blue"
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-rose-600 hover:bg-rose-700"
-                } text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 px-8 py-4 text-lg font-semibold`}
-              >
-                <content.icon className="w-5 h-5 mr-2" />
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
                 Start Free Trial
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-primary" asChild>
+                <Link href="/case-studies">
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                  View Success Stories
             </Link>
-            <Link href={`/demo?audience=${selectedAudience}`}>
-              <Button
-                variant="outline"
-                size="lg"
-                className={`border-2 ${
-                  content.color === "blue"
-                    ? "border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400"
-                    : "border-rose-300 text-rose-700 hover:bg-rose-50 hover:border-rose-400"
-                } transition-all duration-300 px-8 py-4 text-lg bg-transparent`}
-              >
-                <Target className="w-5 h-5 mr-2" />
-                See Live Demo
               </Button>
-            </Link>
+            </div>
+            <p className="text-sm opacity-75">
+              Setup takes less than 5 minutes • No credit card required
+            </p>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+      <footer className="bg-muted py-12">
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center">
-                  <span className="text-slate-900 font-bold text-sm">N</span>
-                </div>
-                <span className="text-lg font-bold">The NMBR</span>
-              </div>
-              <p className="text-slate-400 text-sm">
-                {selectedAudience === "business" 
-                  ? "Turn every product into a personal story that customers can follow."
-                  : "Turn every donation into a personal connection that donors can follow."
-                }
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Hash className="w-6 h-6 text-primary" />
+                <span className="text-xl font-bold">NMBR</span>
+                  </div>
+              <p className="text-sm text-muted-foreground">
+                The complete story-driven fundraising platform for nonprofits.
               </p>
             </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link href="/features" className="hover:text-white transition-colors">Features</Link></li>
-                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
-                <li><Link href="/demo" className="hover:text-white transition-colors">Demo</Link></li>
+            <div className="space-y-4">
+              <h3 className="font-semibold">Platform</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/features" className="hover:text-foreground">Features</Link></li>
+                <li><Link href="/pricing" className="hover:text-foreground">Pricing</Link></li>
+                <li><Link href="/demo" className="hover:text-foreground">Demo</Link></li>
+                <li><Link href="/integrations" className="hover:text-foreground">Integrations</Link></li>
+                <li><Link href="/compare" className="hover:text-foreground">Compare</Link></li>
+                <li><Link href="/api-docs" className="hover:text-foreground">API</Link></li>
+                <li><Link href="/marketplace" className="hover:text-foreground">Marketplace</Link></li>
               </ul>
             </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+            <div className="space-y-4">
+              <h3 className="font-semibold">Resources</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/docs" className="hover:text-foreground">Documentation</Link></li>
+                <li><Link href="/blog" className="hover:text-foreground">Blog</Link></li>
+                <li><Link href="/help" className="hover:text-foreground">Help Center</Link></li>
+                <li><Link href="/contact" className="hover:text-foreground">Contact</Link></li>
               </ul>
             </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-sm text-slate-400">
-                <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
-                <li><Link href="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
-                <li><Link href="/api-docs" className="hover:text-white transition-colors">API Docs</Link></li>
+            <div className="space-y-4">
+              <h3 className="font-semibold">Company</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li><Link href="/about" className="hover:text-foreground">About</Link></li>
+                <li><Link href="/case-studies" className="hover:text-foreground">Success Stories</Link></li>
+                <li><Link href="/enterprise" className="hover:text-foreground">Enterprise</Link></li>
+                <li><Link href="/careers" className="hover:text-foreground">Careers</Link></li>
+                <li><Link href="/privacy" className="hover:text-foreground">Privacy</Link></li>
+                <li><Link href="/terms" className="hover:text-foreground">Terms</Link></li>
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-slate-800 mt-8 pt-8 text-center text-sm text-slate-400">
-            <p>&copy; 2024 The NMBR. All rights reserved.</p>
+          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; 2024 NMBR Platform. All rights reserved.</p>
           </div>
         </div>
       </footer>

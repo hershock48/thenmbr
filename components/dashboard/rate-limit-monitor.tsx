@@ -356,27 +356,27 @@ export function RateLimitMonitor() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <h4 className="font-medium">Authentication Endpoints</h4>
+              <h3 className="font-medium">Authentication Endpoints</h3>
               <p className="text-sm text-muted-foreground">5 requests per 15 minutes</p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">API Endpoints</h4>
+              <h3 className="font-medium">API Endpoints</h3>
               <p className="text-sm text-muted-foreground">100 requests per 15 minutes</p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">Widget Endpoints</h4>
+              <h3 className="font-medium">Widget Endpoints</h3>
               <p className="text-sm text-muted-foreground">200 requests per 15 minutes</p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">Email Sending</h4>
+              <h3 className="font-medium">Email Sending</h3>
               <p className="text-sm text-muted-foreground">10 requests per hour</p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">File Uploads</h4>
+              <h3 className="font-medium">File Uploads</h3>
               <p className="text-sm text-muted-foreground">20 requests per hour</p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">Newsletter Sending</h4>
+              <h3 className="font-medium">Newsletter Sending</h3>
               <p className="text-sm text-muted-foreground">5 requests per hour</p>
             </div>
           </div>

@@ -366,11 +366,13 @@ export function MonitoringDashboard() {
         <CardContent>
           <div className="flex flex-wrap gap-2">
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Level:</label>
+              <label htmlFor="level-select" className="text-sm font-medium">Level:</label>
               <select
+                id="level-select"
                 value={selectedLevel}
                 onChange={(e) => setSelectedLevel(e.target.value as LogLevel | 'all')}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select log level"
               >
                 <option value="all">All Levels</option>
                 <option value={LogLevel.DEBUG}>Debug</option>
@@ -381,11 +383,13 @@ export function MonitoringDashboard() {
               </select>
             </div>
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Category:</label>
+              <label htmlFor="category-select" className="text-sm font-medium">Category:</label>
               <select
+                id="category-select"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value as LogCategory | 'all')}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select log category"
               >
                 <option value="all">All Categories</option>
                 <option value={LogCategory.AUTH}>Auth</option>

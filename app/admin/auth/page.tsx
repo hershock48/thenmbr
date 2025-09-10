@@ -95,7 +95,7 @@ export default function AdminAuthPage() {
           <CardContent className="pt-6">
             <div className="text-center space-y-4">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-              <h2 className="text-2xl font-bold text-foreground">Access Granted</h2>
+              <h1 className="text-3xl font-bold text-foreground">Access Granted</h1>
               <p className="text-muted-foreground">
                 Redirecting to admin dashboard...
               </p>

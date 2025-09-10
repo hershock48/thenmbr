@@ -41,6 +41,7 @@ export function CSRFToken({ name = 'csrf_token', className }: CSRFTokenProps) {
       name={name}
       value={token}
       className={className}
+      aria-label="CSRF token"
     />
   )
 }

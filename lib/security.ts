@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { randomBytes } from 'crypto'
+
+// Edge-compatible random bytes generation
+function randomBytes(length: number): Uint8Array {
+  return crypto.getRandomValues(new Uint8Array(length))
+}
 
 // Security headers configuration
 export const securityHeaders = {
@@ -58,7 +62,8 @@ export const securityHeaders = {
 const csrfTokens = new Map<string, { token: string; expires: number }>()
 
 export function generateCSRFToken(): string {
-  return randomBytes(32).toString('hex')
+  const bytes = randomBytes(32)
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
 }
 
 export function createCSRFToken(sessionId: string): string {
@@ -272,7 +277,8 @@ export function validateFileUpload(
 
 // Generate secure random strings
 export function generateSecureRandom(length: number = 32): string {
-  return randomBytes(length).toString('hex')
+  const bytes = randomBytes(length)
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')
 }
 
 // Validate email format

@@ -347,7 +347,7 @@ function WelcomeStep() {
         </p>
       </div>
       <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
-        <h4 className="font-medium text-cyan-800 mb-2">What you'll accomplish:</h4>
+        <h3 className="font-medium text-cyan-800 mb-2">What you'll accomplish:</h3>
         <ul className="text-sm text-cyan-700 space-y-1">
           <li>✓ Set up your organization profile</li>
           <li>✓ Customize your branding</li>
@@ -458,7 +458,7 @@ function BrandingStep({ data, onChange }: { data: any; onChange: (data: any) => 
       </div>
 
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h4 className="font-medium mb-3">Preview</h4>
+        <h3 className="font-medium mb-3">Preview</h3>
         <div
           className="h-24 rounded-lg flex items-center justify-center text-white font-semibold"
           style={{
@@ -532,7 +532,7 @@ function PaymentStep({ data, onChange }: { data: any; onChange: (data: any) => v
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-800 mb-2">Why Stripe?</h4>
+        <h3 className="font-medium text-blue-800 mb-2">Why Stripe?</h3>
         <ul className="text-sm text-blue-700 space-y-1">
           <li>✓ Secure payment processing</li>
           <li>✓ Low transaction fees</li>
@@ -602,7 +602,7 @@ function CompletionStep({ onStartTour }: { onStartTour: () => void }) {
       </div>
 
       <div className="bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-lg p-6">
-        <h4 className="font-medium text-cyan-800 mb-3">What's Next?</h4>
+        <h3 className="font-medium text-cyan-800 mb-3">What's Next?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div className="flex items-center space-x-2 text-cyan-700">
             <CheckCircle className="w-4 h-4" />

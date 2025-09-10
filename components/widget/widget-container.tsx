@@ -399,13 +399,13 @@ export function WidgetContainer({ organization }: WidgetContainerProps) {
 
               <div className="space-y-4 p-4 bg-gradient-to-r from-cyan-50 to-purple-50 border border-cyan-200 rounded-xl">
                 <div className="text-center space-y-2">
-                  <h4 className="font-semibold text-slate-900">
+                  <h3 className="font-semibold text-slate-900">
                     {organization.organizationType === "business"
                       ? "Track Your Impact Story"
                       : organization.organizationType === "grassroots"
                         ? "Stay Connected to Your Project"
                         : "Stay Connected to Your Story"}
-                  </h4>
+                  </h3>
                   <p className="text-sm text-slate-600">
                     {organization.organizationType === "business"
                       ? `Get exclusive updates on how your purchase of ${selectedNmbr.title} is creating positive change.`

@@ -397,10 +397,10 @@ export const AccessibilityEnhancer = () => {
           <CardContent className="space-y-4">
             {/* Visual Settings */}
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center space-x-2">
+              <h3 className="font-medium flex items-center space-x-2">
                 <Eye className="h-4 w-4" />
                 <span>Visual</span>
-              </h4>
+              </h3>
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -461,10 +461,10 @@ export const AccessibilityEnhancer = () => {
 
             {/* Interaction Settings */}
             <div className="space-y-3">
-              <h4 className="font-medium flex items-center space-x-2">
+              <h3 className="font-medium flex items-center space-x-2">
                 <MousePointer className="h-4 w-4" />
                 <span>Interaction</span>
-              </h4>
+              </h3>
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

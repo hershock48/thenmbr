@@ -290,10 +290,10 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
               {/* Recommendations */}
               {recommendations.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium flex items-center space-x-2">
+                  <h3 className="text-sm font-medium flex items-center space-x-2">
                     <Info className="h-4 w-4" />
                     <span>What you can try:</span>
-                  </h4>
+                  </h3>
                   <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                     {recommendations.map((rec, index) => (
                       <li key={index}>{rec}</li>

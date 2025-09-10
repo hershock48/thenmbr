@@ -145,7 +145,7 @@ export function TierUpgradePrompt({ feature, currentAction, requiredTier, classN
 
           {/* Feature Benefits */}
           <div className="bg-muted/50 rounded-lg p-4">
-            <h4 className="font-semibold mb-2">What you'll get with {requiredTierInfo.name}:</h4>
+            <h3 className="font-semibold mb-2">What you'll get with {requiredTierInfo.name}:</h3>
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li>• {feature} and other advanced features</li>
               <li>• Higher NMBR limits for more stories</li>

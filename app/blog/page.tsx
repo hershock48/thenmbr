@@ -93,7 +93,7 @@ export default function BlogPage() {
               </span>
               <span className="text-sm text-muted-foreground">{posts[0].category}</span>
             </div>
-            <h2 className="text-3xl font-bold text-foreground mb-4">{posts[0].title}</h2>
+            <h3 className="text-3xl font-bold text-foreground mb-4">{posts[0].title}</h3>
             <p className="text-lg text-muted-foreground mb-6">{posts[0].excerpt}</p>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
               <div className="flex items-center gap-1">
@@ -159,8 +159,10 @@ export default function BlogPage() {
             <div className="flex max-w-md mx-auto gap-2">
               <input
                 type="email"
+                id="newsletter-email"
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-2 rounded-lg text-gray-900 placeholder-gray-500"
+                aria-label="Email address for newsletter subscription"
               />
               <Button variant="secondary">Subscribe</Button>
             </div>

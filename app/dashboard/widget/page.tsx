@@ -158,7 +158,13 @@ export default function WidgetPage() {
                         <Label className="text-base">Show Video Button</Label>
                         <p className="text-sm text-gray-600">Display video play button on story images</p>
                       </div>
-                      <input type="checkbox" defaultChecked className="toggle" />
+                      <input 
+                        type="checkbox" 
+                        id="show-video-button"
+                        defaultChecked 
+                        className="toggle" 
+                        aria-label="Show video button on story images"
+                      />
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -166,7 +172,13 @@ export default function WidgetPage() {
                         <Label className="text-base">Require Email for Updates</Label>
                         <p className="text-sm text-gray-600">Make email required when subscribing</p>
                       </div>
-                      <input type="checkbox" defaultChecked className="toggle" />
+                      <input 
+                        type="checkbox" 
+                        id="require-email"
+                        defaultChecked 
+                        className="toggle" 
+                        aria-label="Require email for updates"
+                      />
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -174,7 +186,13 @@ export default function WidgetPage() {
                         <Label className="text-base">Show Progress Bar</Label>
                         <p className="text-sm text-gray-600">Display fundraising progress on active campaigns</p>
                       </div>
-                      <input type="checkbox" defaultChecked className="toggle" />
+                      <input 
+                        type="checkbox" 
+                        id="show-progress-bar"
+                        defaultChecked 
+                        className="toggle" 
+                        aria-label="Show progress bar on active campaigns"
+                      />
                     </div>
 
                     <div className="space-y-2">
@@ -258,7 +276,7 @@ export default function WidgetPage() {
               </Tabs>
 
               <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-2">Integration Tips</h4>
+                <h3 className="font-semibold text-blue-900 mb-2">Integration Tips</h3>
                 <ul className="text-sm text-blue-800 space-y-1">
                   <li>• Place the widget on your donation or about page for maximum visibility</li>
                   <li>• Test the widget on different devices to ensure responsive design</li>

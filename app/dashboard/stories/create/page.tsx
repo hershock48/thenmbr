@@ -399,7 +399,7 @@ export default function CreateStoryPage() {
 
                     {storyData.media.length > 0 && (
                       <div className="space-y-3">
-                        <h4 className="font-medium">Uploaded Media</h4>
+                        <h3 className="font-medium">Uploaded Media</h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {storyData.media.map((media, index) => (
                             <div key={index} className="relative group">
@@ -702,7 +702,7 @@ export default function CreateStoryPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-primary mb-2">{storyData.title || "Your Story Title"}</h2>
+              <h3 className="text-2xl font-bold text-primary mb-2">{storyData.title || "Your Story Title"}</h3>
               <Badge variant="secondary">{storyData.industry || "Category"}</Badge>
             </div>
 

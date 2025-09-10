@@ -352,7 +352,7 @@ export default function AdvancedAnalytics() {
                           {index + 1}
                         </div>
                         <div>
-                          <h4 className="font-semibold text-foreground">{story.name}</h4>
+                          <h3 className="font-semibold text-foreground">{story.name}</h3>
                           <div className="flex gap-4 text-sm text-muted-foreground">
                             <span>{story.views.toLocaleString()} views</span>
                             <span>{story.engagement.toLocaleString()} engagement</span>

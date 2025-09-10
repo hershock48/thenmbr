@@ -253,9 +253,9 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
             <Clock className="w-4 h-4 text-orange-600" />
           </div>
           <div>
-            <h4 className="font-semibold text-orange-900">
+            <h3 className="font-semibold text-orange-900">
               Only ${remaining.toLocaleString()} {context.urgencyMessage}
-            </h4>
+            </h3>
             <p className="text-sm text-orange-700">
               {Math.round(100 - progress)}% remaining • {selectedNmbr.subscribers} {context.supportLabel}
             </p>
@@ -306,10 +306,10 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
 
         {/* Subscription Benefits */}
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
-          <h4 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
+          <h3 className="font-semibold text-green-900 mb-2 flex items-center gap-2">
             <Gift className="w-4 h-4" />
             What you'll get as a subscriber:
-          </h4>
+          </h3>
           <ul className="text-sm text-green-700 space-y-1">
             {context.benefitsList.map((benefit, index) => (
               <li key={index}>{benefit}</li>
@@ -320,7 +320,7 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
         {/* Contact Info */}
         <div className="space-y-4">
           <div className="text-center">
-            <h4 className="font-semibold text-slate-900 mb-1">Join the Story</h4>
+            <h3 className="font-semibold text-slate-900 mb-1">Join the Story</h3>
             <p className="text-sm text-slate-600">
               We'll send you updates about this specific story, not general newsletters
             </p>
@@ -399,9 +399,9 @@ export function EnhancedDonationFlow({ organization, selectedNmbr, onSuccess, on
                 <Heart className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-green-900">
+                <h3 className="font-semibold text-green-900">
                   {context.impactTitle}: ${donationAmount}
-                </h4>
+                </h3>
                 <p className="text-sm text-green-700">{getImpactMessage(Number(donationAmount))}</p>
               </div>
             </div>

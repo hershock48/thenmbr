@@ -369,7 +369,7 @@ export default function NewslettersPage() {
       case 'heading':
         return (
           <div>
-            <h2 className="text-2xl font-bold">{block.content.text}</h2>
+            <h3 className="text-2xl font-bold">{block.content.text}</h3>
           </div>
         )
       case 'text':
@@ -428,7 +428,7 @@ export default function NewslettersPage() {
       case 'contact':
         return (
           <div className="space-y-2">
-            <h4 className="font-semibold">{block.content.name}</h4>
+            <h3 className="font-semibold">{block.content.name}</h3>
             <p className="text-sm text-gray-600">{block.content.email}</p>
             <p className="text-sm text-gray-600">{block.content.phone}</p>
             <p className="text-sm text-gray-600">{block.content.address}</p>

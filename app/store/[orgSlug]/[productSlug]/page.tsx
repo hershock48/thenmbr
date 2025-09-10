@@ -25,10 +25,10 @@ import Image from "next/image"
 import { Product, ProductStoryLink } from "@/types/commerce"
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     orgSlug: string
     productSlug: string
-  }
+  }>
 }
 
 // Mock data - in real app, this would come from API
@@ -46,9 +46,9 @@ const mockProduct: Product = {
   ],
   stock: 75,
   media: [
-    { id: 'm1', type: 'image', url: '/images/coffee-bag.jpg', alt: 'Coffee bag', order: 0 },
-    { id: 'm2', type: 'image', url: '/images/coffee-beans.jpg', alt: 'Coffee beans', order: 1 },
-    { id: 'm3', type: 'image', url: '/images/coffee-farm.jpg', alt: 'Coffee farm', order: 2 }
+    { id: 'm1', type: 'image', url: '/images/coffee-bag.svg', alt: 'Coffee bag', order: 0 },
+    { id: 'm2', type: 'image', url: '/images/coffee-bag.svg', alt: 'Coffee beans', order: 1 },
+    { id: 'm3', type: 'image', url: '/images/coffee-bag.svg', alt: 'Coffee farm', order: 2 }
   ],
   status: 'active',
   fulfillmentMode: 'physical',
@@ -61,7 +61,7 @@ const mockStory = {
   title: "Maria's Coffee Journey",
   excerpt: "Follow Maria's journey from coffee farmer to cooperative leader, and see how your purchase directly supports her community's sustainable agriculture initiatives.",
   fullStory: "Maria has been growing coffee in the mountains of Guatemala for over 20 years. When she joined the cooperative five years ago, she was able to access better prices and sustainable farming practices. Today, she leads a group of 15 farmers who are committed to organic, fair-trade coffee production. Your purchase directly supports Maria's family and her community's education and healthcare programs.",
-  image: '/images/maria-story.jpg',
+  image: '/images/maria-story.svg',
   impact: {
     farmersSupported: 15,
     familiesImpacted: 45,
@@ -71,6 +71,17 @@ const mockStory = {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
+  const [orgSlug, setOrgSlug] = useState<string>('')
+  const [productSlug, setProductSlug] = useState<string>('')
+  
+  useEffect(() => {
+    const loadParams = async () => {
+      const resolvedParams = await params
+      setOrgSlug(resolvedParams.orgSlug)
+      setProductSlug(resolvedParams.productSlug)
+    }
+    loadParams()
+  }, [params])
   const [product, setProduct] = useState<Product>(mockProduct)
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0])
   const [quantity, setQuantity] = useState(1)
@@ -78,7 +89,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [orgInfo, setOrgInfo] = useState({
     name: 'Green Thumbs Initiative',
-    logo: '/logos/green-thumbs.png',
+    logo: '/logos/green-thumbs.svg',
     description: 'Supporting sustainable agriculture and community development'
   })
 
@@ -381,7 +392,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   <h3 className="text-lg font-semibold mb-4">Shipping & Returns</h3>
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-medium mb-2">Shipping</h4>
+                      <h3 className="font-medium mb-2">Shipping</h3>
                       <ul className="text-sm text-muted-foreground space-y-1">
                         <li>• Free shipping on orders over $50</li>
                         <li>• Standard shipping: 3-5 business days</li>
@@ -390,7 +401,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                       </ul>
                     </div>
                     <div>
-                      <h4 className="font-medium mb-2">Returns</h4>
+                      <h3 className="font-medium mb-2">Returns</h3>
                       <ul className="text-sm text-muted-foreground space-y-1">
                         <li>• 30-day return policy</li>
                         <li>• Items must be in original condition</li>

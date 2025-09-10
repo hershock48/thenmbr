@@ -82,7 +82,7 @@ export default function CareersPage() {
         
         {/* Company Values */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-foreground mb-8 text-center">Why Work at NMBR?</h2>
+          <h3 className="text-2xl font-bold text-foreground mb-8 text-center">Why Work at NMBR?</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {benefits.map((benefit, index) => (
               <Card key={index} className="text-center">
@@ -98,7 +98,7 @@ export default function CareersPage() {
         
         {/* Open Positions */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Open Positions</h2>
+          <h3 className="text-2xl font-bold text-foreground mb-8">Open Positions</h3>
           <div className="space-y-6">
             {openPositions.map((position, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
@@ -127,7 +127,7 @@ export default function CareersPage() {
                   </div>
                   
                   <div className="mb-4">
-                    <h4 className="font-medium text-foreground mb-2">Required Skills:</h4>
+                    <h3 className="font-medium text-foreground mb-2">Required Skills:</h3>
                     <div className="flex flex-wrap gap-2">
                       {position.skills.map((skill) => (
                         <Badge key={skill} variant="outline" className="text-xs">

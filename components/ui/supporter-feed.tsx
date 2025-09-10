@@ -319,7 +319,7 @@ export function SupporterFeed({ storyId, className }: SupporterFeedProps) {
 
               <CardContent className="space-y-4">
                 <div>
-                  <h4 className="font-semibold text-lg mb-2">{post.title}</h4>
+                  <h3 className="font-semibold text-lg mb-2">{post.title}</h3>
                   <p className="text-muted-foreground">{post.content}</p>
                 </div>
 

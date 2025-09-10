@@ -18,7 +18,7 @@ export default function StripeConnectSuccessPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-green-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-green-900 mb-2">What's Next?</h4>
+            <h3 className="font-semibold text-green-900 mb-2">What's Next?</h3>
             <ul className="text-sm text-green-800 space-y-1">
               <li>• Donations will be deposited directly to your bank account</li>
               <li>• Platform fees (5%) will be automatically deducted</li>

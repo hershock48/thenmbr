@@ -97,7 +97,7 @@ export default function UnsubscribePage() {
             <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="w-8 h-8 text-cyan-600 animate-pulse" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Processing...</h2>
+            <h1 className="text-xl font-semibold text-gray-900 mb-2">Processing...</h1>
             <p className="text-gray-600">Please wait while we process your unsubscribe request.</p>
           </CardContent>
         </Card>

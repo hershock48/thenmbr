@@ -384,11 +384,13 @@ export function PerformanceMonitor() {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Endpoint:</label>
+              <label htmlFor="endpoint-select" className="text-sm font-medium">Endpoint:</label>
               <select
+                id="endpoint-select"
                 value={selectedEndpoint}
                 onChange={(e) => setSelectedEndpoint(e.target.value)}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select endpoint"
               >
                 <option value="all">All Endpoints</option>
                 <option value="/api/subscribers">Subscribers API</option>
@@ -399,11 +401,13 @@ export function PerformanceMonitor() {
               </select>
             </div>
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Time Range:</label>
+              <label htmlFor="time-range-select" className="text-sm font-medium">Time Range:</label>
               <select
+                id="time-range-select"
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select time range"
               >
                 <option value="15m">Last 15 minutes</option>
                 <option value="1h">Last hour</option>

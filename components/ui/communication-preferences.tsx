@@ -386,7 +386,7 @@ export function CommunicationPreferences({
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-600 mt-0.5" />
             <div className="space-y-1">
-              <h4 className="font-medium text-blue-900">Why Multiple Channels?</h4>
+              <h3 className="font-medium text-blue-900">Why Multiple Channels?</h3>
               <p className="text-sm text-blue-800">
                 We use multiple communication channels to ensure you never miss important updates about the stories you care about. 
                 You can customize each channel to match your preferences and communication style.

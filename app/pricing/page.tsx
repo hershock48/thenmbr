@@ -489,7 +489,7 @@ export default function PricingPage() {
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Heart className="w-6 h-6 text-primary" />
               </div>
-              <h4 className="font-semibold text-foreground mb-2">Optional Support</h4>
+              <h3 className="font-semibold text-foreground mb-2">Optional Support</h3>
               <p className="text-sm text-muted-foreground">
                 {selectedAudience === "nonprofit" ? "Donors" : "Customers"} can choose to add a tip when giving
               </p>
@@ -498,7 +498,7 @@ export default function PricingPage() {
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <DollarSign className="w-6 h-6 text-primary" />
               </div>
-              <h4 className="font-semibold text-foreground mb-2">Reduce Your Costs</h4>
+              <h3 className="font-semibold text-foreground mb-2">Reduce Your Costs</h3>
               <p className="text-sm text-muted-foreground">
                 Tips often cover or eliminate platform fees, reducing your operational costs
               </p>
@@ -507,7 +507,7 @@ export default function PricingPage() {
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Shield className="w-6 h-6 text-primary" />
               </div>
-              <h4 className="font-semibold text-foreground mb-2">Sustainable Platform</h4>
+              <h3 className="font-semibold text-foreground mb-2">Sustainable Platform</h3>
               <p className="text-sm text-muted-foreground">
                 Helps us maintain and improve the platform for all users
               </p>
@@ -520,25 +520,25 @@ export default function PricingPage() {
           <h3 className="text-2xl font-bold text-foreground mb-8">Frequently Asked Questions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
             <div>
-              <h4 className="font-semibold text-foreground mb-2">What counts as an active NMBR?</h4>
+              <h3 className="font-semibold text-foreground mb-2">What counts as an active NMBR?</h3>
               <p className="text-sm text-muted-foreground">
                 An active NMBR is a currently assigned, public story slot. You can archive NMBRs to free up slots and reassign them to new stories.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Can I change my plan anytime?</h4>
+              <h3 className="font-semibold text-foreground mb-2">Can I change my plan anytime?</h3>
               <p className="text-sm text-muted-foreground">
                 Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately and we'll prorate any differences.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-2">What happens to archived NMBRs?</h4>
+              <h3 className="font-semibold text-foreground mb-2">What happens to archived NMBRs?</h3>
               <p className="text-sm text-muted-foreground">
                 Archived NMBRs preserve all history and data. Public URLs can show "This story has concluded" with a final update.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Do you offer custom solutions?</h4>
+              <h3 className="font-semibold text-foreground mb-2">Do you offer custom solutions?</h3>
               <p className="text-sm text-muted-foreground">
                 Yes, our Enterprise plan includes custom integrations, white-label solutions, and dedicated support tailored to your needs.
               </p>

@@ -255,7 +255,7 @@ export default function OnboardingPage() {
                   </div>
                 </div>
                 <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                  <h4 className="font-medium text-accent-foreground mb-2">Test Your QR Code</h4>
+                  <h3 className="font-medium text-accent-foreground mb-2">Test Your QR Code</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     Use your phone's camera to scan the QR code above and see how customers will experience your story.
                   </p>
@@ -285,7 +285,7 @@ export default function OnboardingPage() {
                           <span className="text-primary font-bold">S</span>
                         </div>
                         <div>
-                          <h4 className="font-medium">Shopify</h4>
+                          <h3 className="font-medium">Shopify</h3>
                           <p className="text-sm text-muted-foreground">Connect your Shopify store</p>
                         </div>
                       </div>
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
                           <span className="text-secondary font-bold">W</span>
                         </div>
                         <div>
-                          <h4 className="font-medium">WooCommerce</h4>
+                          <h3 className="font-medium">WooCommerce</h3>
                           <p className="text-sm text-muted-foreground">Connect your WordPress store</p>
                         </div>
                       </div>
@@ -317,7 +317,7 @@ export default function OnboardingPage() {
                           <span className="text-accent font-bold">B</span>
                         </div>
                         <div>
-                          <h4 className="font-medium">BigCommerce</h4>
+                          <h3 className="font-medium">BigCommerce</h3>
                           <p className="text-sm text-muted-foreground">Connect your BigCommerce store</p>
                         </div>
                       </div>

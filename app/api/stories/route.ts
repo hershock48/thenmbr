@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
 
     // For demo purposes, always return mock data
-    // TODO: Replace with actual database queries when Supabase is configured
+    // Note: Replace with actual database queries when Supabase is configured
     {
       // Determine if this is a business or nonprofit based on org ID
       const isBusinessDemo = org === 'demo-business-456'

@@ -325,11 +325,13 @@ export function PerformanceAlerts() {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Severity:</label>
+              <label htmlFor="severity-select" className="text-sm font-medium">Severity:</label>
               <select
+                id="severity-select"
                 value={selectedSeverity}
                 onChange={(e) => setSelectedSeverity(e.target.value as AlertSeverity | 'all')}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select alert severity"
               >
                 <option value="all">All Severities</option>
                 <option value={AlertSeverity.LOW}>Low</option>
@@ -339,11 +341,13 @@ export function PerformanceAlerts() {
               </select>
             </div>
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Status:</label>
+              <label htmlFor="status-select" className="text-sm font-medium">Status:</label>
               <select
+                id="status-select"
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value as AlertStatus | 'all')}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select alert status"
               >
                 <option value="all">All Statuses</option>
                 <option value={AlertStatus.ACTIVE}>Active</option>
@@ -353,11 +357,13 @@ export function PerformanceAlerts() {
               </select>
             </div>
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Type:</label>
+              <label htmlFor="type-select" className="text-sm font-medium">Type:</label>
               <select
+                id="type-select"
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value as AlertType | 'all')}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select alert type"
               >
                 <option value="all">All Types</option>
                 <option value={AlertType.THRESHOLD_EXCEEDED}>Threshold Exceeded</option>

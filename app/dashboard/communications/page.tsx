@@ -278,7 +278,7 @@ export default function CommunicationsPage() {
                     <div className="flex items-center gap-3">
                       <activity.icon className="w-5 h-5 text-muted-foreground" />
                       <div>
-                        <h4 className="font-medium">{activity.title}</h4>
+                        <h3 className="font-medium">{activity.title}</h3>
                         <p className="text-sm text-muted-foreground">
                           {activity.channel} • {activity.sent}
                         </p>

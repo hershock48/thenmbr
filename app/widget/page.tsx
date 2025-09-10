@@ -6,313 +6,907 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Search, Heart, Users, DollarSign, ArrowRight, Gift, Target, Sparkles, CheckCircle, Star } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { 
+  Search, 
+  Heart, 
+  Users, 
+  DollarSign, 
+  ArrowRight, 
+  Gift, 
+  Target, 
+  Sparkles, 
+  CheckCircle, 
+  Star,
+  Hash,
+  Globe,
+  TrendingUp,
+  Award,
+  Clock,
+  Shield,
+  Zap,
+  Play,
+  Eye,
+  MessageSquare,
+  BarChart3,
+  Building2,
+  Smartphone,
+  ExternalLink,
+  Percent,
+  MousePointer,
+  Bell,
+  Share2,
+  ThumbsUp,
+  Star as StarIcon,
+  Activity,
+  Calendar,
+  Trophy,
+  Flame,
+  Coffee,
+  Store,
+  Mail,
+  Phone,
+  MapPin,
+  Link as LinkIcon,
+  RefreshCw,
+  Plus,
+  Minus,
+  ChevronRight,
+  ChevronDown,
+  BookOpen,
+  Camera,
+  Video,
+  Mic,
+  FileText,
+  Download,
+  Upload,
+  Settings,
+  HelpCircle,
+  Info,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  ShoppingCart
+} from "lucide-react"
 
 interface Story {
   id: string
-  nmbr_code: string
+  nmbr: string
   title: string
   description: string
-  photo_url?: string
-  goal_amount?: number
-  current_amount?: number
-  status: string
-  created_at: string
+  image: string
+  category: 'nonprofit' | 'business' | 'grassroots'
+  status: 'active' | 'completed' | 'paused'
+  progress: number
+  goal: number
+  raised: number
+  supporters: number
+  lastUpdate: string
+  updates: StoryUpdate[]
+  products: Product[]
+  organization: {
+    name: string
+    logo: string
+    verified: boolean
+  }
 }
 
-interface Org {
+interface StoryUpdate {
+  id: string
+  date: string
+  title: string
+  content: string
+  image?: string
+  type: 'milestone' | 'update' | 'celebration' | 'challenge'
+  likes: number
+  comments: number
+}
+
+interface Product {
   id: string
   name: string
-  logo_url?: string
-  brand_color?: string
-  website?: string
+  price: number
+  nmbr: string
+  image: string
+  description: string
+  category: string
+  inStock: boolean
+  sales: number
 }
+
+interface LiveMetrics {
+  donations: number
+  views: number
+  shares: number
+  comments: number
+  lastUpdated: string
+}
+
+// Demo data matching the NMBR vision
+const demoStories: Story[] = [
+  {
+    id: "story-001",
+    nmbr: "NMBR:001",
+    title: "Maria's Water Well",
+    description: "Follow Maria's journey as her community gets access to clean water for the first time. Every drop tells a story of hope and transformation.",
+    image: "/images/maria-story.jpg",
+    category: 'nonprofit',
+    status: 'active',
+    progress: 85,
+    goal: 5000,
+    raised: 4250,
+    supporters: 127,
+    lastUpdate: "2 hours ago",
+    organization: {
+      name: "Water for All",
+      logo: "/images/water-for-all-logo.png",
+      verified: true
+    },
+    updates: [
+      {
+        id: "update-001",
+        date: "2024-01-15",
+        title: "Well Construction Begins",
+        content: "The drilling team arrived today. Maria is so excited to finally have clean water! The whole village gathered to watch the first drill.",
+        type: 'milestone',
+        likes: 23,
+        comments: 8
+      },
+      {
+        id: "update-002", 
+        date: "2024-01-22",
+        title: "First Water Flows",
+        content: "Incredible! Clean water is flowing for the first time. The whole village celebrated with songs and dancing. Maria's dream is becoming reality.",
+        type: 'celebration',
+        likes: 45,
+        comments: 12
+      },
+      {
+        id: "update-003",
+        date: "2024-02-01", 
+        title: "Community Training",
+        content: "Maria and her neighbors learned how to maintain the well. This will last for generations. The children are already healthier!",
+        type: 'update',
+        likes: 31,
+        comments: 6
+      }
+    ],
+    products: [
+      {
+        id: "water-bottle",
+        name: "Maria's Water Bottle",
+        price: 25,
+        nmbr: "NMBR:001",
+        image: "/images/water-bottle.jpg",
+        description: "Stainless steel water bottle with Maria's story engraved",
+        category: "Accessories",
+        inStock: true,
+        sales: 89
+      },
+      {
+        id: "well-plaque",
+        name: "Well Dedication Plaque",
+        price: 150,
+        nmbr: "NMBR:001", 
+        image: "/images/well-plaque.jpg",
+        description: "Custom plaque for the well with donor recognition",
+        category: "Memorabilia",
+        inStock: true,
+        sales: 12
+      }
+    ]
+  },
+  {
+    id: "story-002",
+    nmbr: "NMBR:002", 
+    title: "Genesis School Project",
+    description: "Watch Genesis build her dream school and transform her community's future. Every brick represents hope for the children.",
+    image: "/images/genesis-story.jpg",
+    category: 'nonprofit',
+    status: 'active',
+    progress: 92,
+    goal: 15000,
+    raised: 13800,
+    supporters: 89,
+    lastUpdate: "4 hours ago",
+    organization: {
+      name: "Education First",
+      logo: "/images/education-first-logo.png", 
+      verified: true
+    },
+    updates: [
+      {
+        id: "update-004",
+        date: "2024-01-10",
+        title: "School Foundation Laid",
+        content: "The foundation is complete! Genesis can't wait to see her school take shape. The children are already planning their first day.",
+        type: 'milestone',
+        likes: 67,
+        comments: 15
+      },
+      {
+        id: "update-005",
+        date: "2024-01-25", 
+        title: "Walls Going Up",
+        content: "The walls are rising fast. Every brick represents hope for the children. The community is working together to make this dream real.",
+        type: 'update',
+        likes: 52,
+        comments: 9
+      },
+      {
+        id: "update-006",
+        date: "2024-02-05",
+        title: "First Class Begins",
+        content: "School is open! 50 children are now learning in Genesis's dream school. The first day was filled with joy and excitement.",
+        type: 'celebration',
+        likes: 89,
+        comments: 23
+      }
+    ],
+    products: [
+      {
+        id: "school-supplies",
+        name: "School Supply Kit",
+        price: 35,
+        nmbr: "NMBR:002",
+        image: "/images/school-supplies.jpg",
+        description: "Complete school supply kit for one child",
+        category: "Education",
+        inStock: true,
+        sales: 156
+      },
+      {
+        id: "desk-sponsor",
+        name: "Desk Sponsorship",
+        price: 75,
+        nmbr: "NMBR:002",
+        image: "/images/desk-sponsor.jpg", 
+        description: "Sponsor a desk with your name engraved",
+        category: "Sponsorship",
+        inStock: true,
+        sales: 34
+      }
+    ]
+  },
+  {
+    id: "story-003",
+    nmbr: "NMBR:003",
+    title: "Ethiopian Coffee Co-op",
+    description: "Experience the journey of premium coffee from farm to cup, supporting local farmers and their families.",
+    image: "/images/coffee-story.jpg",
+    category: 'business',
+    status: 'active',
+    progress: 100,
+    goal: 10000,
+    raised: 10000,
+    supporters: 234,
+    lastUpdate: "1 day ago",
+    organization: {
+      name: "Ethiopian Coffee Co-op",
+      logo: "/images/coffee-coop-logo.png",
+      verified: true
+    },
+    updates: [
+      {
+        id: "update-007",
+        date: "2024-01-12",
+        title: "Harvest Season Begins",
+        content: "The coffee cherries are perfectly ripe. Our farmers are excited about this year's crop! The quality looks exceptional.",
+        type: 'milestone',
+        likes: 78,
+        comments: 19
+      },
+      {
+        id: "update-008",
+        date: "2024-01-20",
+        title: "Processing Excellence", 
+        content: "Our new processing facility is working beautifully. The quality is exceptional. Every bean tells a story of care and tradition.",
+        type: 'update',
+        likes: 65,
+        comments: 14
+      },
+      {
+        id: "update-009",
+        date: "2024-02-01",
+        title: "First Shipment Ready",
+        content: "The first batch is ready for our customers. Every bag tells a story of impact. The farmers are proud of their work!",
+        type: 'celebration',
+        likes: 92,
+        comments: 28
+      }
+    ],
+    products: [
+      {
+        id: "coffee-bag",
+        name: "Ethiopian Co-op Roast",
+        price: 18,
+        nmbr: "NMBR:003",
+        image: "/images/coffee-bag.jpg",
+        description: "Premium single-origin coffee from our co-op",
+        category: "Coffee",
+        inStock: true,
+        sales: 445
+      },
+      {
+        id: "coffee-subscription",
+        name: "Monthly Coffee Subscription",
+        price: 45,
+        nmbr: "NMBR:003",
+        image: "/images/coffee-subscription.jpg",
+        description: "Monthly delivery of fresh roasted coffee",
+        category: "Subscription",
+        inStock: true,
+        sales: 89
+      }
+    ]
+  }
+]
+
+const popularStories = [
+  { nmbr: "NMBR:001", title: "Maria's Water Well", category: "Water", supporters: 127, trending: true },
+  { nmbr: "NMBR:002", title: "Genesis School Project", category: "Education", supporters: 89, trending: false },
+  { nmbr: "NMBR:003", title: "Ethiopian Coffee Co-op", category: "Business", supporters: 234, trending: true },
+  { nmbr: "NMBR:004", title: "Sustainable Fashion Line", category: "Fashion", supporters: 156, trending: false },
+  { nmbr: "NMBR:005", title: "Community Garden Initiative", category: "Environment", supporters: 78, trending: true }
+]
+
+const dailyChallenges = [
+  {
+    id: "challenge-1",
+    title: "Share a Story",
+    description: "Share Maria's water well story with 3 friends",
+    points: 50,
+    progress: 0,
+    max: 3,
+    icon: Share2
+  },
+  {
+    id: "challenge-2", 
+    title: "Make a Donation",
+    description: "Support any active story with a donation",
+    points: 100,
+    progress: 0,
+    max: 1,
+    icon: Heart
+  },
+  {
+    id: "challenge-3",
+    title: "Follow Updates",
+    description: "Follow 5 stories to get regular updates",
+    points: 75,
+    progress: 2,
+    max: 5,
+    icon: Bell
+  }
+]
 
 function WidgetContent() {
   const searchParams = useSearchParams()
-  const [org, setOrg] = useState<Org | null>(null)
-  const [stories, setStories] = useState<Story[]>([])
-  const [searchCode, setSearchCode] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
   const orgId = searchParams.get('org')
-  const widgetType = searchParams.get('type') || 'story-search'
   const nmbrCode = searchParams.get('nmbr')
+  
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null)
+  const [showAnalytics, setShowAnalytics] = useState(false)
+  const [liveMetrics, setLiveMetrics] = useState<LiveMetrics>({
+    donations: 0,
+    views: 0,
+    shares: 0,
+    comments: 0,
+    lastUpdated: new Date().toLocaleTimeString()
+  })
+  const [isLoading, setIsLoading] = useState(false)
 
+  // Simulate live metrics updates
   useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveMetrics(prev => ({
+        donations: prev.donations + Math.floor(Math.random() * 3),
+        views: prev.views + Math.floor(Math.random() * 5),
+        shares: prev.shares + Math.floor(Math.random() * 2),
+        comments: prev.comments + Math.floor(Math.random() * 2),
+        lastUpdated: new Date().toLocaleTimeString()
+      }))
+    }, 5000)
 
-    if (orgId) {
-      fetchOrg()
-      if (nmbrCode) {
-        setSearchCode(nmbrCode)
-        searchStory(nmbrCode)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Auto-select story if NMBR code provided
+  useEffect(() => {
+    if (nmbrCode) {
+      const story = demoStories.find(s => s.nmbr === nmbrCode)
+      if (story) {
+        setSelectedStory(story)
       }
     }
-  }, [orgId, nmbrCode])
+  }, [nmbrCode])
 
-  const fetchOrg = async () => {
-    try {
-      const response = await fetch(`/api/org/${orgId}`)
-      const data = await response.json()
-      setOrg(data)
-    } catch (error) {
-      // Failed to fetch organization
-    }
-  }
-
-  const searchStory = async (code: string) => {
-    if (!code.trim()) return
-    
-    setLoading(true)
-    setError('')
-    
-    try {
-      const response = await fetch(`/api/stories?org=${orgId}&nmbr=${code}`)
-      const data = await response.json()
-      
-      if (data.stories && data.stories.length > 0) {
-        setStories(data.stories)
-      } else {
-        setError('No story found with that number. Try 1, 2, or 3.')
-        setStories([])
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    if (query.length >= 3) {
+      const story = demoStories.find(s => 
+        s.nmbr.toLowerCase().includes(query.toLowerCase()) ||
+        s.title.toLowerCase().includes(query.toLowerCase())
+      )
+      if (story) {
+        setSelectedStory(story)
       }
-    } catch (error) {
-      setError('Failed to search for story')
-      setStories([])
-    } finally {
-      setLoading(false)
     }
   }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    searchStory(searchCode)
+  const handleQuickSearch = (nmbr: string) => {
+    const story = demoStories.find(s => s.nmbr === nmbr)
+    if (story) {
+      setSelectedStory(story)
+    }
   }
 
-  const handleSubscribe = async (storyId: string) => {
-    // In a real app, this would handle subscription
-    alert('Thank you! You\'ll receive updates about this story.')
+  const handleDonate = (story: Story, amount?: number) => {
+    setIsLoading(true)
+    // Simulate donation process
+    setTimeout(() => {
+      setIsLoading(false)
+      // Update live metrics
+      setLiveMetrics(prev => ({
+        ...prev,
+        donations: prev.donations + 1
+      }))
+    }, 2000)
   }
 
-  const handleDonate = async (storyId: string) => {
-    // In a real app, this would handle donation
-    alert('Redirecting to secure donation page...')
+  const handleFollow = (story: Story) => {
+    // Simulate follow action
+    setLiveMetrics(prev => ({
+      ...prev,
+      views: prev.views + 1
+    }))
   }
 
-  if (!orgId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-background to-purple-50">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="p-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Target className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Widget Not Found</h2>
-            <p className="text-muted-foreground mb-6">
-              This widget requires a valid organization ID to work properly.
-            </p>
-            <div className="text-sm text-muted-foreground space-y-1">
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
+  const handleShare = (story: Story) => {
+    // Simulate share action
+    setLiveMetrics(prev => ({
+      ...prev,
+      shares: prev.shares + 1
+    }))
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 p-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-xl">N</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Live Activity Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4">
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              <span className="font-semibold">Live Activity</span>
+            </div>
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-1">
+                <Heart className="w-4 h-4" />
+                <span>+{liveMetrics.donations}</span>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xs">#</span>
+              <div className="flex items-center gap-1">
+                <Eye className="w-4 h-4" />
+                <span>+{liveMetrics.views}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Share2 className="w-4 h-4" />
+                <span>+{liveMetrics.shares}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MessageSquare className="w-4 h-4" />
+                <span>+{liveMetrics.comments}</span>
               </div>
             </div>
-            <span className="text-2xl font-bold text-foreground">The NMBR</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Find Your Impact Story</h1>
-          <p className="text-muted-foreground">
-            Search by number to discover the person or cause you're helping
+          <div className="text-sm opacity-90">
+            Last updated: {liveMetrics.lastUpdated}
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Hash className="w-8 h-8 text-primary" />
+            <h1 className="text-4xl font-bold">NMBR Platform</h1>
+          </div>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Discover and follow real stories of impact. Every NMBR connects you to authentic stories, 
+            meaningful products, and direct impact.
           </p>
         </div>
 
-        {/* Search Form */}
-        <Card className="mb-8 shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+        {/* Search Section */}
+        <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Search className="w-5 h-5 text-cyan-600" />
-              Search for a Story
+            <CardTitle className="flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Find Your Impact Story
             </CardTitle>
             <CardDescription>
-              Enter the number you received to find your personalized impact story
+              Search by NMBR code or story title to discover authentic stories of impact
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSearch} className="space-y-4">
-              <div>
-                <Label htmlFor="search" className="text-sm font-medium text-foreground">
-                  Story Number
-                </Label>
-                <div className="flex gap-2 mt-1">
-                  <Input
-                    id="search"
-                    type="text"
-                    value={searchCode}
-                    onChange={(e) => setSearchCode(e.target.value)}
-                    placeholder="Enter a number (try 1, 2, or 3)"
-                    className="flex-1 h-12 text-base border-2 border-gray-200 focus:border-cyan-500 focus:ring-cyan-500"
-                  />
-                  <Button 
-                    type="submit" 
-                    disabled={loading}
-                    className="h-12 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg"
-                  >
-                    {loading ? (
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                    ) : (
-                      <>
-                        <Search className="w-4 h-4 mr-2" />
-                        Find Story
-                      </>
-                    )}
-                  </Button>
-                </div>
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter NMBR code (e.g., NMBR:001) or story title..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="flex-1"
+                />
+                <Button onClick={() => handleSearch(searchQuery)}>
+                  <Search className="w-4 h-4 mr-2" />
+                  Search
+                </Button>
               </div>
-            </form>
-
-            {/* Quick Search Buttons */}
-            <div className="mt-6">
-              <p className="text-sm text-muted-foreground mb-3">Or try one of these:</p>
-              <div className="grid grid-cols-3 gap-2">
-                <Button 
-                  variant="outline" 
-                  className="h-10 border-2 border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:border-cyan-300"
-                  onClick={() => searchStory('1')}
-                >
-                  Story #1
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="h-10 border-2 border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300"
-                  onClick={() => searchStory('2')}
-                >
-                  Story #2
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="h-10 border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300"
-                  onClick={() => searchStory('3')}
-                >
-                  Story #3
-                </Button>
+              
+              {/* Quick Search Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm text-muted-foreground mr-2">Quick search:</span>
+                {['NMBR:001', 'NMBR:002', 'NMBR:003'].map((nmbr) => (
+                  <Button
+                    key={nmbr}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickSearch(nmbr)}
+                    className="text-xs"
+                  >
+                    {nmbr}
+                  </Button>
+                ))}
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Error Message */}
-        {error && (
-          <Card className="mb-8 border-red-200 bg-red-50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-red-700">
-                <Target className="w-5 h-5" />
-                <span className="font-medium">{error}</span>
+        {/* Live Analytics Toggle */}
+        <div className="flex justify-end mb-6">
+          <Button
+            variant="outline"
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            className="flex items-center gap-2"
+          >
+            <BarChart3 className="w-4 h-4" />
+            {showAnalytics ? 'Hide' : 'Show'} Live Analytics
+          </Button>
+        </div>
+
+        {/* Live Analytics Panel */}
+        {showAnalytics && (
+          <Card className="mb-8 border-2 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-primary" />
+                Live Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-red-50 rounded-lg">
+                  <Heart className="w-8 h-8 text-red-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-red-600">{liveMetrics.donations}</div>
+                  <div className="text-sm text-red-700">Donations</div>
+                </div>
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <Eye className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-blue-600">{liveMetrics.views}</div>
+                  <div className="text-sm text-blue-700">Views</div>
+                </div>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <Share2 className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-green-600">{liveMetrics.shares}</div>
+                  <div className="text-sm text-green-700">Shares</div>
+                </div>
+                <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <MessageSquare className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-purple-600">{liveMetrics.comments}</div>
+                  <div className="text-sm text-purple-700">Comments</div>
+                </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Stories */}
-        {stories.length > 0 && (
-          <div className="space-y-6">
-            {stories.map((story) => (
-              <Card key={story.id} className="shadow-xl border-0 bg-white/80 backdrop-blur-sm group hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    {/* Story Image */}
-                    <div className="md:w-1/3">
-                      <div className="relative">
-                        <div className="w-full h-48 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-4xl">
-                          {story.nmbr_code}
-                        </div>
-                        {story.photo_url && (
-                          <img 
-                            src={story.photo_url} 
-                            alt={story.title}
-                            className="w-full h-48 object-cover rounded-xl"
-                          />
-                        )}
+        {/* Daily Challenges */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-600" />
+              Daily Challenges
+            </CardTitle>
+            <CardDescription>
+              Complete challenges to earn points and make a bigger impact
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {dailyChallenges.map((challenge) => {
+                const Icon = challenge.icon
+                const progressPercent = (challenge.progress / challenge.max) * 100
+                
+                return (
+                  <div key={challenge.id} className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <Icon className="w-5 h-5 text-yellow-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{challenge.title}</h3>
+                        <p className="text-sm text-muted-foreground">{challenge.description}</p>
                       </div>
                     </div>
-
-                    {/* Story Content */}
-                    <div className="md:w-2/3 space-y-4">
-                      <div>
-                        <h3 className="text-2xl font-bold text-foreground mb-2">{story.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed">{story.description}</p>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Progress</span>
+                        <span>{challenge.progress}/{challenge.max}</span>
                       </div>
-
-                      {/* Progress Bar */}
-                      {story.goal_amount && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-foreground">Progress</span>
-                            <span className="text-sm text-muted-foreground">
-                              ${story.current_amount || 0} / ${story.goal_amount}
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
-                            <div 
-                              className="bg-gradient-to-r from-cyan-500 to-purple-600 h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${Math.min(((story.current_amount || 0) / story.goal_amount) * 100, 100)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <Button 
-                          onClick={() => handleSubscribe(story.id)}
-                          className="flex-1 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg"
-                        >
-                          <Heart className="w-4 h-4 mr-2" />
-                          Follow This Story
-                        </Button>
-                        <Button 
-                          onClick={() => handleDonate(story.id)}
-                          variant="outline"
-                          className="flex-1 border-2 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-300"
-                        >
-                          <Gift className="w-4 h-4 mr-2" />
-                          Make a Donation
-                        </Button>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-yellow-600 font-medium">{challenge.points} points</span>
+                        <span className="text-muted-foreground">
+                          {challenge.progress === challenge.max ? 'Completed!' : `${challenge.max - challenge.progress} left`}
+                        </span>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Popular Stories */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Flame className="w-5 h-5 text-orange-600" />
+              Popular Stories
+            </CardTitle>
+            <CardDescription>
+              Trending stories that are making a real impact
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {popularStories.map((story) => (
+                <Badge
+                  key={story.nmbr}
+                  variant={story.trending ? "default" : "secondary"}
+                  className="cursor-pointer hover:bg-primary/80 transition-colors"
+                  onClick={() => handleQuickSearch(story.nmbr)}
+                >
+                  {story.trending && <Flame className="w-3 h-3 mr-1" />}
+                  {story.nmbr} • {story.title} • {story.supporters} supporters
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Selected Story Display */}
+        {selectedStory ? (
+          <Card className="mb-8">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Hash className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      {selectedStory.nmbr}
+                      {selectedStory.organization.verified && (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      )}
+                    </CardTitle>
+                    <CardDescription>{selectedStory.title}</CardDescription>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={selectedStory.status === 'active' ? 'default' : 'secondary'}>
+                    {selectedStory.status}
+                  </Badge>
+                  <Badge variant="outline">{selectedStory.category}</Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Story Description */}
+                <div className="prose max-w-none">
+                  <p className="text-lg text-muted-foreground">{selectedStory.description}</p>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Progress</span>
+                    <span>{selectedStory.progress}% • ${selectedStory.raised.toLocaleString()} raised</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div 
+                      className="bg-gradient-to-r from-primary to-blue-600 h-3 rounded-full transition-all duration-500"
+                      style={{ width: `${selectedStory.progress}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Goal: ${selectedStory.goal.toLocaleString()}</span>
+                    <span>{selectedStory.supporters} supporters</span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-3">
+                  <Button 
+                    onClick={() => handleDonate(selectedStory)}
+                    disabled={isLoading}
+                    className="flex items-center gap-2"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Heart className="w-4 h-4" />
+                    )}
+                    Donate Now
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleFollow(selectedStory)}
+                    className="flex items-center gap-2"
+                  >
+                    <Bell className="w-4 h-4" />
+                    Follow Story
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleShare(selectedStory)}
+                    className="flex items-center gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share
+                  </Button>
+                </div>
+
+                {/* Story Updates */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Latest Updates</h3>
+                  {selectedStory.updates.map((update) => (
+                    <div key={update.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                          <Calendar className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-semibold">{update.title}</h4>
+                            <Badge variant="outline" className="text-xs">
+                              {update.type}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-2">{update.content}</p>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>{update.date}</span>
+                            <div className="flex items-center gap-1">
+                              <ThumbsUp className="w-3 h-3" />
+                              {update.likes}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MessageSquare className="w-3 h-3" />
+                              {update.comments}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Products */}
+                {selectedStory.products.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Support Through Products</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedStory.products.map((product) => (
+                        <div key={product.id} className="p-4 border rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                              <Gift className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="font-semibold">{product.name}</h4>
+                                <Badge variant="outline" className="text-xs">
+                                  {product.nmbr}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
+                              <div className="flex items-center justify-between">
+                                <span className="text-lg font-bold text-primary">${product.price}</span>
+                                <Button size="sm" className="flex items-center gap-1">
+                                  <ShoppingCart className="w-3 h-3" />
+                                  Add to Cart
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          /* No Story Selected State */
+          <Card className="text-center py-12">
+            <CardContent>
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Find Your Impact Story</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Search for a NMBR code or story title to discover authentic stories of impact and make a difference.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {['NMBR:001', 'NMBR:002', 'NMBR:003'].map((nmbr) => (
+                  <Button
+                    key={nmbr}
+                    variant="outline"
+                    onClick={() => handleQuickSearch(nmbr)}
+                    className="text-sm"
+                  >
+                    Try {nmbr}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Footer */}
-        <div className="text-center mt-12 py-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-sm">N</span>
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+          <Card className="text-center p-6">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Zap className="w-6 h-6 text-blue-600" />
             </div>
-            <span className="text-lg font-bold text-foreground">The NMBR</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Making every donation personal. Connecting donors directly to the people they help.
-          </p>
+            <h3 className="text-lg font-semibold mb-2">Real-Time Updates</h3>
+            <p className="text-sm text-muted-foreground">
+              Get instant updates on the stories you follow. See progress as it happens.
+            </p>
+          </Card>
+          
+          <Card className="text-center p-6">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Heart className="w-6 h-6 text-green-600" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Personal Connection</h3>
+            <p className="text-sm text-muted-foreground">
+              Connect directly with the people and causes you care about. Every story matters.
+            </p>
+          </Card>
+          
+          <Card className="text-center p-6">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-purple-600" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Track Progress</h3>
+            <p className="text-sm text-muted-foreground">
+              See exactly how your support makes a difference with complete transparency.
+            </p>
+          </Card>
         </div>
       </div>
     </div>
@@ -322,10 +916,10 @@ function WidgetContent() {
 export default function WidgetPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-50 via-background to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-600 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your impact story...</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading NMBR Platform...</p>
         </div>
       </div>
     }>

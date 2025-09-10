@@ -322,13 +322,13 @@ export function ProductBlockEditor({ onSave, onCancel }: ProductBlockEditorProps
 
         {selectedProduct && (
           <div className="p-4 border rounded-lg bg-muted/50">
-            <h4 className="font-medium mb-2">Preview</h4>
+            <h3 className="font-medium mb-2">Preview</h3>
             <div className="flex gap-3">
               <div className="w-16 h-16 bg-muted rounded flex items-center justify-center">
                 <ImageIcon className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="flex-1">
-                <h5 className="font-medium">{selectedProduct.title}</h5>
+                <h4 className="font-medium">{selectedProduct.title}</h4>
                 <p className="text-sm text-muted-foreground line-clamp-2">{selectedProduct.description}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold">${selectedProduct.price}</span>

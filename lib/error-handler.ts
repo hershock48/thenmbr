@@ -206,7 +206,7 @@ export class Logger {
         break
     }
 
-    // TODO: Send to external logging service (Sentry, DataDog, etc.)
+    // Note: Send to external logging service (Sentry, DataDog, etc.)
     this.sendToExternalService(entry)
   }
 

@@ -177,7 +177,7 @@ export default function NotificationsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h4 className="font-medium text-foreground">{notification.title}</h4>
+                          <h3 className="font-medium text-foreground">{notification.title}</h3>
                           <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
                           <p className="text-xs text-muted-foreground mt-2">{notification.timestamp}</p>
                         </div>
@@ -218,7 +218,7 @@ export default function NotificationsPage() {
                 .filter((n) => n.type === "story")
                 .map((notification) => (
                   <div key={notification.id} className="p-4 border rounded-lg">
-                    <h4 className="font-medium">{notification.title}</h4>
+                    <h3 className="font-medium">{notification.title}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
                   </div>
                 ))}
@@ -239,7 +239,7 @@ export default function NotificationsPage() {
                 .filter((n) => n.type === "donation")
                 .map((notification) => (
                   <div key={notification.id} className="p-4 border rounded-lg">
-                    <h4 className="font-medium">{notification.title}</h4>
+                    <h3 className="font-medium">{notification.title}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
                   </div>
                 ))}
@@ -260,7 +260,7 @@ export default function NotificationsPage() {
                 .filter((n) => n.type === "analytics")
                 .map((notification) => (
                   <div key={notification.id} className="p-4 border rounded-lg">
-                    <h4 className="font-medium">{notification.title}</h4>
+                    <h3 className="font-medium">{notification.title}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
                   </div>
                 ))}
@@ -279,7 +279,7 @@ export default function NotificationsPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <h4 className="font-medium text-foreground">Delivery Methods</h4>
+                <h3 className="font-medium text-foreground">Delivery Methods</h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -315,7 +315,7 @@ export default function NotificationsPage() {
               <Separator />
 
               <div className="space-y-4">
-                <h4 className="font-medium text-foreground">Notification Types</h4>
+                <h3 className="font-medium text-foreground">Notification Types</h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>

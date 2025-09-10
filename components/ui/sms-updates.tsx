@@ -368,7 +368,7 @@ export function SMSUpdates({ storyId, className }: SMSUpdatesProps) {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
             <div className="space-y-2">
-              <h4 className="font-medium text-blue-900">SMS Best Practices</h4>
+              <h3 className="font-medium text-blue-900">SMS Best Practices</h3>
               <ul className="text-sm text-blue-800 space-y-1">
                 <li>• Keep messages under 160 characters for best delivery</li>
                 <li>• Use urgent messages sparingly for maximum impact</li>

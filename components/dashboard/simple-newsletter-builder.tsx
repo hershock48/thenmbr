@@ -631,11 +631,13 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                   placeholder="Enter heading text..."
                 />
                 <div className="flex items-center space-x-2">
-                  <Label>Size:</Label>
+                  <Label htmlFor={`heading-size-${block.id}`}>Size:</Label>
                   <select
+                    id={`heading-size-${block.id}`}
                     value={block.content.level}
                     onChange={(e) => updateBlock(block.id, { level: parseInt(e.target.value) })}
                     className="px-2 py-1 border rounded"
+                    aria-label="Heading size"
                   >
                     <option value={1}>H1 (Largest)</option>
                     <option value={2}>H2 (Large)</option>
@@ -740,11 +742,13 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
             <Separator />
             {selectedBlock === block.id && (
               <div className="mt-2">
-                <Label>Divider Style</Label>
+                <Label htmlFor={`divider-style-${block.id}`}>Divider Style</Label>
                 <select
+                  id={`divider-style-${block.id}`}
                   value={block.content.style}
                   onChange={(e) => updateBlock(block.id, { style: e.target.value })}
                   className="px-2 py-1 border rounded"
+                  aria-label="Divider style"
                 >
                   <option value="solid">Solid Line</option>
                   <option value="dashed">Dashed Line</option>
@@ -916,11 +920,13 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                 <div className="mb-6">
                   <input
                     type="number"
+                    id="custom-amount"
                     placeholder="Custom amount"
                     value={donationState.customAmount}
                     onChange={(e) => handleCustomAmountChange(e.target.value)}
                     className="w-32 px-3 py-2 rounded-lg text-gray-900 text-center font-semibold"
                     min={block.content.minimumAmount || 5}
+                    aria-label="Custom donation amount"
                   />
                 </div>
               )}
@@ -930,8 +936,9 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                 <div className="mb-6 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Your Name (Optional)</label>
+                      <label htmlFor={`donor-name-${block.id}`} className="block text-sm font-medium mb-2">Your Name (Optional)</label>
                       <input
+                        id={`donor-name-${block.id}`}
                         type="text"
                         value={donationState.donorName}
                         onChange={(e) => setDonationState(prev => ({ ...prev, donorName: e.target.value }))}
@@ -940,8 +947,9 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Email Address</label>
+                      <label htmlFor={`donor-email-${block.id}`} className="block text-sm font-medium mb-2">Email Address</label>
                       <input
+                        id={`donor-email-${block.id}`}
                         type="email"
                         value={donationState.donorEmail}
                         onChange={(e) => setDonationState(prev => ({ ...prev, donorEmail: e.target.value }))}
@@ -1030,11 +1038,13 @@ export function SimpleNewsletterBuilder({ storyId, organizationId, onSave, onSen
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Urgency Level</Label>
+                  <Label htmlFor={`urgency-level-${block.id}`} className="text-white">Urgency Level</Label>
                   <select
+                    id={`urgency-level-${block.id}`}
                     value={block.content.urgency}
                     onChange={(e) => updateBlock(block.id, { urgency: e.target.value })}
                     className="w-full px-3 py-2 rounded-lg bg-white/20 border-white/30 text-white"
+                    aria-label="Urgency level"
                   >
                     <option value="normal">Normal</option>
                     <option value="urgent">Urgent</option>

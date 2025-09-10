@@ -258,7 +258,7 @@ export function AIWritingAssistant({
               /* Suggestions Mode */
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium">Quick Suggestions</h4>
+                  <h3 className="font-medium">Quick Suggestions</h3>
                   <Button
                     variant="outline"
                     size="sm"
@@ -299,10 +299,10 @@ export function AIWritingAssistant({
                 {improvedText && (
                   <div className="space-y-3 p-4 border-2 border-green-200 bg-green-50 rounded-lg">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-green-800 flex items-center gap-2">
+                      <h3 className="font-medium text-green-800 flex items-center gap-2">
                         <CheckCircle className="h-4 w-4" />
                         AI Improved Version
-                      </h4>
+                      </h3>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => setImprovedText('')}>
                           <X className="h-3 w-3" />

@@ -189,7 +189,7 @@ export default function MarketplacePage() {
           {/* Design Selection */}
           <TabsContent value="designs" className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-4">Choose Your Bracelet Design</h2>
+              <h3 className="text-3xl font-bold text-foreground mb-4">Choose Your Bracelet Design</h3>
               <p className="text-muted-foreground text-lg">
                 Select the perfect style for your organization's numbered bracelets
               </p>
@@ -279,7 +279,7 @@ export default function MarketplacePage() {
                       ← Back to Designs
                     </Button>
                     <div className="flex-1">
-                      <h2 className="text-3xl font-bold text-foreground mb-2">Customize Your Bracelets</h2>
+                      <h3 className="text-3xl font-bold text-foreground mb-2">Customize Your Bracelets</h3>
                       <p className="text-muted-foreground text-lg">
                         Personalize your {selectedDesign.name} bracelets
                       </p>
@@ -495,7 +495,7 @@ export default function MarketplacePage() {
           {/* Cart */}
           <TabsContent value="cart" className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-4">Your Cart</h2>
+              <h3 className="text-3xl font-bold text-foreground mb-4">Your Cart</h3>
               <p className="text-muted-foreground text-lg">
                 Review your order before checkout
               </p>

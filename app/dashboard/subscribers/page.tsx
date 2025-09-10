@@ -163,7 +163,7 @@ export default function SubscribersPage() {
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Users className="w-8 h-8 text-blue-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Redirecting to Login</h2>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">Redirecting to Login</h3>
           <p className="text-gray-600">Please log in to access your subscribers.</p>
         </div>
       </div>

@@ -439,7 +439,7 @@ export const newsletterTemplates: NewsletterTemplate[] = [
         type: 'text',
         order: 3,
         content: {
-          text: '<div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0ea5e9;"><h4 style="margin: 0 0 10px 0; color: #0c4a6e;">🌟 The Impact You Made:</h4><p style="margin: 0; color: #075985;">{IMPACT_DESCRIPTION}</p></div>'
+          text: '<div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0ea5e9;"><h3 style="margin: 0 0 10px 0; color: #0c4a6e;">🌟 The Impact You Made:</h3><p style="margin: 0; color: #075985;">{IMPACT_DESCRIPTION}</p></div>'
         },
         styling: {
           padding: '0 20px'

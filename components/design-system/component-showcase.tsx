@@ -41,7 +41,7 @@ export function ComponentShowcase() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h4 className="font-medium mb-3">Loading Spinners</h4>
+            <h3 className="font-medium mb-3">Loading Spinners</h3>
             <div className="flex items-center gap-4">
               <LoadingSpinner size="xs" />
               <LoadingSpinner size="sm" />
@@ -52,7 +52,7 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Skeleton Loaders</h4>
+            <h3 className="font-medium mb-3">Skeleton Loaders</h3>
             <div className="space-y-3">
               <Skeleton variant="text" className="w-3/4" />
               <Skeleton variant="text" className="w-1/2" />
@@ -67,7 +67,7 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Loading Overlay</h4>
+            <h3 className="font-medium mb-3">Loading Overlay</h3>
             <LoadingOverlay isLoading={isLoading} message="Processing...">
               <div className="p-6 bg-muted rounded-lg">
                 <p>Content that can be overlaid with loading state</p>
@@ -94,7 +94,7 @@ export function ComponentShowcase() {
         </CardHeader>
         <CardContent className="space-y-8">
           <div>
-            <h4 className="font-medium mb-3">Empty State</h4>
+            <h3 className="font-medium mb-3">Empty State</h3>
             <EmptyState
               icon={<Inbox className="h-8 w-8 text-muted-foreground" />}
               title="No campaigns yet"
@@ -107,7 +107,7 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Error State</h4>
+            <h3 className="font-medium mb-3">Error State</h3>
             <ErrorState
               title="Failed to load data"
               description="There was a problem loading your campaigns"
@@ -116,7 +116,7 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">No Results</h4>
+            <h3 className="font-medium mb-3">No Results</h3>
             <NoResultsState searchTerm="nonprofit" onClear={() => console.log("Clear search")} />
           </div>
         </CardContent>
@@ -157,7 +157,7 @@ export function ComponentShowcase() {
         </CardHeader>
         <CardContent className="space-y-8">
           <div>
-            <h4 className="font-medium mb-3">Progress Bars</h4>
+            <h3 className="font-medium mb-3">Progress Bars</h3>
             <div className="space-y-4">
               <ProgressBar value={75} label="Campaign Progress" showLabel />
               <ProgressBar value={45} variant="warning" size="sm" />
@@ -166,12 +166,12 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Step Indicator</h4>
+            <h3 className="font-medium mb-3">Step Indicator</h3>
             <StepIndicator steps={steps} />
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Circular Progress</h4>
+            <h3 className="font-medium mb-3">Circular Progress</h3>
             <div className="flex gap-6">
               <CircularProgress value={75} size={100} />
               <CircularProgress value={45} variant="warning" size={80} />
@@ -189,7 +189,7 @@ export function ComponentShowcase() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h4 className="font-medium mb-3">Colors</h4>
+            <h3 className="font-medium mb-3">Colors</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="space-y-2">
                 <div className="w-full h-12 bg-primary rounded"></div>
@@ -211,7 +211,7 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Typography</h4>
+            <h3 className="font-medium mb-3">Typography</h3>
             <div className="space-y-2">
               <p className="text-4xl font-bold">Heading 1</p>
               <p className="text-2xl font-semibold">Heading 2</p>
@@ -222,7 +222,7 @@ export function ComponentShowcase() {
           </div>
 
           <div>
-            <h4 className="font-medium mb-3">Component Sizes</h4>
+            <h3 className="font-medium mb-3">Component Sizes</h3>
             <div className="flex items-center gap-3">
               <Button size="sm">Small</Button>
               <Button>Medium</Button>

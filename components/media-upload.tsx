@@ -102,10 +102,12 @@ export function MediaUpload({ type, onMediaSelect, className = "" }: MediaUpload
                 {uploading ? "Uploading..." : `Choose ${type}`}
                 <input
                   type="file"
+                  id="media-upload"
                   accept={acceptTypes}
                   onChange={handleFileSelect}
                   className="hidden"
                   disabled={uploading}
+                  aria-label={`Upload ${type}`}
                 />
               </label>
             </Button>

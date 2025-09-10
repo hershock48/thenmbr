@@ -260,7 +260,7 @@ export function generateCompletionEmail(data: CompletionData) {
             </div>
 
             <div class="impact">
-              <h4 style="margin: 0 0 10px 0; color: #0c4a6e;">🌟 The Impact You Made:</h4>
+              <h3 style="margin: 0 0 10px 0; color: #0c4a6e;">🌟 The Impact You Made:</h3>
               <p style="margin: 0; color: #075985;">${data.impact}</p>
             </div>
 

@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense, lazy } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Save, Send, Eye, Download } from 'lucide-react'
-import { SimpleNewsletterBuilder } from '@/components/dashboard/simple-newsletter-builder'
-import { AudienceTargeting } from '@/components/dashboard/audience-targeting'
+import { ArrowLeft, Save, Send, Eye, Download, Loader2 } from 'lucide-react'
+
+// Lazy load heavy components
+const SimpleNewsletterBuilder = lazy(() => import('@/components/dashboard/simple-newsletter-builder').then(module => ({ default: module.SimpleNewsletterBuilder })))
+const AudienceTargeting = lazy(() => import('@/components/dashboard/audience-targeting').then(module => ({ default: module.AudienceTargeting })))
 
 export default function NewsletterBuilderPage() {
   const { org } = useAuth()
@@ -111,21 +113,43 @@ export default function NewsletterBuilderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
           {/* Audience Targeting Sidebar */}
           <div className="lg:col-span-1">
-            <AudienceTargeting
-              organizationId={org?.id || ''}
-              onAudienceChange={handleAudienceChange}
-            />
+            <Suspense fallback={
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="ml-2">Loading audience targeting...</span>
+                  </div>
+                </CardContent>
+              </Card>
+            }>
+              <AudienceTargeting
+                organizationId={org?.id || ''}
+                onAudienceChange={handleAudienceChange}
+              />
+            </Suspense>
           </div>
           
           {/* Newsletter Builder */}
           <div className="lg:col-span-2">
-            <SimpleNewsletterBuilder
-              storyId={storyId}
-              organizationId={org?.id || ''}
-              onSave={handleSave}
-              onSend={handleSend}
-              audience={audience}
-            />
+            <Suspense fallback={
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="ml-2">Loading newsletter builder...</span>
+                  </div>
+                </CardContent>
+              </Card>
+            }>
+              <SimpleNewsletterBuilder
+                storyId={storyId}
+                organizationId={org?.id || ''}
+                onSave={handleSave}
+                onSend={handleSend}
+                audience={audience}
+              />
+            </Suspense>
           </div>
         </div>
       </div>

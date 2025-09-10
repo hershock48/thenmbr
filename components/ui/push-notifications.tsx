@@ -255,7 +255,7 @@ export function PushNotifications({ storyId, className }: PushNotificationsProps
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div>
-                <h4 className="font-medium text-yellow-900">Notification Permission Required</h4>
+                <h3 className="font-medium text-yellow-900">Notification Permission Required</h3>
                 <p className="text-sm text-yellow-800 mt-1">
                   {permissionStatus === 'default' 
                     ? 'Click "Enable Notifications" to allow push notifications in your browser.'
@@ -489,7 +489,7 @@ export function PushNotifications({ storyId, className }: PushNotificationsProps
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium">{notification.title}</h4>
+                        <h3 className="font-medium">{notification.title}</h3>
                         <Badge className={typeColor}>
                           <TypeIcon className="w-3 h-3 mr-1" />
                           {notification.type.replace('_', ' ')}
@@ -549,7 +549,7 @@ export function PushNotifications({ storyId, className }: PushNotificationsProps
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-green-600 mt-0.5" />
             <div className="space-y-2">
-              <h4 className="font-medium text-green-900">Push Notification Best Practices</h4>
+              <h3 className="font-medium text-green-900">Push Notification Best Practices</h3>
               <ul className="text-sm text-green-800 space-y-1">
                 <li>• Keep titles under 50 characters and messages under 200 characters</li>
                 <li>• Use urgent notifications sparingly for maximum impact</li>

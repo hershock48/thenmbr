@@ -202,7 +202,7 @@ export default function BrandingPage() {
                   </div>
 
                   <div className="pt-4 border-t">
-                    <h4 className="font-medium mb-3">Color Preview</h4>
+                    <h3 className="font-medium mb-3">Color Preview</h3>
                     <div className="flex gap-2">
                       <div
                         className="w-12 h-12 rounded-lg border-2 border-gray-200"
@@ -299,7 +299,7 @@ export default function BrandingPage() {
                   </div>
 
                   <div className="pt-4 border-t">
-                    <h4 className="font-medium mb-3">Typography Preview</h4>
+                    <h3 className="font-medium mb-3">Typography Preview</h3>
                     <div className="space-y-2">
                       <h3
                         className="text-xl font-bold"
@@ -475,7 +475,7 @@ export default function BrandingPage() {
                   </div>
 
                   <div className="pt-4 border-t">
-                    <h4 className="font-medium mb-3">Email Branding</h4>
+                    <h3 className="font-medium mb-3">Email Branding</h3>
                     <div className="space-y-3">
                       <div className="space-y-2">
                         <Label htmlFor="email-header-color">Email Header Color</Label>

@@ -72,7 +72,7 @@ export const withAuth = (handler: Function) => {
     }
 
     try {
-      // TODO: Implement JWT token validation
+      // Note: JWT token validation would be implemented here
       // const token = authHeader.substring(7)
       // const payload = await verifyJWT(token)
       

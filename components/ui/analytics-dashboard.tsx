@@ -291,15 +291,17 @@ export function AnalyticsDashboard({ orgType = 'nonprofit', className = '' }: An
       {isCustomizing && (
         <Card className="p-4 bg-muted/50">
           <div className="space-y-3">
-            <h4 className="font-medium text-sm">Choose metrics to display:</h4>
+            <h3 className="font-medium text-sm">Choose metrics to display:</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {allMetrics.map(metric => (
                 <label key={metric.id} className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    id={`metric-${metric.id}`}
                     checked={selectedMetrics.includes(metric.id)}
                     onChange={() => toggleMetric(metric.id)}
                     className="rounded"
+                    aria-label={`Toggle ${metric.name} metric`}
                   />
                   <span className="text-sm">{metric.title}</span>
                 </label>
@@ -350,7 +352,7 @@ export function AnalyticsDashboard({ orgType = 'nonprofit', className = '' }: An
             <TrendingUp className="w-5 h-5 text-blue-600" />
           </div>
           <div className="flex-1">
-            <h4 className="font-medium text-blue-900">Performance Insight</h4>
+            <h3 className="font-medium text-blue-900">Performance Insight</h3>
             <p className="text-sm text-blue-700 mt-1">
               {orgType === 'nonprofit' 
                 ? "Your story engagement is 23% above average for similar organizations. Keep creating compelling content!"

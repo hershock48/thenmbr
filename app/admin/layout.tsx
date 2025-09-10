@@ -60,7 +60,7 @@ export default function AdminLayout({
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Authenticating...</h2>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Authenticating...</h1>
           <p className="text-gray-600">Please wait while we verify your access.</p>
         </div>
       </div>

@@ -336,11 +336,13 @@ export function DatabasePerformance() {
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Table:</label>
+              <label htmlFor="table-select" className="text-sm font-medium">Table:</label>
               <select
+                id="table-select"
                 value={selectedTable}
                 onChange={(e) => setSelectedTable(e.target.value)}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select database table"
               >
                 <option value="all">All Tables</option>
                 <option value="subscribers">Subscribers</option>
@@ -352,11 +354,13 @@ export function DatabasePerformance() {
               </select>
             </div>
             <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium">Time Range:</label>
+              <label htmlFor="time-range-select" className="text-sm font-medium">Time Range:</label>
               <select
+                id="time-range-select"
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
                 className="px-3 py-1 border rounded-md text-sm"
+                aria-label="Select time range"
               >
                 <option value="15m">Last 15 minutes</option>
                 <option value="1h">Last hour</option>

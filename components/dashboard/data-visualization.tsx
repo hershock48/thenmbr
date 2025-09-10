@@ -364,7 +364,7 @@ export function DataVisualization({ data }: DataVisualizationProps) {
                           <span className="font-bold text-blue-600">#{story.id}</span>
                         </div>
                         <div>
-                          <h4 className="font-semibold">{story.title}</h4>
+                          <h3 className="font-semibold">{story.title}</h3>
                           <div className="flex items-center gap-4 text-sm text-gray-600">
                             <span>{story.subscribers} subscribers</span>
                             <span className="flex items-center gap-1">

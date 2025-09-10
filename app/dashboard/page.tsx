@@ -22,16 +22,19 @@ import {
   DollarSign,
   Package,
   Zap,
+  Loader2,
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 import { useAuth } from "@/contexts/AuthContext"
 import { useOrganization } from "@/contexts/OrganizationContext"
 import { useSubscription } from "@/contexts/SubscriptionContext"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense, lazy } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { AnalyticsDashboard } from "@/components/ui/analytics-dashboard"
+
+// Lazy load heavy analytics component
+const AnalyticsDashboard = lazy(() => import("@/components/ui/analytics-dashboard").then(module => ({ default: module.AnalyticsDashboard })))
 
 interface Story {
   id: string
@@ -210,7 +213,7 @@ export default function DashboardPage() {
           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Users className="w-8 h-8 text-slate-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Redirecting to Login</h2>
+          <h3 className="text-2xl font-bold text-slate-900 mb-2">Redirecting to Login</h3>
           <p className="text-slate-600">Please log in to access your dashboard.</p>
         </div>
       </div>
@@ -297,7 +300,24 @@ export default function DashboardPage() {
       </div>
 
       <div className="mb-6" data-tour="analytics-dashboard">
-        <AnalyticsDashboard orgType={orgType} />
+        <Suspense fallback={
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2" />
+                Analytics Dashboard
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="ml-2">Loading analytics...</span>
+              </div>
+            </CardContent>
+          </Card>
+        }>
+          <AnalyticsDashboard orgType={orgType} />
+        </Suspense>
       </div>
 
       {/* Tier Status Card */}

@@ -126,7 +126,7 @@ export default function BusinessesPage() {
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Story-Driven Commerce Platform</h2>
+            <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Story-Driven Commerce Platform</h3>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Everything you need to embed stories in products and track the sales impact of customer engagement
             </p>
@@ -218,7 +218,7 @@ export default function BusinessesPage() {
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Real Brands, Real Results</h2>
+            <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Real Brands, Real Results</h3>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               See how businesses are using product-embedded stories to increase customer lifetime value and drive repeat
               sales
@@ -331,9 +331,9 @@ export default function BusinessesPage() {
       {/* CTA Section */}
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-muted/50 to-card/50">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+          <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
             Ready to Transform Your Customer Relationships?
-          </h2>
+          </h3>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join forward-thinking businesses who are building deeper customer connections through authentic impact
             storytelling. Start creating brand advocates today.

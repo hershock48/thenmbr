@@ -25,9 +25,9 @@ import Image from "next/image"
 import { Product, ProductStoryLink } from "@/types/commerce"
 
 interface StorefrontPageProps {
-  params: {
+  params: Promise<{
     orgSlug: string
-  }
+  }>
 }
 
 // Mock data - in real app, this would come from API
@@ -46,7 +46,7 @@ const mockProducts: Product[] = [
     ],
     stock: 75,
     media: [
-      { id: 'm1', type: 'image', url: '/images/coffee-bag.jpg', alt: 'Coffee bag', order: 0 }
+      { id: 'm1', type: 'image', url: '/images/coffee-bag.svg', alt: 'Coffee bag', order: 0 }
     ],
     status: 'active',
     fulfillmentMode: 'physical',
@@ -67,7 +67,7 @@ const mockProducts: Product[] = [
     ],
     stock: 150,
     media: [
-      { id: 'm2', type: 'image', url: '/images/seed-packets.jpg', alt: 'Seed packets', order: 0 }
+      { id: 'm2', type: 'image', url: '/images/seed-packets.svg', alt: 'Seed packets', order: 0 }
     ],
     status: 'active',
     fulfillmentMode: 'physical',
@@ -82,6 +82,7 @@ const mockStoryLinks: ProductStoryLink[] = [
 ]
 
 export default function StorefrontPage({ params }: StorefrontPageProps) {
+  const [orgSlug, setOrgSlug] = useState<string>('')
   const [products, setProducts] = useState<Product[]>(mockProducts)
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts)
   const [searchTerm, setSearchTerm] = useState('')
@@ -89,9 +90,18 @@ export default function StorefrontPage({ params }: StorefrontPageProps) {
   const [cart, setCart] = useState<Record<string, number>>({})
   const [orgInfo, setOrgInfo] = useState({
     name: 'Green Thumbs Initiative',
-    logo: '/logos/green-thumbs.png',
+    logo: '/logos/green-thumbs.svg',
     description: 'Supporting sustainable agriculture and community development'
   })
+
+  useEffect(() => {
+    // Handle params in client component
+    const loadParams = async () => {
+      const resolvedParams = await params
+      setOrgSlug(resolvedParams.orgSlug)
+    }
+    loadParams()
+  }, [params])
 
   useEffect(() => {
     // Filter products based on search term
@@ -158,7 +168,7 @@ export default function StorefrontPage({ params }: StorefrontPageProps) {
       id: storyLink.nmbrId,
       title: "Maria's Coffee Journey",
       excerpt: "Follow Maria's journey from coffee farmer to cooperative leader...",
-      image: '/images/maria-story.jpg'
+      image: '/images/maria-story.svg'
     }
   }
 
@@ -206,7 +216,7 @@ export default function StorefrontPage({ params }: StorefrontPageProps) {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary/10 to-secondary/10 py-12">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Support Our Mission Through Purchase</h2>
+          <h3 className="text-3xl font-bold mb-4">Support Our Mission Through Purchase</h3>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Every purchase directly supports the stories and causes you care about. 
             See the impact your purchase makes.
@@ -368,7 +378,7 @@ export default function StorefrontPage({ params }: StorefrontPageProps) {
                       )}
                       
                       <Button className="w-full" asChild>
-                        <Link href={`/store/${params.orgSlug}/${product.slug}`}>
+                        <Link href={`/store/${orgSlug || 'demo-org'}/${product.slug}`}>
                           View Product
                         </Link>
                       </Button>
