@@ -127,20 +127,14 @@ const initialAttributionData = {
 }
 
 export default function DemoPage() {
-  const [selectedAudience, setSelectedAudience] = useState<'nonprofit' | 'business'>('nonprofit')
   const [selectedStory, setSelectedStory] = useState(0)
   const [showWidget, setShowWidget] = useState(false)
   const [attributionData, setAttributionData] = useState(initialAttributionData.nonprofit)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const currentStories = demoStories[selectedAudience]
+  const currentStories = demoStories.nonprofit
   const currentStory = currentStories[selectedStory]
-
-  useEffect(() => {
-    setAttributionData(initialAttributionData[selectedAudience])
-    setSelectedStory(0)
-  }, [selectedAudience])
 
   const handleNMBRClick = async (nmbrId: string) => {
     try {
@@ -254,28 +248,20 @@ export default function DemoPage() {
                 Interactive Demo
               </Badge>
               <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Experience NMBR in Action
+                Experience Story-Driven Fundraising
               </h1>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                See how NMBR transforms stories into sustainable revenue. 
-                Click on NMBR codes, explore products, and watch real-time attribution tracking.
+                See how NMBR transforms impact stories into sustainable donor relationships. 
+                Click on NMBR codes, explore donation opportunities, and watch real-time impact attribution.
               </p>
             </div>
 
-            {/* Audience Switcher */}
+            {/* Nonprofit Focus Badge */}
             <div className="flex justify-center">
-              <Tabs value={selectedAudience} onValueChange={(value: any) => setSelectedAudience(value)} className="w-full max-w-md">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="nonprofit" className="flex items-center gap-2">
-                    <Heart className="w-4 h-4" />
-                    Nonprofit
-                  </TabsTrigger>
-                  <TabsTrigger value="business" className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" />
-                    Business
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <div className="bg-primary/10 text-primary px-6 py-2 rounded-full font-medium flex items-center gap-2">
+                <Heart className="w-4 h-4" />
+                Nonprofit Demo
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">

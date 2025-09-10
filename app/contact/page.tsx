@@ -16,7 +16,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">Contact Us</h1>
           <p className="text-xl text-muted-foreground">
-            Get in touch with our team - we're here to help
+            Get in touch with our team - we're here to help your nonprofit succeed
           </p>
         </div>
         
@@ -101,6 +101,40 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium">Office</p>
                     <p className="text-sm text-muted-foreground">San Francisco, CA</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Enterprise & Sales</CardTitle>
+                <CardDescription>
+                  For large nonprofits and enterprise inquiries
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">Enterprise Sales</p>
+                    <p className="text-sm text-muted-foreground">enterprise@nmbr-platform.com</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">Sales Phone</p>
+                    <p className="text-sm text-muted-foreground">1-800-NMBR-SALES</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <MessageCircle className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">Schedule Demo</p>
+                    <p className="text-sm text-muted-foreground">Book a personalized demo</p>
                   </div>
                 </div>
               </CardContent>

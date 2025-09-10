@@ -145,9 +145,11 @@ export default function HomePage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg px-8 py-6">
-                  Start Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                <Button size="lg" className="text-lg px-8 py-6" asChild>
+                  <Link href="/signup">
+                    Start Free Trial
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
                     </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
                 <Link href="/demo/attribution">
@@ -733,9 +735,11 @@ export default function HomePage() {
                 </div>
                 
                 <div className="mt-6 text-center">
-                  <Button size="lg" className="w-full">
-                    Start Your Free Trial
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <Button size="lg" className="w-full" asChild>
+                    <Link href="/signup">
+                      Start Your Free Trial
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Link>
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2">
                     No credit card required • 14-day free trial • Setup in 5 minutes
@@ -988,8 +992,11 @@ export default function HomePage() {
                       <Button 
                         className={`w-full ${tier.popular ? 'bg-primary hover:bg-primary/90' : ''}`}
                         variant={tier.popular ? 'default' : 'outline'}
+                        asChild
                       >
-                        {tier.cta}
+                        <Link href={tier.cta === "Contact Sales" ? "/enterprise/sales" : "/signup"}>
+                          {tier.cta}
+                        </Link>
                       </Button>
                     </CardContent>
                   </Card>
@@ -1104,11 +1111,13 @@ export default function HomePage() {
               donor relationships from their impact stories.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-6" asChild>
+                <Link href="/signup">
+                  Start Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-primary" asChild>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white/50 text-white hover:bg-white hover:text-primary bg-white/10 backdrop-blur-sm" asChild>
                 <Link href="/case-studies">
                   <ExternalLink className="w-5 h-5 mr-2" />
                   View Success Stories

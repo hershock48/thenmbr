@@ -10,7 +10,7 @@ export default function AboutPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">About NMBR Platform</h1>
           <p className="text-xl text-muted-foreground">
-            We're revolutionizing fundraising through personalized impact stories
+            The complete story-driven fundraising platform for nonprofits
           </p>
         </div>
         
@@ -21,7 +21,7 @@ export default function AboutPage() {
           
           <h2 className="text-2xl font-semibold text-foreground mb-4">Our Mission</h2>
           <p className="text-muted-foreground mb-6">
-            To create a world where every donation has a face, every story has a number, and every impact is personal. We believe that when donors can see exactly how their contribution helps, they give more generously and feel more connected to the cause.
+            To turn stories into impact by connecting donors directly to the people they help through numbered stories. We believe that when donors can see exactly how their contribution creates change, they give more generously and build lasting relationships with your cause.
           </p>
           
           <h2 className="text-2xl font-semibold text-foreground mb-4">How It Works</h2>
@@ -31,7 +31,7 @@ export default function AboutPage() {
           
           <h2 className="text-2xl font-semibold text-foreground mb-4">Our Impact</h2>
           <p className="text-muted-foreground">
-            Since launching, we've helped nonprofits raise over $2.5 million through personalized stories, connecting thousands of donors to the people they've helped around the world.
+            Since launching, we've helped nonprofits raise over $2.5 million through story-driven fundraising, connecting thousands of donors to the people they've helped around the world. Our platform has enabled sustainable donor relationships that go beyond one-time donations.
           </p>
         </div>
       </main>

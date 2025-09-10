@@ -29,7 +29,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: "starter",
     name: "Starter",
-    description: "Perfect for small nonprofits, grassroots projects, and local businesses testing story-linked products",
+    description: "Perfect for small nonprofits getting started with story-driven fundraising",
     price: "$99",
     annualPrice: "$990",
     period: "/month",
@@ -55,7 +55,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: "growth",
     name: "Growth",
-    description: "For growing nonprofits and SMBs running multiple story-linked products",
+    description: "For growing nonprofits ready to scale their story-driven fundraising",
     price: "$199",
     annualPrice: "$1,990",
     period: "/month",
@@ -69,7 +69,7 @@ const pricingTiers: PricingTier[] = [
       "5 active NMBRs (unlimited archived)",
       "Everything in Starter",
       "Advanced branding (remove 'Powered by')",
-      "Enhanced analytics (donations by NMBR, growth trends)",
+      "Enhanced analytics (donations by story, donor journey tracking)",
       "Mailchimp/Constant Contact sync",
       "Zapier webhooks",
       "Marketplace self-serve ordering",
@@ -81,7 +81,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: "professional",
     name: "Professional",
-    description: "For established nonprofits and mid-sized brands with comprehensive needs",
+    description: "For established nonprofits with comprehensive fundraising needs",
     price: "$399",
     annualPrice: "$3,990",
     period: "/month",
@@ -96,7 +96,7 @@ const pricingTiers: PricingTier[] = [
       "Everything in Growth",
       "White-label (custom subdomain)",
       "Built-in email (25k/month included)",
-      "Advanced analytics (open rates, funnels, UTM)",
+      "Advanced analytics (donor engagement, conversion funnels, impact tracking)",
       "Public API + CRM connectors",
       "Team roles & permissions",
       "2 live onboarding sessions",
@@ -107,7 +107,7 @@ const pricingTiers: PricingTier[] = [
   {
     id: "enterprise",
     name: "Enterprise",
-    description: "For large nonprofits, federations, and multi-brand portfolios",
+    description: "For large nonprofits, federations, and multi-organization portfolios",
     price: "Custom",
     annualPrice: "$750-1,000+",
     period: "/month",
@@ -133,119 +133,11 @@ const pricingTiers: PricingTier[] = [
   },
 ]
 
-const businessTiers: PricingTier[] = [
-  {
-    id: "starter-business",
-    name: "Starter",
-    description: "Perfect for small businesses testing story-driven commerce",
-    price: "$99",
-    annualPrice: "$990",
-    period: "/month",
-    icon: Heart,
-    color: "from-rose-500 to-pink-600",
-    activeNmbrs: "1-3",
-    seats: "2",
-    platformFee: "5%",
-    support: "Email (2 biz days)",
-    features: [
-      "1-3 active NMBRs (unlimited archived)",
-      "Product story pages with origin stories",
-      "Customer engagement tracking",
-      "Stripe checkout integration",
-      "Basic branding + 'Powered by The NMBR'",
-      "Basic analytics (searches, views, sales)",
-      "CSV exports (customers & sales)",
-      "Up to 2 admin users",
-      "Reassign up to 2 NMBRs/year",
-    ],
-    cta: "Start Free Trial",
-  },
-  {
-    id: "growth-business",
-    name: "Growth",
-    description: "For growing businesses with multiple story-linked products",
-    price: "$199",
-    annualPrice: "$1,990",
-    period: "/month",
-    icon: Users,
-    color: "from-blue-500 to-indigo-600",
-    activeNmbrs: "5",
-    seats: "Unlimited",
-    platformFee: "3%",
-    support: "Email + Chat (1 biz day)",
-    features: [
-      "5 active NMBRs (unlimited archived)",
-      "Everything in Starter",
-      "Advanced branding (remove 'Powered by')",
-      "Enhanced analytics (sales by NMBR, conversion rates)",
-      "E-commerce platform integrations",
-      "Zapier webhooks",
-      "Marketplace self-serve ordering",
-      "Reassign up to 5 NMBRs/year",
-    ],
-    cta: "Start Growth",
-    popular: true,
-  },
-  {
-    id: "professional-business",
-    name: "Professional",
-    description: "For established businesses with comprehensive story-commerce needs",
-    price: "$399",
-    annualPrice: "$3,990",
-    period: "/month",
-    icon: Building2,
-    color: "from-emerald-500 to-teal-600",
-    activeNmbrs: "10",
-    seats: "Unlimited + Roles",
-    platformFee: "1% (0% with tips)",
-    support: "Priority (8 biz hours)",
-    features: [
-      "10 active NMBRs (unlimited archived)",
-      "Everything in Growth",
-      "White-label (custom subdomain)",
-      "Built-in email marketing (25k/month)",
-      "Advanced analytics (conversion funnels, LTV)",
-      "Public API + CRM connectors",
-      "Team roles & permissions",
-      "2 live onboarding sessions",
-      "Reassign up to 12 NMBRs/year",
-    ],
-    cta: "Start Professional",
-  },
-  {
-    id: "enterprise-business",
-    name: "Enterprise",
-    description: "For large businesses and multi-brand portfolios",
-    price: "Custom",
-    annualPrice: "$750-1,000+",
-    period: "/month",
-    icon: Crown,
-    color: "from-purple-500 to-violet-600",
-    activeNmbrs: "Unlimited",
-    seats: "Unlimited + Enterprise",
-    platformFee: "0%",
-    support: "Dedicated CSM (4 biz hours)",
-    features: [
-      "Unlimited active NMBRs",
-      "Everything in Professional",
-      "SSO (SAML/OIDC) + SCIM",
-      "Dedicated email domain (250k/month)",
-      "IP allow-listing + audit logs",
-      "Data residency controls",
-      "Custom theming packages",
-      "Multi-brand management",
-      "Unlimited reassignments",
-      "Quarterly business reviews",
-    ],
-    cta: "Contact Sales",
-  },
-]
 
 export default function PricingPage() {
-  const [selectedAudience, setSelectedAudience] = useState<"nonprofit" | "business">("nonprofit")
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("annual")
 
-  const currentTiers = selectedAudience === "nonprofit" ? pricingTiers : businessTiers
+  const currentTiers = pricingTiers
 
   return (
     <div className="min-h-screen bg-background">
@@ -269,34 +161,17 @@ export default function PricingPage() {
 
           <div className="text-center">
             <h1 className="text-4xl font-bold text-foreground mb-4">
-              Make every supporter part of a <span className="text-primary">story</span>
+              Turn Stories Into <span className="text-primary">Impact</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              NMBR links what you give—bracelets, tags, products—to living stories your community can follow, support, and share.
+              The complete story-driven fundraising platform for nonprofits. Turn your impact stories into sustainable donor relationships and recurring support.
             </p>
 
-            {/* Audience Toggle */}
-            <div className="flex items-center justify-center space-x-1 bg-muted rounded-lg p-1 max-w-md mx-auto mb-8">
-              <button
-                onClick={() => setSelectedAudience("nonprofit")}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  selectedAudience === "nonprofit"
-                    ? "bg-rose-100 text-rose-800 shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Nonprofits
-              </button>
-              <button
-                onClick={() => setSelectedAudience("business")}
-                className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  selectedAudience === "business"
-                    ? "bg-blue-100 text-blue-800 shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Businesses
-              </button>
+            {/* Nonprofit Focus Badge */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="bg-primary/10 text-primary px-6 py-2 rounded-full font-medium">
+                Nonprofit Pricing
+              </div>
             </div>
 
             {/* Billing Toggle */}
