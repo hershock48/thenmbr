@@ -30,20 +30,33 @@ export default function NewsletterBuilderPage() {
     setIsLoading(false)
   }, [searchParams])
 
-  const handleSave = (newsletter: any) => {
+  interface NewsletterData {
+    name: string
+    content: unknown
+    type: string
+    storyId?: string
+  }
+
+  interface AudienceData {
+    type: 'all' | 'specific'
+    selectedStories: string[]
+    totalRecipients: number
+  }
+
+  const handleSave = (newsletter: NewsletterData) => {
     console.log('Newsletter saved:', newsletter)
     // Show success message
     // Optionally redirect back to newsletters list
   }
 
-  const handleSend = (newsletter: any) => {
+  const handleSend = (newsletter: NewsletterData) => {
     console.log('Newsletter sent:', newsletter)
     console.log('Audience:', audience)
     // Show success message
     // Optionally redirect back to newsletters list
   }
 
-  const handleAudienceChange = (newAudience: any) => {
+  const handleAudienceChange = (newAudience: AudienceData) => {
     setAudience(newAudience)
   }
 

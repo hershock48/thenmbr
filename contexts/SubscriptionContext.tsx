@@ -1,309 +1,188 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect } from "react"
 
 export interface SubscriptionTier {
   id: string
   name: string
-  monthlyPrice: number
-  annualPrice: number
-  activeNmbrs: number // -1 for unlimited
-  platformFee: number
-  seats: number // -1 for unlimited
+  price: number
   features: string[]
-  isActive: boolean
+  limits: {
+    stories: number
+    subscribers: number
+    newsletters: number
+    aiReviews: number
+  }
 }
 
-export interface OrganizationSubscription {
-  id: string
-  organizationId: string
-  tierId: string
+export interface Subscription {
   tier: SubscriptionTier
-  status: 'active' | 'inactive' | 'trial' | 'cancelled'
-  currentPeriodStart: string
-  currentPeriodEnd: string
-  trialEndsAt?: string
-  activeNmbrsUsed: number
-  seatsUsed: number
-  createdAt: string
-  updatedAt: string
+  status: 'active' | 'cancelled' | 'past_due' | 'trialing'
+  currentPeriodEnd: Date
+  cancelAtPeriodEnd: boolean
 }
 
 interface SubscriptionContextType {
-  subscription: OrganizationSubscription | null
+  subscription: Subscription | null
   tier: SubscriptionTier | null
-  isLoading: boolean
-  canCreateNmbr: () => boolean
-  canAddSeat: () => boolean
+  loading: boolean
   canUseFeature: (feature: string) => boolean
-  getRemainingNmbrs: () => number
-  getRemainingSeats: () => number
-  upgradeSubscription: (tierId: string) => Promise<void>
-  downgradeSubscription: (tierId: string) => Promise<void>
-  incrementNmbrUsage: () => void
-  decrementNmbrUsage: () => void
-  incrementSeatUsage: () => void
-  decrementSeatUsage: () => void
-  purchaseSubscription: (tierId: string, billingPeriod: 'monthly' | 'annual') => Promise<void>
+  upgradeTier: (tierId: string) => Promise<void>
+  cancelSubscription: () => Promise<void>
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined)
 
-// Mock subscription tiers
-const SUBSCRIPTION_TIERS: SubscriptionTier[] = [
-  {
+const TIER_INFO: Record<string, SubscriptionTier> = {
+  free: {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    features: ['Basic stories', 'Email campaigns', 'Basic analytics'],
+    limits: {
+      stories: 3,
+      subscribers: 100,
+      newsletters: 10,
+      aiReviews: 5
+    }
+  },
+  starter: {
     id: 'starter',
     name: 'Starter',
-    monthlyPrice: 99,
-    annualPrice: 990,
-    activeNmbrs: 3,
-    platformFee: 5,
-    seats: 2,
-    features: ['basic_analytics', 'csv_exports', 'basic_branding', 'email_campaigns', 'basic_commerce'],
-    isActive: true
+    price: 29,
+    features: ['10 stories', '500 subscribers', 'Unlimited newsletters', 'AI Review'],
+    limits: {
+      stories: 10,
+      subscribers: 500,
+      newsletters: 999999,
+      aiReviews: 100
+    }
   },
-  {
+  growth: {
     id: 'growth',
     name: 'Growth',
-    monthlyPrice: 199,
-    annualPrice: 1990,
-    activeNmbrs: 5,
-    platformFee: 3,
-    seats: -1, // unlimited
-    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'email_campaigns', 'sms_updates', 'white_label_storefront'],
-    isActive: true
+    price: 99,
+    features: ['50 stories', '2000 subscribers', 'Advanced analytics', 'Priority support'],
+    limits: {
+      stories: 50,
+      subscribers: 2000,
+      newsletters: 999999,
+      aiReviews: 500
+    }
   },
-  {
+  professional: {
     id: 'professional',
     name: 'Professional',
-    monthlyPrice: 399,
-    annualPrice: 3990,
-    activeNmbrs: 10,
-    platformFee: 1,
-    seats: -1, // unlimited
-    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'white_label', 'api_access', 'built_in_email', 'team_roles', 'email_campaigns', 'sms_updates', 'push_notifications', 'supporter_feed', 'white_label_storefront', 'commerce_analytics', 'attribution_tracking'],
-    isActive: true
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    monthlyPrice: 750,
-    annualPrice: 9000,
-    activeNmbrs: -1, // unlimited
-    platformFee: 0,
-    seats: -1, // unlimited
-    features: ['basic_analytics', 'csv_exports', 'advanced_branding', 'integrations', 'marketplace', 'white_label', 'api_access', 'built_in_email', 'team_roles', 'sso', 'advanced_security', 'email_campaigns', 'sms_updates', 'push_notifications', 'supporter_feed', 'white_label_storefront', 'commerce_analytics', 'attribution_tracking', 'global_marketplace'],
-    isActive: true
+    price: 299,
+    features: ['Unlimited stories', 'Unlimited subscribers', 'White-label', 'API access'],
+    limits: {
+      stories: 999999,
+      subscribers: 999999,
+      newsletters: 999999,
+      aiReviews: 999999
+    }
   }
-]
+}
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
-  const [subscription, setSubscription] = useState<OrganizationSubscription | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Load subscription data from localStorage or API
-    const loadSubscription = async () => {
+    // In a real app, this would fetch from your database
+    // For now, we'll use localStorage to simulate user data
+    const loadSubscription = () => {
       try {
-        // Check localStorage first (for demo purposes)
-        const storedSubscription = localStorage.getItem('organization_subscription')
-        
-        if (storedSubscription) {
-          const parsed = JSON.parse(storedSubscription)
-          const tier = SUBSCRIPTION_TIERS.find(t => t.id === parsed.tierId)
-          if (tier) {
-            setSubscription({
-              ...parsed,
-              tier
-            })
-          }
+        const stored = localStorage.getItem('subscription')
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          setSubscription({
+            ...parsed,
+            currentPeriodEnd: new Date(parsed.currentPeriodEnd)
+          })
         } else {
-          // Default to starter tier for new organizations
-          const defaultSubscription: OrganizationSubscription = {
-            id: 'sub_default',
-            organizationId: 'org_default',
-            tierId: 'starter',
-            tier: SUBSCRIPTION_TIERS.find(t => t.id === 'starter')!,
-            status: 'trial',
-            currentPeriodStart: new Date().toISOString(),
-            currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-            trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days
-            activeNmbrsUsed: 0,
-            seatsUsed: 1,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }
-          setSubscription(defaultSubscription)
-          localStorage.setItem('organization_subscription', JSON.stringify(defaultSubscription))
+          // Default to free tier
+          setSubscription({
+            tier: TIER_INFO.free,
+            status: 'active',
+            currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+            cancelAtPeriodEnd: false
+          })
         }
       } catch (error) {
-        console.error('Error loading subscription:', error)
-        // Fallback to starter tier
-        const fallbackSubscription: OrganizationSubscription = {
-          id: 'sub_fallback',
-          organizationId: 'org_fallback',
-          tierId: 'starter',
-          tier: SUBSCRIPTION_TIERS.find(t => t.id === 'starter')!,
-          status: 'trial',
-          currentPeriodStart: new Date().toISOString(),
-          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-          activeNmbrsUsed: 0,
-          seatsUsed: 1,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-        setSubscription(fallbackSubscription)
+        console.error('Failed to load subscription:', error)
+        setSubscription({
+          tier: TIER_INFO.free,
+          status: 'active',
+          currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          cancelAtPeriodEnd: false
+        })
       } finally {
-        setIsLoading(false)
+        setLoading(false)
       }
     }
 
     loadSubscription()
   }, [])
 
-  const canCreateNmbr = (): boolean => {
-    if (!subscription || !subscription.tier) return false
-    if (subscription.tier.activeNmbrs === -1) return true // unlimited
-    return subscription.activeNmbrsUsed < subscription.tier.activeNmbrs
-  }
-
-  const canAddSeat = (): boolean => {
-    if (!subscription || !subscription.tier) return false
-    if (subscription.tier.seats === -1) return true // unlimited
-    return subscription.seatsUsed < subscription.tier.seats
-  }
-
   const canUseFeature = (feature: string): boolean => {
-    if (!subscription || !subscription.tier) return false
-    return subscription.tier.features.includes(feature)
-  }
-
-  const getRemainingNmbrs = (): number => {
-    if (!subscription || !subscription.tier) return 0
-    if (subscription.tier.activeNmbrs === -1) return -1 // unlimited
-    return Math.max(0, subscription.tier.activeNmbrs - subscription.activeNmbrsUsed)
-  }
-
-  const getRemainingSeats = (): number => {
-    if (!subscription || !subscription.tier) return 0
-    if (subscription.tier.seats === -1) return -1 // unlimited
-    return Math.max(0, subscription.tier.seats - subscription.seatsUsed)
-  }
-
-  const upgradeSubscription = async (tierId: string): Promise<void> => {
-    // Mock upgrade - in real app, this would call API
-    const newTier = SUBSCRIPTION_TIERS.find(t => t.id === tierId)
-    if (newTier && subscription) {
-      setSubscription({
-        ...subscription,
-        tierId,
-        tier: newTier,
-        updatedAt: new Date().toISOString()
-      })
+    if (!subscription) return false
+    
+    switch (feature) {
+      case 'ai_review':
+        return subscription.tier.limits.aiReviews > 0
+      case 'advanced_analytics':
+        return subscription.tier.id !== 'free'
+      case 'white_label':
+        return subscription.tier.id === 'professional'
+      case 'api_access':
+        return subscription.tier.id === 'professional'
+      default:
+        return true
     }
   }
 
-  const downgradeSubscription = async (tierId: string): Promise<void> => {
-    // Mock downgrade - in real app, this would call API
-    const newTier = SUBSCRIPTION_TIERS.find(t => t.id === tierId)
-    if (newTier && subscription) {
-      const updatedSubscription = {
-        ...subscription,
-        tierId,
-        tier: newTier,
-        updatedAt: new Date().toISOString()
-      }
-      setSubscription(updatedSubscription)
-      localStorage.setItem('organization_subscription', JSON.stringify(updatedSubscription))
+  const upgradeTier = async (tierId: string): Promise<void> => {
+    const newTier = TIER_INFO[tierId]
+    if (!newTier) throw new Error('Invalid tier ID')
+
+    // In a real app, this would call your payment API
+    const newSubscription: Subscription = {
+      tier: newTier,
+      status: 'active',
+      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      cancelAtPeriodEnd: false
     }
+
+    setSubscription(newSubscription)
+    localStorage.setItem('subscription', JSON.stringify(newSubscription))
   }
 
-  const incrementNmbrUsage = (): void => {
-    if (subscription) {
-      const updatedSubscription = {
-        ...subscription,
-        activeNmbrsUsed: subscription.activeNmbrsUsed + 1,
-        updatedAt: new Date().toISOString()
-      }
-      setSubscription(updatedSubscription)
-      localStorage.setItem('organization_subscription', JSON.stringify(updatedSubscription))
-    }
-  }
+  const cancelSubscription = async (): Promise<void> => {
+    if (!subscription) return
 
-  const decrementNmbrUsage = (): void => {
-    if (subscription) {
-      const updatedSubscription = {
-        ...subscription,
-        activeNmbrsUsed: Math.max(0, subscription.activeNmbrsUsed - 1),
-        updatedAt: new Date().toISOString()
-      }
-      setSubscription(updatedSubscription)
-      localStorage.setItem('organization_subscription', JSON.stringify(updatedSubscription))
+    // In a real app, this would call your payment API
+    const cancelledSubscription: Subscription = {
+      ...subscription,
+      status: 'cancelled',
+      cancelAtPeriodEnd: true
     }
-  }
 
-  const incrementSeatUsage = (): void => {
-    if (subscription) {
-      const updatedSubscription = {
-        ...subscription,
-        seatsUsed: subscription.seatsUsed + 1,
-        updatedAt: new Date().toISOString()
-      }
-      setSubscription(updatedSubscription)
-      localStorage.setItem('organization_subscription', JSON.stringify(updatedSubscription))
-    }
-  }
-
-  const decrementSeatUsage = (): void => {
-    if (subscription) {
-      const updatedSubscription = {
-        ...subscription,
-        seatsUsed: Math.max(1, subscription.seatsUsed - 1), // Minimum 1 seat
-        updatedAt: new Date().toISOString()
-      }
-      setSubscription(updatedSubscription)
-      localStorage.setItem('organization_subscription', JSON.stringify(updatedSubscription))
-    }
-  }
-
-  const purchaseSubscription = async (tierId: string, billingPeriod: 'monthly' | 'annual'): Promise<void> => {
-    const newTier = SUBSCRIPTION_TIERS.find(t => t.id === tierId)
-    if (newTier && subscription) {
-      const updatedSubscription = {
-        ...subscription,
-        tierId,
-        tier: newTier,
-        status: 'active' as const,
-        currentPeriodStart: new Date().toISOString(),
-        currentPeriodEnd: new Date(Date.now() + (billingPeriod === 'annual' ? 365 : 30) * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-      setSubscription(updatedSubscription)
-      localStorage.setItem('organization_subscription', JSON.stringify(updatedSubscription))
-    }
-  }
-
-  const value: SubscriptionContextType = {
-    subscription,
-    tier: subscription?.tier || null,
-    isLoading,
-    canCreateNmbr,
-    canAddSeat,
-    canUseFeature,
-    getRemainingNmbrs,
-    getRemainingSeats,
-    upgradeSubscription,
-    downgradeSubscription,
-    incrementNmbrUsage,
-    decrementNmbrUsage,
-    incrementSeatUsage,
-    decrementSeatUsage,
-    purchaseSubscription
+    setSubscription(cancelledSubscription)
+    localStorage.setItem('subscription', JSON.stringify(cancelledSubscription))
   }
 
   return (
-    <SubscriptionContext.Provider value={value}>
+    <SubscriptionContext.Provider
+      value={{
+        subscription,
+        tier: subscription?.tier || null,
+        loading,
+        canUseFeature,
+        upgradeTier,
+        cancelSubscription
+      }}
+    >
       {children}
     </SubscriptionContext.Provider>
   )

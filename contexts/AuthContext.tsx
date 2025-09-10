@@ -33,6 +33,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Achievement system removed - could add analytics tracking here
 
   useEffect(() => {
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://placeholder.supabase.co') {
+      console.error('❌ Supabase not configured. Authentication will not work.')
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
@@ -93,6 +100,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signIn = async (email: string, password: string) => {
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://placeholder.supabase.co') {
+      throw new Error('Authentication service not configured. Please set up Supabase environment variables.')
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,

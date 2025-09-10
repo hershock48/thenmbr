@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { SubscriptionProvider } from '@/contexts/SubscriptionContext'
 import { AIUsageProvider } from '@/contexts/AIUsageContext'
+import { EnhancedAuthProvider } from '@/contexts/EnhancedAuthContext'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -85,11 +86,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <AuthProvider>
-          <SubscriptionProvider>
-            <AIUsageProvider>
-              {children}
-            </AIUsageProvider>
-          </SubscriptionProvider>
+          <EnhancedAuthProvider>
+            <SubscriptionProvider>
+              <AIUsageProvider>
+                {children}
+              </AIUsageProvider>
+            </SubscriptionProvider>
+          </EnhancedAuthProvider>
         </AuthProvider>
         <Analytics />
       </body>

@@ -16,21 +16,12 @@ import {
   Sparkles, 
   Building2, 
   ArrowLeft, 
-  Info,
   Target,
   BarChart3,
   Mail,
-  Shield,
   Zap,
-  Star,
-  TrendingUp,
   Globe,
-  Clock,
-  DollarSign,
-  Eye,
-  MousePointer,
-  CreditCard,
-  MessageSquare
+  Clock
 } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
@@ -152,8 +143,9 @@ export default function SignupPage() {
       setTimeout(() => {
         router.push("/dashboard")
       }, 3000)
-    } catch (err: any) {
-      setError(err.message || "An error occurred during signup. Please try again.")
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An error occurred during signup. Please try again."
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -324,6 +316,8 @@ export default function SignupPage() {
                         placeholder="your@organization.org"
                         value={formData.email}
                         onChange={(e) => handleInputChange("email", e.target.value)}
+                        aria-label="Email address"
+                        aria-required="true"
                       />
                     </div>
                     <div className="space-y-2">
@@ -509,7 +503,7 @@ export default function SignupPage() {
                   ) : (
                     <Button 
                       onClick={handleSubmit} 
-                      disabled={loading || !validateStep(4)}
+                      disabled={loading || !validateStep(3)}
                       className="bg-primary hover:bg-primary/90"
                     >
                       {loading ? (

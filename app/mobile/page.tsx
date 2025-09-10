@@ -69,7 +69,7 @@ interface MobileFeature {
   id: string
   name: string
   description: string
-  icon: any
+  icon: React.ComponentType<{ className?: string }>
   status: 'available' | 'coming-soon' | 'beta'
   category: 'core' | 'analytics' | 'social' | 'automation'
   priority: 'high' | 'medium' | 'low'

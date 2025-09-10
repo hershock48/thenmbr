@@ -81,7 +81,18 @@ interface Newsletter {
 interface NewsletterBlock {
   id: string
   type: 'heading' | 'text' | 'image' | 'button' | 'divider' | 'story' | 'stats' | 'contact' | 'donation' | 'action'
-  content: any
+  content: {
+    text?: string
+    title?: string
+    image?: string
+    url?: string
+    stats?: Array<{
+      label: string
+      value: string
+      icon?: string
+    }>
+    [key: string]: unknown
+  }
   order: number
 }
 
@@ -791,7 +802,7 @@ export default function NewslettersPage() {
     }
   }
 
-  const updateBlock = (blockId: string, updates: any) => {
+  const updateBlock = (blockId: string, updates: Partial<NewsletterBlock['content']>) => {
     setBlocks(blocks.map(block => 
       block.id === blockId ? { ...block, content: { ...block.content, ...updates } } : block
     ))
@@ -1077,7 +1088,7 @@ export default function NewslettersPage() {
       case 'stats':
         return (
           <div className="grid grid-cols-2 gap-4">
-            {block.content.stats?.map((stat: any, index: number) => (
+            {block.content.stats?.map((stat, index: number) => (
               <div key={index} className="text-center">
                 <div className="text-2xl font-bold text-blue-600">{stat.value}</div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
