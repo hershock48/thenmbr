@@ -23,82 +23,30 @@ import { useOrganization } from "@/contexts/OrganizationContext"
 import { useSubscription } from "@/contexts/SubscriptionContext"
 import { CommerceAnalytics } from "@/types/commerce"
 
-// Mock analytics data
+// Start with empty analytics data - will populate as users create stories and receive donations
 const mockAnalytics: CommerceAnalytics = {
   revenue: {
-    total: 45680,
-    byNmbr: {
-      'nmbr-4': 12500,
-      'nmbr-7': 8900,
-      'nmbr-12': 6800,
-      'nmbr-15': 4200,
-      'nmbr-23': 3380
-    },
-    byUpdate: {
-      'update-2024-01-20': 8500,
-      'update-2024-01-15': 7200,
-      'update-2024-01-10': 6800,
-      'update-2024-01-05': 5200
-    },
-    byProduct: {
-      'coffee-12oz': 15600,
-      'textile-scarf': 8900,
-      'pottery-vase': 6800,
-      'jewelry-necklace': 4200
-    },
+    total: 0,
+    byNmbr: {},
+    byUpdate: {},
+    byProduct: {},
     byTimeframe: {
-      daily: {
-        '2024-01-20': 1200,
-        '2024-01-19': 980,
-        '2024-01-18': 1450,
-        '2024-01-17': 890,
-        '2024-01-16': 1100
-      },
-      weekly: {
-        '2024-W03': 5200,
-        '2024-W02': 4800,
-        '2024-W01': 4200
-      },
-      monthly: {
-        '2024-01': 15600,
-        '2023-12': 12800,
-        '2023-11': 11200
-      }
+      daily: {},
+      weekly: {},
+      monthly: {}
     }
   },
   orders: {
-    total: 342,
-    averageOrderValue: 133.57,
-    conversionRate: 4.2,
-    repeatPurchaseRate: 23.5
+    total: 0,
+    averageOrderValue: 0,
+    conversionRate: 0,
+    repeatPurchaseRate: 0
   },
   attribution: {
-    emailClicks: 2840,
-    emailConversions: 142,
-    emailRevenue: 18920,
-    topPerformingUpdates: [
-      {
-        updateId: 'update-2024-01-20',
-        nmbrId: 'nmbr-4',
-        clicks: 450,
-        conversions: 28,
-        revenue: 4200
-      },
-      {
-        updateId: 'update-2024-01-15',
-        nmbrId: 'nmbr-7',
-        clicks: 380,
-        conversions: 22,
-        revenue: 3200
-      },
-      {
-        updateId: 'update-2024-01-10',
-        nmbrId: 'nmbr-12',
-        clicks: 320,
-        conversions: 18,
-        revenue: 2800
-      }
-    ]
+    emailClicks: 0,
+    emailConversions: 0,
+    emailRevenue: 0,
+    topPerformingUpdates: []
   }
 }
 
@@ -116,9 +64,9 @@ export default function CommercePage() {
       <div className="space-y-6">
         <div className="text-center py-12">
           <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-2xl font-bold mb-2">Commerce Analytics Not Available</h3>
+          <h3 className="text-2xl font-bold mb-2">Donation Analytics Not Available</h3>
           <p className="text-muted-foreground mb-4">
-            Commerce analytics are available on Professional tier and above. Upgrade to track sales and revenue from your stories.
+            Donation analytics are available on Professional tier and above. Upgrade to track donations and fundraising from your stories.
           </p>
           <Button>Upgrade Plan</Button>
         </div>
@@ -130,9 +78,9 @@ export default function CommercePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Commerce Analytics</h1>
+          <h1 className="text-3xl font-bold">Donation Analytics</h1>
           <p className="text-muted-foreground">
-            Track sales, revenue, and attribution from your {terminology.subscribers.toLowerCase()}
+            Track donations, fundraising, and attribution from your {terminology.subscribers.toLowerCase()}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -175,8 +123,34 @@ export default function CommercePage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {analytics.revenue.total === 0 ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mx-auto">
+                    <ShoppingCart className="h-8 w-8 text-cyan-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">No donation data yet</h3>
+                    <p className="text-muted-foreground">
+                      When you create impact stories and donors start contributing, analytics will appear here.
+                    </p>
+                  </div>
+                  <div className="space-y-3">
+                    <Button asChild>
+                      <a href="/dashboard/nmbrs">Create Your First Story</a>
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Impact stories help donors understand your mission and connect with your cause
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* Key Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">

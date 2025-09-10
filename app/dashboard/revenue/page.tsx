@@ -45,33 +45,17 @@ import {
   Activity
 } from "lucide-react"
 
+// Start with empty metrics - will populate as users create stories and receive donations
 const revenueMetrics = {
-  totalRevenue: 28470,
-  monthlyGrowth: 23.5,
-  averageOrderValue: 89.50,
-  conversionRate: 4.2,
-  totalOrders: 318,
-  repeatCustomers: 67.3,
-  revenueByStory: [
-    { story: "Maria's Coffee Journey", revenue: 8940, orders: 100, conversion: 5.2 },
-    { story: "Sustainable Farming Impact", revenue: 6720, orders: 75, conversion: 4.8 },
-    { story: "Community Health Initiative", revenue: 5280, orders: 60, conversion: 3.9 },
-    { story: "Education Access Program", revenue: 4530, orders: 50, conversion: 4.1 },
-    { story: "Environmental Conservation", revenue: 3000, orders: 33, conversion: 3.2 }
-  ],
-  revenueByChannel: [
-    { channel: "Email Campaigns", revenue: 12840, percentage: 45.1 },
-    { channel: "SMS Updates", revenue: 8540, percentage: 30.0 },
-    { channel: "Push Notifications", revenue: 4260, percentage: 15.0 },
-    { channel: "Direct Website", revenue: 2830, percentage: 9.9 }
-  ],
-  topPerformingProducts: [
-    { name: "Organic Coffee Beans", revenue: 8940, units: 100, price: 89.40 },
-    { name: "Sustainable Seed Packets", revenue: 6720, units: 75, price: 89.60 },
-    { name: "Health Supplements", revenue: 5280, units: 60, price: 88.00 },
-    { name: "Educational Materials", revenue: 4530, units: 50, price: 90.60 },
-    { name: "Eco-Friendly Products", revenue: 3000, units: 33, price: 90.91 }
-  ]
+  totalRevenue: 0,
+  monthlyGrowth: 0,
+  averageOrderValue: 0,
+  conversionRate: 0,
+  totalOrders: 0,
+  repeatCustomers: 0,
+  revenueByStory: [],
+  revenueByChannel: [],
+  topPerformingProducts: []
 }
 
 const optimizationSuggestions = [
@@ -120,8 +104,8 @@ export default function RevenuePage() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Revenue Analytics</h1>
-              <p className="text-muted-foreground">Track and optimize your story-driven revenue</p>
+              <h1 className="text-3xl font-bold">Donation Analytics</h1>
+              <p className="text-muted-foreground">Track and optimize your story-driven donations</p>
             </div>
             <div className="flex items-center gap-4">
               <Button variant="outline">
@@ -140,7 +124,32 @@ export default function RevenuePage() {
       {/* Key Metrics */}
       <section className="py-8 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {revenueMetrics.totalRevenue === 0 ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mx-auto">
+                    <DollarSign className="h-8 w-8 text-cyan-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">No donation data yet</h3>
+                    <p className="text-muted-foreground">
+                      When you create impact stories and donors start contributing, analytics will appear here.
+                    </p>
+                  </div>
+                  <div className="space-y-3">
+                    <Button asChild>
+                      <a href="/dashboard/nmbrs">Create Your First Story</a>
+                    </Button>
+                    <p className="text-sm text-muted-foreground">
+                      Impact stories help donors understand your mission and connect with your cause
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -213,6 +222,7 @@ export default function RevenuePage() {
               </CardContent>
             </Card>
           </div>
+          )}
         </div>
       </section>
 

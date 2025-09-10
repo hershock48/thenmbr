@@ -86,7 +86,6 @@ const organizationConfigs = {
         name: "Impact Stories",
         href: "/dashboard/nmbrs",
         icon: Heart,
-        badge: "24",
         description: "Manage your impact stories and beneficiaries",
       },
       { name: "Donors", href: "/dashboard/subscribers", icon: Users, description: "Manage your donor relationships" },
@@ -174,7 +173,6 @@ const organizationConfigs = {
         name: "Project Stories",
         href: "/dashboard/nmbrs",
         icon: FolderOpen,
-        badge: "24",
         description: "Manage your project stories and updates",
       },
       {
@@ -265,7 +263,6 @@ const organizationConfigs = {
         name: "Brand Stories",
         href: "/dashboard/stories",
         icon: Building2,
-        badge: "24",
         description: "Manage your brand and product stories",
       },
       {
