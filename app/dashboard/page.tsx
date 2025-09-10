@@ -72,6 +72,7 @@ export default function DashboardPage() {
     completionRate: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (org?.id) {
@@ -85,6 +86,7 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
+      setError(null)
       // Start with empty data - users will create their own content
       const mockStories: Story[] = []
 
@@ -101,6 +103,7 @@ export default function DashboardPage() {
       setStats(mockStats)
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error)
+      setError("Failed to load dashboard data. Please refresh the page.")
     } finally {
       setLoading(false)
     }
@@ -138,6 +141,23 @@ export default function DashboardPage() {
               <div className="h-3 w-24 bg-muted animate-pulse rounded" />
             </div>
           ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-600 text-2xl">⚠️</span>
+          </div>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Something went wrong</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Refresh Page
+          </Button>
         </div>
       </div>
     )

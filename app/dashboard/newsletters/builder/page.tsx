@@ -15,6 +15,7 @@ export default function NewsletterBuilderPage() {
   const searchParams = useSearchParams()
   const [storyId, setStoryId] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [audience, setAudience] = useState({
     type: 'all' as 'all' | 'specific',
     selectedStories: [] as string[],
@@ -22,12 +23,18 @@ export default function NewsletterBuilderPage() {
   })
 
   useEffect(() => {
-    // Get story ID from URL params or use first available story
-    const storyIdParam = searchParams.get('storyId')
-    if (storyIdParam) {
-      setStoryId(storyIdParam)
+    try {
+      // Get story ID from URL params or use first available story
+      const storyIdParam = searchParams.get('storyId')
+      if (storyIdParam) {
+        setStoryId(storyIdParam)
+      }
+    } catch (err) {
+      console.error('Error initializing newsletter builder:', err)
+      setError('Failed to initialize newsletter builder. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }, [searchParams])
 
   interface NewsletterData {
@@ -43,17 +50,31 @@ export default function NewsletterBuilderPage() {
     totalRecipients: number
   }
 
-  const handleSave = (newsletter: NewsletterData) => {
-    console.log('Newsletter saved:', newsletter)
-    // Show success message
-    // Optionally redirect back to newsletters list
+  const handleSave = async (newsletter: NewsletterData) => {
+    try {
+      setError(null)
+      console.log('Newsletter saved:', newsletter)
+      // TODO: Implement actual save functionality
+      // Show success message
+      // Optionally redirect back to newsletters list
+    } catch (err) {
+      console.error('Error saving newsletter:', err)
+      setError('Failed to save newsletter. Please try again.')
+    }
   }
 
-  const handleSend = (newsletter: NewsletterData) => {
-    console.log('Newsletter sent:', newsletter)
-    console.log('Audience:', audience)
-    // Show success message
-    // Optionally redirect back to newsletters list
+  const handleSend = async (newsletter: NewsletterData) => {
+    try {
+      setError(null)
+      console.log('Newsletter sent:', newsletter)
+      console.log('Audience:', audience)
+      // TODO: Implement actual send functionality
+      // Show success message
+      // Optionally redirect back to newsletters list
+    } catch (err) {
+      console.error('Error sending newsletter:', err)
+      setError('Failed to send newsletter. Please try again.')
+    }
   }
 
   const handleAudienceChange = (newAudience: AudienceData) => {
@@ -67,7 +88,27 @@ export default function NewsletterBuilderPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading newsletter builder...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-red-600 text-2xl">⚠️</span>
+          </div>
+          <h2 className="text-xl font-semibold text-foreground mb-2">Something went wrong</h2>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
       </div>
     )
   }
