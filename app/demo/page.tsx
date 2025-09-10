@@ -379,11 +379,7 @@ export default function DemoPage() {
                             <p className="text-muted-foreground text-sm mb-3">{story.description}</p>
                             <div className="flex items-center gap-4 text-sm">
                               <span className="font-medium text-primary">{story.id.toUpperCase()}</span>
-                              {selectedAudience === 'nonprofit' ? (
-                                <span className="text-green-600">${story.donations.raised.toLocaleString()} raised</span>
-                              ) : (
-                                <span className="text-green-600">${story.sales.revenue.toLocaleString()} revenue</span>
-                              )}
+                              <span className="text-green-600">${story.donations.raised.toLocaleString()} raised</span>
                             </div>
                           </div>
                         </div>

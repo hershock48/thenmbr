@@ -22,6 +22,8 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { TrendingUp, Users, Eye, ShoppingCart, DollarSign, Calendar, Download, Filter } from "lucide-react"
+import { DonorJourneyTracker } from "@/components/dashboard/donor-journey-tracker"
+import { ConversionFunnelAnalyzer } from "@/components/dashboard/conversion-funnel-analyzer"
 
 const getNonprofitAnalyticsData = () => {
   return {
@@ -48,6 +50,7 @@ const getNonprofitAnalyticsData = () => {
         donations: 420,
         revenue: 8400,
         impact: "12 months of school",
+        roi: 245
       },
       {
         name: "Clean Water for Village",
@@ -56,6 +59,7 @@ const getNonprofitAnalyticsData = () => {
         donations: 380,
         revenue: 7600,
         impact: "200 people served",
+        roi: 200
       },
       {
         name: "Medical Care for Children",
@@ -64,6 +68,7 @@ const getNonprofitAnalyticsData = () => {
         donations: 340,
         revenue: 6800,
         impact: "15 children treated",
+        roi: 200
       },
       {
         name: "Food Security Program",
@@ -72,6 +77,7 @@ const getNonprofitAnalyticsData = () => {
         donations: 280,
         revenue: 5600,
         impact: "50 families fed",
+        roi: 200
       },
       {
         name: "Disaster Relief Fund",
@@ -80,6 +86,7 @@ const getNonprofitAnalyticsData = () => {
         donations: 220,
         revenue: 4400,
         impact: "25 homes rebuilt",
+        roi: 200
       },
     ],
   }
@@ -375,6 +382,10 @@ export default function AdvancedAnalytics() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Advanced Analytics Components */}
+        <DonorJourneyTracker />
+        <ConversionFunnelAnalyzer />
       </div>
     </div>
   )

@@ -37,7 +37,7 @@ const mockAttributionData = {
   totalSubscribers: 2847,
   emailOpenRate: 68.5,
   clickThroughRate: 12.3,
-  revenueByStory: [
+  donationsByStory: [
     {
       id: 'nmbr-001',
       title: "Maria's Coffee Journey",
@@ -66,7 +66,7 @@ const mockAttributionData = {
       lastUpdated: '1 hour ago'
     }
   ],
-  revenueByCampaign: [
+  donationsByCampaign: [
     {
       id: 'email-001',
       name: 'Coffee Lovers Newsletter',
@@ -133,7 +133,7 @@ export default function AttributionDashboard() {
           {
             time: 'Just now',
             event: Math.random() > 0.5 ? 'Purchase' : 'Story View',
-            story: prev.revenueByStory[Math.floor(Math.random() * 3)].title,
+            story: prev.donationsByStory[Math.floor(Math.random() * 3)].title,
             amount: Math.random() > 0.5 ? (Math.random() * 30 + 10).toFixed(2) : undefined,
             customer: ['Sarah M.', 'Mike R.', 'Lisa K.', 'John D.', 'Emma S.'][Math.floor(Math.random() * 5)]
           },
@@ -152,9 +152,9 @@ export default function AttributionDashboard() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Revenue Attribution Dashboard</h1>
+              <h1 className="text-3xl font-bold">Impact Attribution Dashboard</h1>
               <p className="text-muted-foreground mt-2">
-                Live tracking of story-to-sale attribution and revenue generation
+                Live tracking of story-to-donation attribution and impact generation
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -179,7 +179,7 @@ export default function AttributionDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Donations</CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -193,7 +193,7 @@ export default function AttributionDashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Donations</CardTitle>
                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -248,7 +248,7 @@ export default function AttributionDashboard() {
           {/* Revenue by Story */}
           <TabsContent value="stories" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {liveData.revenueByStory.map((story) => (
+              {liveData.donationsByStory.map((story) => (
                 <Card key={story.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-center justify-between">
@@ -263,11 +263,11 @@ export default function AttributionDashboard() {
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Revenue</p>
+                        <p className="text-sm text-muted-foreground">Donations</p>
                         <p className="text-2xl font-bold">${story.revenue.toLocaleString()}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Orders</p>
+                        <p className="text-sm text-muted-foreground">Donations</p>
                         <p className="text-2xl font-bold">{story.orders}</p>
                       </div>
                     </div>
@@ -296,7 +296,7 @@ export default function AttributionDashboard() {
           {/* Revenue by Campaign */}
           <TabsContent value="campaigns" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {liveData.revenueByCampaign.map((campaign) => (
+              {liveData.donationsByCampaign.map((campaign) => (
                 <Card key={campaign.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-center justify-between">
@@ -310,11 +310,11 @@ export default function AttributionDashboard() {
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Revenue</p>
+                        <p className="text-sm text-muted-foreground">Donations</p>
                         <p className="text-2xl font-bold">${campaign.revenue.toLocaleString()}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Orders</p>
+                        <p className="text-sm text-muted-foreground">Donations</p>
                         <p className="text-2xl font-bold">{campaign.orders}</p>
                       </div>
                     </div>

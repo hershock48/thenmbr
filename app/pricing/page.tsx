@@ -356,7 +356,7 @@ export default function PricingPage() {
         <div className="mt-16 bg-muted/50 rounded-xl p-8 text-center">
           <h3 className="text-2xl font-bold text-foreground mb-4">Donor Tips Feature</h3>
           <p className="text-muted-foreground mb-6 max-w-3xl mx-auto">
-            When enabled, {selectedAudience === "nonprofit" ? "donors" : "customers"} can add an optional tip to support NMBR. 
+            When enabled, donors can add an optional tip to support NMBR. 
             This often offsets or eliminates platform fees for your organization, making our service more sustainable for everyone.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -366,7 +366,7 @@ export default function PricingPage() {
               </div>
               <h3 className="font-semibold text-foreground mb-2">Optional Support</h3>
               <p className="text-sm text-muted-foreground">
-                {selectedAudience === "nonprofit" ? "Donors" : "Customers"} can choose to add a tip when giving
+                Donors can choose to add a tip when giving
               </p>
             </div>
             <div className="text-center">
@@ -425,7 +425,7 @@ export default function PricingPage() {
         <div className="mt-16 text-center bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-8">
           <h3 className="text-2xl font-bold text-foreground mb-4">Ready to Transform Your Impact?</h3>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Join organizations using story-driven engagement to increase {selectedAudience === "nonprofit" ? "donations and build stronger donor relationships" : "sales and create loyal customers"}.
+            Join organizations using story-driven engagement to increase donations and build stronger donor relationships.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-primary hover:bg-primary/90" asChild>
