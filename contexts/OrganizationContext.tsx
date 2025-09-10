@@ -25,6 +25,10 @@ import {
   Crown,
   Rocket,
   DollarSign,
+  Store,
+  Smartphone,
+  Code,
+  Zap,
 } from "lucide-react"
 
 interface OrganizationTerminology {
@@ -100,7 +104,14 @@ const organizationConfigs = {
         icon: BarChart3,
         description: "Track donations and campaign performance",
       },
-      { name: "Marketplace", href: "/dashboard/marketplace", icon: ShoppingCart, description: "Order branded merchandise" },
+      { name: "Marketplace", href: "/marketplace", icon: ShoppingCart, description: "Browse and customize products with NMBR codes" },
+      { name: "Storefront", href: "/dashboard/storefront", icon: Store, description: "Manage your white-label storefront" },
+      { name: "Community", href: "/community", icon: Users, description: "Connect with other nonprofits and share success stories" },
+      { name: "Advanced Analytics", href: "/dashboard/advanced-analytics", icon: BarChart3, description: "Deep insights into your fundraising performance" },
+      { name: "Referrals", href: "/dashboard/referrals", icon: Share2, description: "Grow through referrals and affiliate partnerships" },
+      { name: "Mobile App", href: "/mobile", icon: Smartphone, description: "Download and manage the NMBR mobile app" },
+      { name: "API Documentation", href: "/api-docs", icon: Code, description: "Integrate NMBR with your existing systems" },
+      { name: "Automation", href: "/dashboard/automation", icon: Zap, description: "Automate your fundraising processes and workflows" },
       {
         name: "Donation Widget",
         href: "/dashboard/widget",

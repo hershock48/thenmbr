@@ -36,63 +36,63 @@ import {
 const pricingTiers = [
   {
     name: "Starter",
-    price: 99,
-    annualPrice: 990,
+    price: 29,
+    annualPrice: 290,
     description: "Perfect for small nonprofits getting started",
     features: [
-      "3 NMBRs",
+      "3 impact stories",
       "2 team seats", 
       "Basic analytics",
       "Email campaigns",
-      "Basic fundraising",
-      "5% platform fee"
+      "Product templates",
+      "10% marketplace fee"
     ],
     cta: "Start Free Trial",
     popular: false
   },
   {
     name: "Growth", 
-    price: 199,
-    annualPrice: 1990,
+    price: 79,
+    annualPrice: 790,
     description: "For growing nonprofits ready to scale",
     features: [
-      "5 NMBRs",
+      "10 impact stories",
       "Unlimited team seats",
       "Advanced analytics", 
       "SMS updates",
-      "White-label donation pages",
-      "3% platform fee"
+      "Custom product designs",
+      "7% marketplace fee"
     ],
     cta: "Start Free Trial",
     popular: true
   },
   {
     name: "Professional",
-    price: 399,
-    annualPrice: 3990,
+    price: 149,
+    annualPrice: 1490,
     description: "For established nonprofits with complex needs",
     features: [
-      "10 NMBRs",
+      "Unlimited stories",
       "Push notifications",
       "Donor feed",
       "Fundraising analytics",
-      "Attribution tracking",
-      "1% platform fee"
+      "White-label storefronts",
+      "5% marketplace fee"
     ],
     cta: "Start Free Trial",
     popular: false
   },
   {
     name: "Enterprise",
-    price: 750,
-    annualPrice: 9000,
+    price: 299,
+    annualPrice: 2990,
     description: "For large nonprofits with custom requirements",
     features: [
-      "Unlimited NMBRs",
-      "Global impact marketplace",
+      "Unlimited everything",
       "Custom integrations",
       "Dedicated support",
-      "0% platform fee",
+      "API access",
+      "3% marketplace fee",
       "Custom features"
     ],
     cta: "Contact Sales",
@@ -160,12 +160,12 @@ export default function HomePage() {
                   The Complete Story-Driven Fundraising Platform
                 </Badge>
                 <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
-                  Turn Every Donor Into a
-                  <span className="text-primary"> Storyteller</span>
+                  Turn Any Product Into a
+                  <span className="text-primary"> Fundraising Tool</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
-                  Create numbered bracelets that tell your impact story. When donors search the code, 
-                  they discover the real people behind your cause and become lifelong supporters.
+                  Add a NMBR code to anything you sell - t-shirts, mugs, stickers, or custom products. 
+                  When donors enter the code, they discover the real people behind your cause and become lifelong supporters.
                 </p>
                 
                 {/* Market Timing & Urgency */}
@@ -176,11 +176,11 @@ export default function HomePage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-green-900 dark:text-green-100 mb-1">
-                        Why Now? Donors Want Connection
+                        Why Now? The Future of Nonprofit Commerce
                       </h3>
                       <p className="text-sm text-green-700 dark:text-green-300">
                         <strong>78% of donors</strong> want to know exactly how their money helps real people. 
-                        NMBR bracelets create that connection instantly - donors search the code and see the impact story. 
+                        NMBR technology creates that connection instantly - whether it's on a t-shirt, mug, or custom product. 
                         Join 500+ nonprofits already using this $2.3T giving market strategy.
                       </p>
                     </div>
@@ -191,14 +191,14 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary" asChild>
                   <Link href="/signup">
-                    Create Your First NMBR Story
+                    Start Your Fundraising Platform
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                     </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2" asChild>
                 <Link href="/demo/attribution">
                   <Smartphone className="w-5 h-5 mr-2" />
-                  View Live Demo
+                  See How It Works
                   </Link>
                   </Button>
               </div>
@@ -276,14 +276,79 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Social Proof Section */}
+      <section className="py-16 bg-white/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-foreground">
+                Trusted by 500+ Nonprofits Worldwide
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                See how organizations are using NMBR technology to increase donations and donor engagement
+              </p>
+            </div>
+
+            {/* Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+                <div className="text-3xl font-bold text-green-600 mb-2">40%</div>
+                <div className="text-sm font-medium text-green-800">Average Increase in Donor Retention</div>
+                <div className="text-xs text-green-600 mt-1">When using NMBR technology</div>
+              </div>
+              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                <div className="text-3xl font-bold text-blue-600 mb-2">$2.3M</div>
+                <div className="text-sm font-medium text-blue-800">Total Funds Raised</div>
+                <div className="text-xs text-blue-600 mt-1">Through NMBR-powered products</div>
+              </div>
+              <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                <div className="text-3xl font-bold text-purple-600 mb-2">85%</div>
+                <div className="text-sm font-medium text-purple-800">Donor Engagement Rate</div>
+                <div className="text-xs text-purple-600 mt-1">When entering NMBR codes</div>
+              </div>
+            </div>
+
+            {/* Organization Logos */}
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">Trusted by leading organizations</p>
+              <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
+                <div className="text-lg font-semibold text-cyan-600">WaterAid</div>
+                <div className="text-lg font-semibold text-purple-600">UNICEF</div>
+                <div className="text-lg font-semibold text-red-600">Red Cross</div>
+                <div className="text-lg font-semibold text-green-600">Doctors Without Borders</div>
+                <div className="text-lg font-semibold text-blue-600">World Wildlife Fund</div>
+                <div className="text-lg font-semibold text-orange-600">Oxfam</div>
+              </div>
+            </div>
+
+            {/* Testimonial */}
+            <div className="max-w-3xl mx-auto">
+              <blockquote className="text-lg italic text-muted-foreground mb-4">
+                "NMBR technology transformed our fundraising. We added codes to our event t-shirts and saw a 60% increase in donor engagement. 
+                Now every product we sell tells our story and connects donors to our impact."
+              </blockquote>
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">SJ</span>
+                </div>
+                <div className="text-left">
+                  <div className="font-semibold text-foreground">Sarah Johnson</div>
+                  <div className="text-sm text-muted-foreground">Development Director, Clean Water Initiative</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Platform Overview */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-4 mb-16">
             <h3 className="text-4xl font-bold">The Complete Story-Driven Fundraising Platform</h3>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Everything you need to turn your stories into sustainable donor relationships and recurring support. 
-              No more juggling multiple tools or losing attribution.
+              Everything you need to turn any product into a fundraising tool. Add NMBR codes to t-shirts, mugs, 
+              stickers, or custom merchandise - then watch as donors connect with your impact stories and become lifelong supporters.
             </p>
             <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
               <p className="text-lg font-medium text-foreground mb-2">
@@ -331,24 +396,24 @@ export default function HomePage() {
                 <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4">
                   <ShoppingCart className="w-6 h-6 text-blue-600" />
                 </div>
-                <CardTitle>Fundraising Suite</CardTitle>
+                <CardTitle>Product Marketplace</CardTitle>
                 <CardDescription>
-                  White-label donation pages and global marketplace for story-driven fundraising
+                  Add NMBR codes to any product - t-shirts, mugs, stickers, or custom merchandise
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>White-label donation pages</span>
+                    <span>Customizable product templates</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Global impact marketplace</span>
+                    <span>Dropship integration</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span>Stripe Connect integration</span>
+                    <span>White-label storefronts</span>
                   </li>
                 </ul>
               </CardContent>
