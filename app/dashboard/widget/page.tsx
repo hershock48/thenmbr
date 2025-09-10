@@ -340,21 +340,26 @@ export default function WidgetPage() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">1,247</div>
+                  <div className="text-2xl font-bold text-blue-600">0</div>
                   <div className="text-sm text-gray-600">Widget Views</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">89</div>
+                  <div className="text-2xl font-bold text-green-600">0</div>
                   <div className="text-sm text-gray-600">NMBR Searches</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">34</div>
+                  <div className="text-2xl font-bold text-purple-600">0</div>
                   <div className="text-sm text-gray-600">New Subscribers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">$1,250</div>
+                  <div className="text-2xl font-bold text-orange-600">$0</div>
                   <div className="text-sm text-gray-600">Donations</div>
                 </div>
+              </div>
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800 text-center">
+                  Analytics will appear here once you embed the widget on your website and people start using it.
+                </p>
               </div>
             </CardContent>
           </Card>

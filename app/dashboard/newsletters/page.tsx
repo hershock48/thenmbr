@@ -166,35 +166,8 @@ export default function NewslettersPage() {
 
   const fetchNewsletters = async () => {
     try {
-      // Mock data for now
-      const mockNewsletters: Newsletter[] = [
-        {
-          id: "1",
-          name: "Monthly Impact Update",
-          type: "story_update",
-          status: "sent",
-          storyId: "story-1",
-          storyTitle: "Clean Water Project",
-          theme: "modern",
-          recipients: 1250,
-          sentAt: "2024-01-15T10:00:00Z",
-          openRate: 68.5,
-          clickRate: 23.2,
-          createdAt: "2024-01-15T09:00:00Z"
-        },
-        {
-          id: "2",
-          name: "Project Milestone Reached",
-          type: "milestone",
-          status: "draft",
-          storyId: "story-2",
-          storyTitle: "Education Initiative",
-          theme: "classic",
-          recipients: 0,
-          createdAt: "2024-01-20T14:30:00Z"
-        }
-      ]
-      setNewsletters(mockNewsletters)
+      // Start with empty array - users will create their own newsletters
+      setNewsletters([])
     } catch (error) {
       console.error("Failed to fetch newsletters:", error)
     } finally {
@@ -730,17 +703,32 @@ export default function NewslettersPage() {
 
       {filteredNewsletters.length === 0 && (
         <div className="text-center py-12">
-          <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No newsletters found</h3>
-          <p className="text-gray-600 mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Mail className="w-8 h-8 text-blue-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            {searchQuery || statusFilter !== "all" || typeFilter !== "all"
+              ? "No newsletters found"
+              : "No newsletters yet"
+            }
+          </h3>
+          <p className="text-muted-foreground mb-6">
             {searchQuery || statusFilter !== "all" || typeFilter !== "all"
               ? "Try adjusting your filters to see more results"
-              : "Create your first newsletter to get started"}
+              : "Create your first newsletter to keep donors updated on your impact stories and build stronger relationships."
+            }
           </p>
-          <Button onClick={() => setShowBuilder(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Newsletter
-          </Button>
+          {!searchQuery && statusFilter === "all" && typeFilter === "all" && (
+            <div className="space-y-3">
+              <Button onClick={() => setShowBuilder(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Newsletter
+              </Button>
+              <p className="text-sm text-muted-foreground">
+                Use our drag-and-drop builder to create beautiful, professional newsletters
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

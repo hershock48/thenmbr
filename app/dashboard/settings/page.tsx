@@ -22,7 +22,7 @@ export default function SettingsPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Settings</h1>
           <p className="text-muted-foreground">
-            Manage your business profile, team, billing, and platform preferences.
+            Manage your organization profile, team, billing, and platform preferences.
           </p>
         </div>
 
@@ -51,33 +51,33 @@ export default function SettingsPage() {
           <TabsContent value="profile" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Business Profile</CardTitle>
-                <CardDescription>Update your business information and branding settings.</CardDescription>
+                <CardTitle>Organization Profile</CardTitle>
+                <CardDescription>Update your nonprofit information and branding settings.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="company-name">Company Name</Label>
-                    <Input id="company-name" defaultValue="Artisan Coffee Co." />
+                    <Label htmlFor="org-name">Organization Name</Label>
+                    <Input id="org-name" placeholder="Enter your nonprofit name" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="industry">Industry</Label>
-                    <Input id="industry" defaultValue="Food & Beverage" />
+                    <Label htmlFor="cause">Cause Focus</Label>
+                    <Input id="cause" placeholder="e.g., Education, Healthcare, Community" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="website">Website</Label>
-                    <Input id="website" defaultValue="https://artisancoffee.com" />
+                    <Input id="website" placeholder="https://yournonprofit.org" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" defaultValue="+1 (555) 123-4567" />
+                    <Input id="phone" placeholder="+1 (555) 123-4567" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Company Description</Label>
+                  <Label htmlFor="description">Mission Statement</Label>
                   <Textarea
                     id="description"
-                    defaultValue="We source premium coffee beans directly from farmers and create meaningful connections between our customers and the stories behind their coffee."
+                    placeholder="Describe your organization's mission and impact..."
                     rows={3}
                   />
                 </div>
@@ -101,62 +101,18 @@ export default function SettingsPage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                {
-                  name: "Sarah Johnson",
-                  email: "sarah@artisancoffee.com",
-                  role: "Owner",
-                  avatar: "/placeholder.svg?height=40&width=40",
-                },
-                {
-                  name: "Mike Chen",
-                  email: "mike@artisancoffee.com",
-                  role: "Manager",
-                  avatar: "/placeholder.svg?height=40&width=40",
-                },
-                {
-                  name: "Emma Davis",
-                  email: "emma@artisancoffee.com",
-                  role: "Editor",
-                  avatar: "/placeholder.svg?height=40&width=40",
-                },
-              ].map((member, index) => (
-                <Card key={index} className="bg-card">
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <Avatar>
-                        <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
-                        <AvatarFallback>
-                          {member.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{member.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{member.email}</p>
-                        <Badge variant="secondary" className="mt-1 text-xs">
-                          {member.role}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex justify-end space-x-2 mt-3">
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-destructive hover:text-destructive bg-transparent"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">No team members yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Invite team members to help manage your nonprofit's impact stories and donor communications.
+              </p>
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+                <Plus className="w-4 h-4 mr-2" />
+                Invite Team Member
+              </Button>
             </div>
           </TabsContent>
 
@@ -171,19 +127,19 @@ export default function SettingsPage() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Plan</span>
-                    <Badge className="bg-primary text-primary-foreground">Business Pro</Badge>
+                    <Badge className="bg-primary text-primary-foreground">Free Trial</Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Monthly Cost</span>
-                    <span className="font-semibold">$299/month</span>
+                    <span className="font-semibold">$0/month</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Next Billing</span>
-                    <span className="text-sm">January 15, 2025</span>
+                    <span className="text-sm text-muted-foreground">Trial Ends</span>
+                    <span className="text-sm">14 days remaining</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Stories Created</span>
-                    <span className="text-sm">47 / 100</span>
+                    <span className="text-sm">0 / 5</span>
                   </div>
                   <Button variant="outline" className="w-full bg-transparent">
                     Upgrade Plan

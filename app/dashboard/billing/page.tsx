@@ -25,35 +25,35 @@ import Link from "next/link"
 const TIER_INFO = {
   starter: {
     name: "Starter",
-    monthlyPrice: 99,
-    annualPrice: 990,
+    monthlyPrice: 49,
+    annualPrice: 490,
     icon: Crown,
     color: "from-rose-500 to-pink-600",
-    features: ["1-3 active NMBRs", "Basic analytics", "CSV exports", "Basic branding", "2 team seats"]
+    features: ["1-3 impact stories", "Basic analytics", "CSV exports", "Basic branding", "2 team seats"]
   },
   growth: {
     name: "Growth", 
-    monthlyPrice: 199,
-    annualPrice: 1990,
+    monthlyPrice: 99,
+    annualPrice: 990,
     icon: Zap,
     color: "from-blue-500 to-indigo-600",
-    features: ["5 active NMBRs", "Advanced branding", "Integrations", "Marketplace", "Unlimited seats"]
+    features: ["5 impact stories", "Advanced branding", "Integrations", "Marketplace", "Unlimited seats"]
   },
   professional: {
     name: "Professional",
-    monthlyPrice: 399, 
-    annualPrice: 3990,
+    monthlyPrice: 199, 
+    annualPrice: 1990,
     icon: BarChart3,
     color: "from-emerald-500 to-teal-600",
-    features: ["10 active NMBRs", "White-label", "API access", "Built-in email", "Team roles"]
+    features: ["10 impact stories", "White-label", "API access", "Built-in email", "Team roles"]
   },
   enterprise: {
     name: "Enterprise",
-    monthlyPrice: 750,
-    annualPrice: 9000,
+    monthlyPrice: 399,
+    annualPrice: 3990,
     icon: Shield,
     color: "from-purple-500 to-violet-600", 
-    features: ["Unlimited NMBRs", "SSO", "Advanced security", "Dedicated support"]
+    features: ["Unlimited impact stories", "SSO", "Advanced security", "Dedicated support"]
   }
 }
 
@@ -140,10 +140,10 @@ export default function BillingPage() {
                     <div className="text-2xl font-bold text-primary">${tier.monthlyPrice}</div>
                     <div className="text-sm text-muted-foreground">per month</div>
                   </div>
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-2xl font-bold text-primary">{tier.activeNmbrs === -1 ? 'Unlimited' : tier.activeNmbrs}</div>
-                    <div className="text-sm text-muted-foreground">active NMBRs</div>
-                  </div>
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold text-primary">{tier.activeNmbrs === -1 ? 'Unlimited' : tier.activeNmbrs}</div>
+                      <div className="text-sm text-muted-foreground">impact stories</div>
+                    </div>
                   <div className="text-center p-4 bg-muted/50 rounded-lg">
                     <div className="text-2xl font-bold text-primary">{tier.platformFee}%</div>
                     <div className="text-sm text-muted-foreground">platform fee</div>

@@ -36,13 +36,13 @@ import {
 
 const currentTier = {
   name: "Growth",
-  price: 199,
+  price: 99,
   features: [
-    "5 NMBRs",
+    "5 impact stories",
     "Unlimited team seats",
     "Advanced analytics", 
     "SMS updates",
-    "White-label storefront",
+    "White-label donation pages",
     "3% platform fee"
   ]
 }
@@ -50,29 +50,29 @@ const currentTier = {
 const upgradeTiers = [
   {
     name: "Professional",
-    price: 399,
-    annualPrice: 3990,
-    description: "For established organizations with complex needs",
+    price: 199,
+    annualPrice: 1990,
+    description: "For established nonprofits with complex needs",
     features: [
-      "10 NMBRs",
+      "10 impact stories",
       "Push notifications",
       "Supporter feed",
-      "Commerce analytics",
+      "Donation analytics",
       "Attribution tracking",
       "1% platform fee"
     ],
     cta: "Upgrade to Professional",
     popular: false,
-    savings: "Save $1,188 annually",
-    roi: "300% ROI in 6 months"
+    savings: "Save $398 annually",
+    roi: "300% impact increase in 6 months"
   },
   {
     name: "Enterprise",
-    price: 750,
-    annualPrice: 9000,
-    description: "For large organizations with custom requirements",
+    price: 399,
+    annualPrice: 3990,
+    description: "For large nonprofits with custom requirements",
     features: [
-      "Unlimited NMBRs",
+      "Unlimited impact stories",
       "Global marketplace",
       "Custom integrations",
       "Dedicated support",
@@ -82,7 +82,7 @@ const upgradeTiers = [
     cta: "Contact Sales",
     popular: true,
     savings: "Save $0 annually",
-    roi: "500% ROI in 3 months"
+    roi: "500% impact increase in 3 months"
   }
 ]
 
@@ -90,28 +90,28 @@ const upgradeReasons = [
   {
     icon: <TrendingUp className="w-6 h-6 text-green-600" />,
     title: "You're Growing Fast",
-    description: "Your current plan is limiting your revenue potential. Upgrade to scale without restrictions.",
+    description: "Your current plan is limiting your impact potential. Upgrade to scale without restrictions.",
     metric: "127% growth in last 30 days",
     color: "green"
   },
   {
-    icon: <DollarSign className="w-6 h-6 text-blue-600" />,
-    title: "Missing Revenue Opportunities",
-    description: "You're leaving money on the table with limited attribution tracking and analytics.",
-    metric: "$2,847 potential monthly revenue",
+    icon: <Heart className="w-6 h-6 text-blue-600" />,
+    title: "Missing Donation Opportunities",
+    description: "You're leaving donations on the table with limited attribution tracking and analytics.",
+    metric: "$2,847 potential monthly donations",
     color: "blue"
   },
   {
     icon: <Users className="w-6 h-6 text-purple-600" />,
     title: "Team Collaboration Needs",
-    description: "Your team needs advanced features to work more efficiently and drive better results.",
+    description: "Your team needs advanced features to work more efficiently and drive better impact.",
     metric: "5 team members need access",
     color: "purple"
   },
   {
     icon: <Target className="w-6 h-6 text-orange-600" />,
     title: "Advanced Targeting Required",
-    description: "You need sophisticated audience targeting and campaign optimization tools.",
+    description: "You need sophisticated donor targeting and campaign optimization tools.",
     metric: "4.2% conversion rate potential",
     color: "orange"
   }
@@ -142,11 +142,11 @@ export default function UpgradePage() {
               </Badge>
               <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
                 Scale Your
-                <span className="text-primary"> Revenue</span>
+                <span className="text-primary"> Impact</span>
               </h1>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
                 You're outgrowing your current plan. Upgrade to unlock advanced features 
-                and maximize your revenue potential.
+                and maximize your impact potential.
               </p>
             </div>
             

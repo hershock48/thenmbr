@@ -27,33 +27,34 @@ import { SupporterFeed } from "@/components/ui/supporter-feed"
 import { SMSUpdates } from "@/components/ui/sms-updates"
 import { PushNotifications } from "@/components/ui/push-notifications"
 
+// Start with empty stats - will populate as users create communications
 const communicationStats = {
   email: {
-    total: 1500,
-    sent: 1200,
-    opened: 960,
-    clicked: 240,
-    unsubscribed: 15
+    total: 0,
+    sent: 0,
+    opened: 0,
+    clicked: 0,
+    unsubscribed: 0
   },
   sms: {
-    total: 500,
-    sent: 450,
-    delivered: 420,
-    opened: 340,
-    clicked: 85
+    total: 0,
+    sent: 0,
+    delivered: 0,
+    opened: 0,
+    clicked: 0
   },
   push: {
-    total: 800,
-    sent: 750,
-    delivered: 720,
-    opened: 580,
-    clicked: 220
+    total: 0,
+    sent: 0,
+    delivered: 0,
+    opened: 0,
+    clicked: 0
   },
   feed: {
-    totalViews: 2500,
-    totalPosts: 45,
-    totalEngagement: 1200,
-    activeUsers: 180
+    totalViews: 0,
+    totalPosts: 0,
+    totalEngagement: 0,
+    activeUsers: 0
   }
 }
 
@@ -235,63 +236,22 @@ export default function CommunicationsPage() {
               <CardDescription>Latest messages sent across all channels</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {[
-                  {
-                    type: 'email',
-                    icon: Mail,
-                    title: 'Maria\'s Graduation Update',
-                    channel: 'Email Newsletter',
-                    sent: '2 hours ago',
-                    status: 'sent',
-                    engagement: '78% open rate'
-                  },
-                  {
-                    type: 'sms',
-                    icon: MessageSquare,
-                    title: 'Urgent: Community Garden Milestone',
-                    channel: 'SMS Alert',
-                    sent: '4 hours ago',
-                    status: 'sent',
-                    engagement: '92% delivery rate'
-                  },
-                  {
-                    type: 'push',
-                    icon: Bell,
-                    title: 'Volunteer Event Tomorrow',
-                    channel: 'Push Notification',
-                    sent: '1 day ago',
-                    status: 'sent',
-                    engagement: '65% open rate'
-                  },
-                  {
-                    type: 'feed',
-                    icon: Globe,
-                    title: 'New Story: Community Garden Progress',
-                    channel: 'Supporter Feed',
-                    sent: '2 days ago',
-                    status: 'published',
-                    engagement: '45 interactions'
-                  }
-                ].map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <activity.icon className="w-5 h-5 text-muted-foreground" />
-                      <div>
-                        <h3 className="font-medium">{activity.title}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {activity.channel} • {activity.sent}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <Badge variant="outline" className="mb-1">
-                        {activity.status}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground">{activity.engagement}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Send className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No communications yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  When you send newsletters, SMS updates, or post to your supporter feed, they'll appear here.
+                </p>
+                <div className="space-y-2">
+                  <Button asChild>
+                    <a href="/dashboard/newsletters">Create Newsletter</a>
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    Start by creating your first newsletter to engage with donors
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

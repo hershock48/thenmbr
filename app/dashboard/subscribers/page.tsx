@@ -111,12 +111,13 @@ export default function SubscribersPage() {
 
   const fetchStats = async () => {
     try {
-      // Mock stats for now - in real app this would come from API
+      // Calculate real stats from actual subscriber data
       setStats({
         total_subscribers: subscribers.length,
         active_subscribers: subscribers.filter(s => s.status === 'active').length,
         total_story_subscriptions: subscribers.reduce((acc, s) => acc + s.nmbr_subscriptions.length, 0),
-        avg_engagement_score: 7.2,
+        avg_engagement_score: subscribers.length > 0 ? 
+          subscribers.reduce((acc, s) => acc + (s.total_donations > 0 ? 10 : 5), 0) / subscribers.length : 0,
         total_donations: subscribers.filter(s => s.total_donations > 0).length,
         total_donation_amount: subscribers.reduce((acc, s) => acc + s.total_donated_amount, 0)
       })
@@ -336,17 +337,29 @@ export default function SubscribersPage() {
               <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-8 h-8 text-cyan-600" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">No subscribers yet</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {searchTerm || statusFilter !== "all" ? "No subscribers found" : "No subscribers yet"}
+              </h3>
               <p className="text-muted-foreground mb-6">
-                When people subscribe to your stories through the widget, they'll appear here.
+                {searchTerm || statusFilter !== "all" 
+                  ? "Try adjusting your search or filter to see more subscribers"
+                  : "When people subscribe to your stories through the widget, they'll appear here. Create your first story to get started!"
+                }
               </p>
-              <Link href="/dashboard/nmbrs">
-                <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Your First Story
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+              {!searchTerm && statusFilter === "all" && (
+                <div className="space-y-3">
+                  <Link href="/dashboard/nmbrs">
+                    <Button className="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white shadow-lg">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Your First Story
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                  <p className="text-sm text-muted-foreground">
+                    Stories with the donation widget will automatically collect subscriber emails
+                  </p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">
