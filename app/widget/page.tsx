@@ -386,7 +386,7 @@ function WidgetContent() {
   const searchParams = useSearchParams()
   const orgId = searchParams.get('org')
   const nmbrCode = searchParams.get('nmbr')
-  
+
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
   const [showAnalytics, setShowAnalytics] = useState(false)
@@ -416,7 +416,7 @@ function WidgetContent() {
 
   // Auto-select story if NMBR code provided
   useEffect(() => {
-    if (nmbrCode) {
+      if (nmbrCode) {
       const story = demoStories.find(s => s.nmbr === nmbrCode)
       if (story) {
         setSelectedStory(story)
@@ -473,7 +473,7 @@ function WidgetContent() {
     }))
   }
 
-  return (
+    return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Live Activity Banner */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4">
@@ -535,31 +535,31 @@ function WidgetContent() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex gap-2">
-                <Input
+                  <Input
                   placeholder="Enter NMBR code (e.g., NMBR:001) or story title..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="flex-1"
                 />
                 <Button onClick={() => handleSearch(searchQuery)}>
-                  <Search className="w-4 h-4 mr-2" />
+                        <Search className="w-4 h-4 mr-2" />
                   Search
-                </Button>
+                  </Button>
               </div>
-              
-              {/* Quick Search Buttons */}
+
+            {/* Quick Search Buttons */}
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm text-muted-foreground mr-2">Quick search:</span>
                 {['NMBR:001', 'NMBR:002', 'NMBR:003'].map((nmbr) => (
-                  <Button
+                <Button 
                     key={nmbr}
-                    variant="outline"
+                  variant="outline" 
                     size="sm"
                     onClick={() => handleQuickSearch(nmbr)}
                     className="text-xs"
-                  >
+                >
                     {nmbr}
-                  </Button>
+                </Button>
                 ))}
               </div>
             </div>
@@ -636,7 +636,7 @@ function WidgetContent() {
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                         <Icon className="w-5 h-5 text-yellow-600" />
-                      </div>
+                        </div>
                       <div>
                         <h3 className="font-semibold">{challenge.title}</h3>
                         <p className="text-sm text-muted-foreground">{challenge.description}</p>
@@ -727,16 +727,16 @@ function WidgetContent() {
                 {/* Story Description */}
                 <div className="prose max-w-none">
                   <p className="text-lg text-muted-foreground">{selectedStory.description}</p>
-                </div>
+                      </div>
 
-                {/* Progress Bar */}
-                <div className="space-y-2">
+                      {/* Progress Bar */}
+                        <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Progress</span>
                     <span>{selectedStory.progress}% • ${selectedStory.raised.toLocaleString()} raised</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div 
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div 
                       className="bg-gradient-to-r from-primary to-blue-600 h-3 rounded-full transition-all duration-500"
                       style={{ width: `${selectedStory.progress}%` }}
                     />
@@ -744,10 +744,10 @@ function WidgetContent() {
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Goal: ${selectedStory.goal.toLocaleString()}</span>
                     <span>{selectedStory.supporters} supporters</span>
-                  </div>
-                </div>
+                          </div>
+                        </div>
 
-                {/* Action Buttons */}
+                      {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3">
                   <Button 
                     onClick={() => handleDonate(selectedStory)}
@@ -761,22 +761,22 @@ function WidgetContent() {
                     )}
                     Donate Now
                   </Button>
-                  <Button 
+                        <Button 
                     variant="outline"
                     onClick={() => handleFollow(selectedStory)}
                     className="flex items-center gap-2"
-                  >
+                        >
                     <Bell className="w-4 h-4" />
                     Follow Story
-                  </Button>
-                  <Button 
-                    variant="outline"
+                        </Button>
+                        <Button 
+                          variant="outline"
                     onClick={() => handleShare(selectedStory)}
                     className="flex items-center gap-2"
-                  >
+                        >
                     <Share2 className="w-4 h-4" />
                     Share
-                  </Button>
+                        </Button>
                 </div>
 
                 {/* Story Updates */}
@@ -846,9 +846,9 @@ function WidgetContent() {
                     </div>
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+                  </div>
+                </CardContent>
+              </Card>
         ) : (
           /* No Story Selected State */
           <Card className="text-center py-12">
@@ -870,8 +870,8 @@ function WidgetContent() {
                   >
                     Try {nmbr}
                   </Button>
-                ))}
-              </div>
+            ))}
+          </div>
             </CardContent>
           </Card>
         )}
@@ -901,11 +901,11 @@ function WidgetContent() {
           <Card className="text-center p-6">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <BarChart3 className="w-6 h-6 text-purple-600" />
-            </div>
+          </div>
             <h3 className="text-lg font-semibold mb-2">Track Progress</h3>
-            <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
               See exactly how your support makes a difference with complete transparency.
-            </p>
+          </p>
           </Card>
         </div>
       </div>
