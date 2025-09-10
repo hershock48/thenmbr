@@ -194,16 +194,23 @@ async function sendNewsletterToSubscribers(
       const personalizedHtml = newsletterContent.html.replace(/{SUBSCRIBER_NAME}/g, subscriber.first_name || 'Friend')
       const personalizedUnsubscribeUrl = newsletterContent.html.match(/unsubscribeUrl.*?href="([^"]*)"/)?.[1]?.replace('{SUBSCRIBER_ID}', subscriber.id) || ''
 
-      // In a real implementation, you would integrate with an email service like:
-      // - SendGrid
-      // - Mailgun
-      // - AWS SES
-      // - Resend
+      // Import email service
+      const { emailService } = await import('@/lib/email-service')
       
-      // For now, we'll just log the email and mark it as sent
-      console.log('Sending newsletter to:', subscriber.email)
-      console.log('Subject:', personalizedSubject)
-      console.log('Story-specific subscription for:', story.title)
+      // Send actual email
+      const emailResult = await emailService.sendNewsletter({
+        to: subscriber.email,
+        subject: personalizedSubject,
+        html: personalizedHtml,
+        subscriberId: subscriber.id,
+        campaignId: campaignId,
+        storyId: story.id,
+        unsubscribeUrl: personalizedUnsubscribeUrl
+      })
+
+      if (!emailResult.success) {
+        throw new Error(emailResult.error || 'Failed to send email')
+      }
       
       // Record email event
       await supabase

@@ -112,7 +112,9 @@ export default function SelectOrgPage() {
         csr_focus_areas: undefined,
         logo_url: undefined,
         website: newOrg.website,
-        brand_color: newOrg.brand_color
+        brand_color: newOrg.brand_color,
+        created_at: newOrg.created_at,
+        updated_at: newOrg.created_at
       }
       setOrg(nonprofitOrg)
       router.push('/dashboard')
@@ -158,7 +160,9 @@ export default function SelectOrgPage() {
         csr_focus_areas: undefined,
         logo_url: undefined,
         website: newOrg.website,
-        brand_color: newOrg.brand_color
+        brand_color: newOrg.brand_color,
+        created_at: newOrg.created_at,
+        updated_at: newOrg.created_at
       }
       setOrg(nonprofitOrg)
       router.push('/dashboard')
@@ -187,7 +191,9 @@ export default function SelectOrgPage() {
         csr_focus_areas: undefined,
         logo_url: undefined,
         website: org.website,
-        brand_color: org.brand_color
+        brand_color: org.brand_color,
+        created_at: org.created_at,
+        updated_at: org.created_at
       }
       setOrg(nonprofitOrg)
       
@@ -254,9 +260,10 @@ export default function SelectOrgPage() {
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Building2 className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Welcome to NMBR</CardTitle>
+                <CardTitle className="text-3xl font-bold">Welcome to NMBR! 🎉</CardTitle>
                 <CardDescription className="text-lg">
-                  Let's set up your first nonprofit organization to get started with impact storytelling
+                  You're just one step away from creating your first impact story. 
+                  Let's set up your nonprofit organization to start connecting with donors.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -264,11 +271,11 @@ export default function SelectOrgPage() {
                   <Button
                     onClick={handleCreateDefaultOrg}
                     disabled={creatingOrg}
-                    className="h-24 flex-col gap-2"
+                    className="h-24 flex-col gap-2 bg-primary hover:bg-primary/90"
                   >
                     <Sparkles className="h-6 w-6" />
-                    <span className="font-semibold">Quick Start</span>
-                    <span className="text-sm opacity-80">Create with defaults</span>
+                    <span className="font-semibold">Get Started Now</span>
+                    <span className="text-sm opacity-80">Ready in 30 seconds</span>
                   </Button>
                   
                   <Dialog open={showCreateOrg} onOpenChange={setShowCreateOrg}>

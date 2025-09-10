@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -59,13 +59,21 @@ const getNonprofitAnalyticsData = () => {
     ],
     topStoriesData: [
       // Empty - will populate as users create stories
-    ],
+    ] as Array<{
+      name: string
+      impact: string
+      views: number
+      donations: number
+      fundsRaised: number
+      conversionRate: number
+    }>,
     donorDemographicsData: [
       // Empty - will populate as donors engage
     ],
     impactMetricsData: [
       // Empty - will populate as users create stories and receive donations
-    ]
+    ],
+    hasData: false // Flag to show empty states
   }
 }
 
@@ -74,7 +82,20 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState("6months")
   const [selectedMetric, setSelectedMetric] = useState("fundsRaised")
-  const { performanceData, conversionFunnelData, topStoriesData, donorDemographicsData, impactMetricsData } = getNonprofitAnalyticsData()
+  const [isLive, setIsLive] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState(new Date())
+  const { performanceData, conversionFunnelData, topStoriesData, donorDemographicsData, impactMetricsData, hasData } = getNonprofitAnalyticsData()
+
+  // Simulate real-time updates
+  React.useEffect(() => {
+    if (isLive) {
+      const interval = setInterval(() => {
+        setLastUpdated(new Date())
+      }, 30000) // Update every 30 seconds
+      
+      return () => clearInterval(interval)
+    }
+  }, [isLive])
 
   const totalViews = performanceData.reduce((sum, data) => sum + data.views, 0)
   const totalEngagement = performanceData.reduce((sum, data) => sum + data.engagement, 0)
@@ -89,12 +110,33 @@ export default function AnalyticsPage() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
-              <p className="text-muted-foreground mt-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+                {isLive && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+                    <Activity className="w-3 h-3 mr-1 animate-pulse" />
+                    Live
+                  </Badge>
+                )}
+              </div>
+              <p className="text-muted-foreground">
                 Track your impact stories and donor engagement
+                {isLive && (
+                  <span className="text-xs text-muted-foreground ml-2">
+                    • Last updated: {lastUpdated.toLocaleTimeString()}
+                  </span>
+                )}
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <Button 
+                variant={isLive ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsLive(!isLive)}
+              >
+                <Activity className="h-4 w-4 mr-2" />
+                {isLive ? "Live" : "Paused"}
+              </Button>
               <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
@@ -219,24 +261,38 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={performanceData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip 
-                          formatter={(value) => [`$${value.toLocaleString()}`, 'Funds Raised']}
-                          labelFormatter={(label) => `Month: ${label}`}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="fundsRaised"
-                          stroke="hsl(var(--primary))"
-                          fill="hsl(var(--primary))"
-                          fillOpacity={0.3}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    {hasData ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={performanceData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip 
+                            formatter={(value) => [`$${value.toLocaleString()}`, 'Funds Raised']}
+                            labelFormatter={(label) => `Month: ${label}`}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="fundsRaised"
+                            stroke="hsl(var(--primary))"
+                            fill="hsl(var(--primary))"
+                            fillOpacity={0.3}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center">
+                        <div className="text-center space-y-4">
+                          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                            <BarChart3 className="h-8 w-8 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-foreground">No data yet</h3>
+                            <p className="text-muted-foreground">Create impact stories to see analytics here</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -248,29 +304,43 @@ export default function AnalyticsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={performanceData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="month" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line
-                          type="monotone"
-                          dataKey="views"
-                          stroke="#8884d8"
-                          strokeWidth={2}
-                          name="Views"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="engagement"
-                          stroke="#82ca9d"
-                          strokeWidth={2}
-                          name="Engagement"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+                    {hasData ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={performanceData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="views"
+                            stroke="#8884d8"
+                            strokeWidth={2}
+                            name="Views"
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="engagement"
+                            stroke="#82ca9d"
+                            strokeWidth={2}
+                            name="Engagement"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center">
+                        <div className="text-center space-y-4">
+                          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                            <Activity className="h-8 w-8 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-foreground">No engagement data</h3>
+                            <p className="text-muted-foreground">Views and engagement will appear here</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -342,39 +412,54 @@ export default function AnalyticsPage() {
                 <CardDescription>Stories driving the most engagement and funds raised</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {topStoriesData.map((story, index) => (
-                    <div key={story.name} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-semibold text-primary">#{index + 1}</span>
+                {hasData && topStoriesData.length > 0 ? (
+                  <div className="space-y-4">
+                    {topStoriesData.map((story, index) => (
+                      <div key={story.name} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-semibold text-primary">#{index + 1}</span>
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-foreground">{story.name}</h3>
+                            <p className="text-sm text-muted-foreground">{story.impact}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground">{story.name}</h3>
-                          <p className="text-sm text-muted-foreground">{story.impact}</p>
+                        <div className="flex items-center gap-6">
+                          <div className="text-center">
+                            <div className="font-semibold text-foreground">{story.views.toLocaleString()}</div>
+                            <div className="text-xs text-muted-foreground">Views</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-semibold text-foreground">{story.donations.toLocaleString()}</div>
+                            <div className="text-xs text-muted-foreground">Donations</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-semibold text-foreground">${story.fundsRaised.toLocaleString()}</div>
+                            <div className="text-xs text-muted-foreground">Funds Raised</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="font-semibold text-foreground">{story.conversionRate}%</div>
+                            <div className="text-xs text-muted-foreground">Conversion</div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-center">
-                          <div className="font-semibold text-foreground">{story.views.toLocaleString()}</div>
-                          <div className="text-xs text-muted-foreground">Views</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-semibold text-foreground">{story.donations.toLocaleString()}</div>
-                          <div className="text-xs text-muted-foreground">Donations</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-semibold text-foreground">${story.fundsRaised.toLocaleString()}</div>
-                          <div className="text-xs text-muted-foreground">Funds Raised</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-semibold text-foreground">{story.conversionRate}%</div>
-                          <div className="text-xs text-muted-foreground">Conversion</div>
-                        </div>
-                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Target className="h-8 w-8 text-muted-foreground" />
                     </div>
-                  ))}
-                </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No stories yet</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Create impact stories to see performance analytics here
+                    </p>
+                    <Button asChild>
+                      <a href="/dashboard/nmbrs">Create Your First Story</a>
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -418,24 +503,40 @@ export default function AnalyticsPage() {
                   <CardDescription>Key insights about your donor base</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-primary">1,960</div>
-                      <div className="text-sm text-muted-foreground">Total Donors</div>
+                  {hasData ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-4 bg-muted rounded-lg">
+                        <div className="text-2xl font-bold text-primary">{totalDonations.toLocaleString()}</div>
+                        <div className="text-sm text-muted-foreground">Total Donors</div>
+                      </div>
+                      <div className="text-center p-4 bg-muted rounded-lg">
+                        <div className="text-2xl font-bold text-primary">
+                          ${totalDonations > 0 ? (totalFundsRaised / totalDonations).toFixed(2) : '0.00'}
+                        </div>
+                        <div className="text-sm text-muted-foreground">Avg Donation</div>
+                      </div>
+                      <div className="text-center p-4 bg-muted rounded-lg">
+                        <div className="text-2xl font-bold text-primary">
+                          {totalDonations > 0 ? (totalDonations / totalDonations).toFixed(1) : '0.0'}
+                        </div>
+                        <div className="text-sm text-muted-foreground">Avg Donations/Donor</div>
+                      </div>
+                      <div className="text-center p-4 bg-muted rounded-lg">
+                        <div className="text-2xl font-bold text-primary">0%</div>
+                        <div className="text-sm text-muted-foreground">Repeat Donors</div>
+                      </div>
                     </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-primary">$32.50</div>
-                      <div className="text-sm text-muted-foreground">Avg Donation</div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Users className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-foreground mb-2">No donor data yet</h3>
+                      <p className="text-muted-foreground">
+                        Donor insights will appear here as people engage with your stories
+                      </p>
                     </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-primary">2.3</div>
-                      <div className="text-sm text-muted-foreground">Avg Donations/Donor</div>
-                    </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-primary">68%</div>
-                      <div className="text-sm text-muted-foreground">Repeat Donors</div>
-                    </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

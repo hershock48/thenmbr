@@ -87,6 +87,7 @@ export default function CreateStoryPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [showPreview, setShowPreview] = useState(false)
   const [isPublishing, setIsPublishing] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   
   const [storyData, setStoryData] = useState<StoryData>({
@@ -144,8 +145,8 @@ export default function CreateStoryPage() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000))
     
-    // Redirect to story management
-    window.location.href = "/dashboard/stories"
+    setIsPublishing(false)
+    setShowSuccess(true)
   }
 
   const getProgressPercentage = () => {
@@ -619,6 +620,75 @@ export default function CreateStoryPage() {
               <p className="text-muted-foreground">
                 {storyData.impactDescription || "Your impact description will appear here..."}
               </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-green-600" />
+              </div>
+              <DialogTitle className="text-3xl font-bold text-green-900 mb-4">
+                🎉 Your Impact Story is Live!
+              </DialogTitle>
+              <DialogDescription className="text-lg text-muted-foreground mb-6">
+                Congratulations! Your story is now live and ready to connect with donors. 
+                Here's what happens next:
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Next Steps */}
+            <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">What's Next?</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                  <div>
+                    <h4 className="font-medium text-foreground mb-1">Get Your NMBR Code</h4>
+                    <p className="text-sm text-muted-foreground">Your unique code will be generated and ready to share with donors.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                  <div>
+                    <h4 className="font-medium text-foreground mb-1">Customize Your Widget</h4>
+                    <p className="text-sm text-muted-foreground">Embed the donation widget on your website to start receiving donations.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                  <div>
+                    <h4 className="font-medium text-foreground mb-1">Track Your Impact</h4>
+                    <p className="text-sm text-muted-foreground">Monitor donations, engagement, and donor relationships in your dashboard.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                className="flex-1 bg-primary hover:bg-primary/90" 
+                onClick={() => window.location.href = "/dashboard/stories"}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View Your Story
+              </Button>
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => window.location.href = "/dashboard/widget"}
+              >
+                <Hash className="w-4 h-4 mr-2" />
+                Customize Widget
+              </Button>
             </div>
           </div>
         </DialogContent>

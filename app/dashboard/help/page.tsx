@@ -21,11 +21,15 @@ import {
   CheckCircle,
   AlertCircle,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Heart,
+  TrendingUp
 } from "lucide-react"
 import { useState } from "react"
+import { useOrganization } from "@/contexts/OrganizationContext"
 
 export default function HelpPage() {
+  const { terminology } = useOrganization()
   const [searchQuery, setSearchQuery] = useState("")
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -45,42 +49,46 @@ export default function HelpPage() {
       category: "Getting Started",
       questions: [
         {
-          question: "How do I create my first NMBR?",
-          answer: "To create your first NMBR, go to the NMBRs page and click 'Create New NMBR'. Fill in the story details, set your fundraising goal, and activate your campaign. Your NMBR will be ready to share with supporters."
+          question: `How do I create my first ${terminology.stories.toLowerCase()}?`,
+          answer: `To create your first ${terminology.stories.toLowerCase()}, go to the ${terminology.stories} page and click 'Create New Story'. Fill in the impact details, set your fundraising goal, and publish your story. Your story will be ready to share with donors.`
         },
         {
-          question: "How do I embed the widget on my website?",
-          answer: "Go to the Widget page in your dashboard. Customize the appearance and copy the embed code. Paste it into your website's HTML where you want the widget to appear."
+          question: "How do I embed the donation widget on my website?",
+          answer: "Go to the Widget page in your dashboard. Customize the appearance and copy the embed code. Paste it into your website's HTML where you want the donation widget to appear."
         },
         {
-          question: "How do I connect my Stripe account?",
-          answer: "Navigate to the Billing page and click 'Connect Stripe Account'. Follow the Stripe Connect flow to link your payment processing account."
+          question: "How do I connect my payment processor?",
+          answer: "Navigate to the Billing page and click 'Connect Payment Processor'. Follow the integration flow to link your Stripe or other payment processing account."
         }
       ]
     },
     {
-      category: "NMBRs & Stories",
+      category: `${terminology.stories} & Fundraising`,
       questions: [
         {
-          question: "Can I edit a NMBR after it's published?",
-          answer: "Yes, you can edit most details of your NMBR from the NMBRs page. However, some changes may require approval if the NMBR is already active."
+          question: `Can I edit a ${terminology.stories.toLowerCase()} after it's published?`,
+          answer: `Yes, you can edit most details of your ${terminology.stories.toLowerCase()} from the ${terminology.stories} page. However, some changes may require approval if the story is already active and receiving donations.`
         },
         {
-          question: "How do I track donations for my NMBR?",
+          question: "How do I track donations for my stories?",
           answer: "All donation tracking is available in the Analytics page. You can see real-time donation data, donor information, and campaign performance metrics."
         },
         {
-          question: "What happens when someone enters a NMBR code?",
-          answer: "When someone enters a NMBR code, they'll see the story behind the bracelet, can subscribe for updates, and can make a donation to support the cause."
+          question: "What happens when someone searches a NMBR code?",
+          answer: "When someone searches a NMBR code, they'll see your impact story, can subscribe for updates, and can make a donation to support your cause directly."
+        },
+        {
+          question: "How do I send newsletters to my donors?",
+          answer: "Use the Newsletters page to create and send updates to your donors. You can segment your audience, create beautiful templates, and track engagement."
         }
       ]
     },
     {
-      category: "Billing & Payments",
+      category: "Donations & Payments",
       questions: [
         {
           question: "How much does NMBR Platform cost?",
-          answer: "We offer flexible pricing plans starting at $29/month. Check the Billing page for detailed pricing information and plan features."
+          answer: "We offer flexible pricing plans starting at $49/month for nonprofits. Check the Billing page for detailed pricing information and plan features."
         },
         {
           question: "When will I receive my donations?",
@@ -89,6 +97,10 @@ export default function HelpPage() {
         {
           question: "Can I change my subscription plan?",
           answer: "Yes, you can upgrade or downgrade your plan at any time from the Billing page. Changes take effect at your next billing cycle."
+        },
+        {
+          question: "Are there any transaction fees?",
+          answer: "Stripe charges standard processing fees (2.9% + 30¢ per transaction). NMBR Platform doesn't charge additional fees on donations."
         }
       ]
     },
@@ -96,7 +108,7 @@ export default function HelpPage() {
       category: "Technical Support",
       questions: [
         {
-          question: "The widget isn't displaying correctly on my website",
+          question: "The donation widget isn't displaying correctly on my website",
           answer: "Check that you've copied the complete embed code and that your website supports iframes. Try the JavaScript version if the iframe doesn't work."
         },
         {
@@ -106,6 +118,10 @@ export default function HelpPage() {
         {
           question: "How do I reset my password?",
           answer: "Go to Settings > Security and use the 'Change Password' option. You'll need to enter your current password and create a new one."
+        },
+        {
+          question: "How do I integrate with my existing CRM?",
+          answer: "Visit the Integrations page to connect with popular CRM systems like Salesforce, Mailchimp, and others. We provide step-by-step setup guides."
         }
       ]
     }
@@ -201,8 +217,8 @@ export default function HelpPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold text-gray-900">Help & Support</h1>
-        <p className="text-gray-600">Find answers to common questions and get the help you need</p>
+        <h1 className="text-3xl font-bold text-foreground">Help & Support</h1>
+        <p className="text-muted-foreground">Find answers to common questions and get the help you need for your {terminology.fundraising.toLowerCase()}</p>
         
         {/* Search Bar */}
         <div className="relative max-w-md">
@@ -481,7 +497,7 @@ export default function HelpPage() {
                   Documentation
                 </CardTitle>
                 <CardDescription>
-                  Complete guides and API documentation
+                  Complete guides for {terminology.fundraising.toLowerCase()} and donor management
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -503,7 +519,7 @@ export default function HelpPage() {
                   Video Tutorials
                 </CardTitle>
                 <CardDescription>
-                  Step-by-step video guides
+                  Step-by-step video guides for nonprofits
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -522,17 +538,83 @@ export default function HelpPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5" />
-                  Best Practices
+                  Fundraising Best Practices
                 </CardTitle>
                 <CardDescription>
-                  Tips for successful NMBR campaigns
+                  Tips for successful {terminology.fundraising.toLowerCase()} campaigns
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
                   variant="outline" 
                   className="w-full"
-                  onClick={() => handleResourceClick("Best Practices Guide")}
+                  onClick={() => handleResourceClick("Fundraising Best Practices Guide")}
+                >
+                  Read Guide
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Heart className="w-5 h-5" />
+                  Donor Engagement Guide
+                </CardTitle>
+                <CardDescription>
+                  How to build lasting relationships with donors
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleResourceClick("Donor Engagement Guide")}
+                >
+                  Read Guide
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5" />
+                  Storytelling Workshop
+                </CardTitle>
+                <CardDescription>
+                  Learn to create compelling impact stories
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleResourceClick("Storytelling Workshop")}
+                >
+                  Join Workshop
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" />
+                  Analytics Guide
+                </CardTitle>
+                <CardDescription>
+                  Understanding your fundraising metrics
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => handleResourceClick("Analytics Guide")}
                 >
                   Read Guide
                   <ExternalLink className="w-4 h-4 ml-2" />

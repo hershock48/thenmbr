@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { useSubscription } from "@/contexts/SubscriptionContext"
 import { TeamRolesPrompt } from "@/components/ui/tier-upgrade-prompt"
+import { useOrganization } from "@/contexts/OrganizationContext"
 
 interface TeamMember {
   id: string
@@ -32,26 +33,8 @@ interface TeamMember {
   lastActive: string
 }
 
-const mockTeamMembers: TeamMember[] = [
-  {
-    id: '1',
-    name: 'John Smith',
-    email: 'john@example.com',
-    role: 'admin',
-    status: 'active',
-    joinedAt: '2024-01-15T00:00:00Z',
-    lastActive: '2024-01-20T10:30:00Z'
-  },
-  {
-    id: '2',
-    name: 'Sarah Johnson',
-    email: 'sarah@example.com',
-    role: 'editor',
-    status: 'active',
-    joinedAt: '2024-01-10T00:00:00Z',
-    lastActive: '2024-01-19T14:20:00Z'
-  }
-]
+// Start with empty team - will populate as users invite team members
+const mockTeamMembers: TeamMember[] = []
 
 const roleIcons = {
   admin: Crown,
@@ -67,6 +50,7 @@ const roleColors = {
 
 export default function TeamPage() {
   const { tier, canAddSeat, getRemainingSeats, incrementSeatUsage } = useSubscription()
+  const { terminology } = useOrganization()
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(mockTeamMembers)
   const [isAddingMember, setIsAddingMember] = useState(false)
   const [newMember, setNewMember] = useState({
@@ -247,42 +231,105 @@ export default function TeamPage() {
           <CardDescription>Manage your team members and their roles</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {teamMembers.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-primary">
-                      {member.name.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{member.name}</h3>
-                      <Badge className={roleColors[member.role]}>
-                        <div className="flex items-center gap-1">
-                          {getRoleIcon(member.role)}
-                          {member.role}
-                        </div>
-                      </Badge>
+          {teamMembers.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-10 h-10 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-3">
+                Build Your Team
+              </h3>
+              <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
+                Invite team members to help manage your {terminology.stories.toLowerCase()}, 
+                newsletters, and donor relationships. Collaborate effectively with role-based permissions.
+              </p>
+
+              {/* Quick Start Guide */}
+              <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                <h4 className="text-lg font-semibold text-foreground mb-4">How Team Management Works</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                    <div>
+                      <h5 className="font-medium text-foreground mb-1">Invite Team Members</h5>
+                      <p className="text-sm text-muted-foreground">Send email invitations to colleagues and volunteers.</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{member.email}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Joined {new Date(member.joinedAt).toLocaleDateString()}
-                    </p>
                   </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
-                    {member.status}
-                  </Badge>
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                    <div>
+                      <h5 className="font-medium text-foreground mb-1">Assign Roles</h5>
+                      <p className="text-sm text-muted-foreground">Set appropriate permissions for each team member.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                    <div>
+                      <h5 className="font-medium text-foreground mb-1">Collaborate</h5>
+                      <p className="text-sm text-muted-foreground">Work together on stories, newsletters, and donor outreach.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  onClick={() => setIsAddingMember(true)}
+                  className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
+                >
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  Invite Your First Team Member
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="text-lg px-8 py-6"
+                  onClick={() => window.open('/help/team-management', '_blank')}
+                >
+                  <Eye className="w-5 h-5 mr-2" />
+                  Learn More
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {teamMembers.map((member) => (
+                <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-primary">
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium">{member.name}</h3>
+                        <Badge className={roleColors[member.role]}>
+                          <div className="flex items-center gap-1">
+                            {getRoleIcon(member.role)}
+                            {member.role}
+                          </div>
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{member.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Joined {new Date(member.joinedAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge variant={member.status === 'active' ? 'default' : 'secondary'}>
+                      {member.status}
+                    </Badge>
+                    <Button variant="ghost" size="sm">
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -301,10 +348,12 @@ export default function TeamPage() {
               </div>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• Full access to all features</li>
-                <li>• Manage team members</li>
-                <li>• Billing and subscription</li>
-                <li>• Organization settings</li>
-                <li>• Create and edit content</li>
+                <li>• Manage team members and roles</li>
+                <li>• Billing and subscription management</li>
+                <li>• Organization settings and branding</li>
+                <li>• Create and edit {terminology.stories.toLowerCase()}</li>
+                <li>• Send newsletters and communications</li>
+                <li>• View all analytics and reports</li>
               </ul>
             </div>
             <div className="space-y-3">
@@ -313,11 +362,12 @@ export default function TeamPage() {
                 <h3 className="font-semibold">Editor</h3>
               </div>
               <ul className="space-y-1 text-sm text-muted-foreground">
-                <li>• Create and edit stories</li>
-                <li>• Manage newsletters</li>
-                <li>• View analytics</li>
-                <li>• Cannot manage team</li>
-                <li>• Cannot access billing</li>
+                <li>• Create and edit {terminology.stories.toLowerCase()}</li>
+                <li>• Send newsletters and updates</li>
+                <li>• Manage donor communications</li>
+                <li>• View analytics and reports</li>
+                <li>• Cannot manage team or billing</li>
+                <li>• Cannot change organization settings</li>
               </ul>
             </div>
             <div className="space-y-3">
@@ -326,11 +376,12 @@ export default function TeamPage() {
                 <h3 className="font-semibold">Viewer</h3>
               </div>
               <ul className="space-y-1 text-sm text-muted-foreground">
-                <li>• View stories and content</li>
-                <li>• View analytics</li>
-                <li>• Cannot create or edit</li>
-                <li>• Cannot manage team</li>
-                <li>• Read-only access</li>
+                <li>• View {terminology.stories.toLowerCase()} and content</li>
+                <li>• View analytics and reports</li>
+                <li>• Read donor communications</li>
+                <li>• Cannot create or edit content</li>
+                <li>• Cannot manage team or settings</li>
+                <li>• Read-only access for volunteers</li>
               </ul>
             </div>
           </div>

@@ -337,21 +337,59 @@ export default function DashboardPage() {
         <CardContent className="p-6">
           {stories.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-primary" />
+              <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Heart className="w-10 h-10 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                No stories yet
+              <h3 className="text-2xl font-bold text-foreground mb-3">
+                Ready to Create Your First Impact Story?
               </h3>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                Create your first impact story to start connecting with donors and raising funds for your cause.
+              <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
+                Your impact story is the heart of NMBR. When donors search your bracelet code, 
+                they'll discover the real people behind your cause and become lifelong supporters.
               </p>
-              <Link href="/dashboard/stories/create">
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Your First Story
-                </Button>
-              </Link>
+              
+              {/* Quick Start Guide */}
+              <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                <h4 className="text-lg font-semibold text-foreground mb-4">How It Works</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                    <div>
+                      <h5 className="font-medium text-foreground mb-1">Create Your Story</h5>
+                      <p className="text-sm text-muted-foreground">Write about the real people your nonprofit helps and the impact you create.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                    <div>
+                      <h5 className="font-medium text-foreground mb-1">Get Your NMBR Code</h5>
+                      <p className="text-sm text-muted-foreground">We'll generate a unique code that donors can search to find your story.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                    <div>
+                      <h5 className="font-medium text-foreground mb-1">Share & Fundraise</h5>
+                      <p className="text-sm text-muted-foreground">Embed the widget on your website and watch donations come in.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/dashboard/stories/create">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6">
+                    <Plus className="w-5 h-5 mr-2" />
+                    Create Your First Story
+                  </Button>
+                </Link>
+                <Link href="/demo">
+                  <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+                    <Eye className="w-5 h-5 mr-2" />
+                    See How It Works
+                  </Button>
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">

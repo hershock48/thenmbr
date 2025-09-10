@@ -20,52 +20,8 @@ interface Notification {
   priority: "low" | "medium" | "high"
 }
 
-const getMockNotifications = (orgType: string): Notification[] => [
-  {
-    id: "1",
-    type: orgType === "business" ? "donation" : "donation",
-    title: orgType === "business" ? "New Purchase Made" : "New Donation Received",
-    message: orgType === "business" 
-      ? "Sarah Johnson purchased your Coffee Blend #3 for $25"
-      : "Sarah Johnson donated $50 to your Clean Water Project story",
-    timestamp: "2 minutes ago",
-    read: false,
-    priority: "high",
-  },
-  {
-    id: "2",
-    type: "story",
-    title: "Story Performance Update",
-    message: orgType === "business"
-      ? 'Your "Artisan Coffee Journey" story reached 1,000 views this week'
-      : 'Your "Education for All" story reached 1,000 views this week',
-    timestamp: "1 hour ago",
-    read: false,
-    priority: "medium",
-  },
-  {
-    id: "3",
-    type: "analytics",
-    title: "Weekly Analytics Report",
-    message: orgType === "business"
-      ? "Your stories generated $2,450 in sales this week (+15%)"
-      : "Your stories generated $2,450 in donations this week (+15%)",
-    timestamp: "3 hours ago",
-    read: true,
-    priority: "medium",
-  },
-  {
-    id: "4",
-    type: "system",
-    title: "NMBR Searched",
-    message: orgType === "business"
-      ? "25 people searched your NMBR at the farmers market"
-      : "25 people searched your NMBR at the community event",
-    timestamp: "1 day ago",
-    read: true,
-    priority: "low",
-  },
-]
+// Start with empty notifications - will populate as users create stories and receive donations
+const getMockNotifications = (orgType: string): Notification[] => []
 
 const getNotificationIcon = (type: string) => {
   switch (type) {
@@ -161,9 +117,72 @@ export default function NotificationsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {notifications.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Bell className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No notifications yet</p>
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Bell className="w-10 h-10 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">
+                    No Notifications Yet
+                  </h3>
+                  <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
+                    You'll receive notifications when donors engage with your {terminology.stories.toLowerCase()}, 
+                    make donations, or when there are important updates about your {terminology.fundraising.toLowerCase()}.
+                  </p>
+
+                  {/* Quick Start Guide */}
+                  <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                    <h4 className="text-lg font-semibold text-foreground mb-4">What You'll Be Notified About</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                        <div>
+                          <h5 className="font-medium text-foreground mb-1">New Donations</h5>
+                          <p className="text-sm text-muted-foreground">Instant alerts when someone donates to your stories.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                        <div>
+                          <h5 className="font-medium text-foreground mb-1">Story Engagement</h5>
+                          <p className="text-sm text-muted-foreground">Updates on views, shares, and donor interactions.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                        <div>
+                          <h5 className="font-medium text-foreground mb-1">Milestone Alerts</h5>
+                          <p className="text-sm text-muted-foreground">Celebrate when you reach funding goals and targets.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
+                        <div>
+                          <h5 className="font-medium text-foreground mb-1">Analytics Reports</h5>
+                          <p className="text-sm text-muted-foreground">Weekly summaries of your fundraising performance.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button 
+                      size="lg" 
+                      className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
+                      onClick={() => window.location.href = '/dashboard/nmbrs'}
+                    >
+                      <MessageSquare className="w-5 h-5 mr-2" />
+                      Create Your First Story
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="text-lg px-8 py-6"
+                      onClick={() => window.location.href = '/dashboard/widget'}
+                    >
+                      <Settings className="w-5 h-5 mr-2" />
+                      Set Up Widget
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 notifications.map((notification) => (
@@ -214,14 +233,27 @@ export default function NotificationsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {notifications
-                .filter((n) => n.type === "story")
-                .map((notification) => (
-                  <div key={notification.id} className="p-4 border rounded-lg">
-                    <h3 className="font-medium">{notification.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-                  </div>
-                ))}
+              {notifications.filter((n) => n.type === "story").length === 0 ? (
+                <div className="text-center py-8">
+                  <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <h3 className="font-medium text-foreground mb-2">No Story Notifications</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    You'll receive updates when your {terminology.stories.toLowerCase()} get views, shares, or engagement.
+                  </p>
+                  <Button variant="outline" onClick={() => window.location.href = '/dashboard/nmbrs'}>
+                    Create Your First Story
+                  </Button>
+                </div>
+              ) : (
+                notifications
+                  .filter((n) => n.type === "story")
+                  .map((notification) => (
+                    <div key={notification.id} className="p-4 border rounded-lg">
+                      <h3 className="font-medium">{notification.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                    </div>
+                  ))
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -235,14 +267,27 @@ export default function NotificationsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {notifications
-                .filter((n) => n.type === "donation")
-                .map((notification) => (
-                  <div key={notification.id} className="p-4 border rounded-lg">
-                    <h3 className="font-medium">{notification.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-                  </div>
-                ))}
+              {notifications.filter((n) => n.type === "donation").length === 0 ? (
+                <div className="text-center py-8">
+                  <TrendingUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <h3 className="font-medium text-foreground mb-2">No Donation Notifications</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    You'll receive instant alerts when donors contribute to your {terminology.stories.toLowerCase()}.
+                  </p>
+                  <Button variant="outline" onClick={() => window.location.href = '/dashboard/widget'}>
+                    Set Up Donation Widget
+                  </Button>
+                </div>
+              ) : (
+                notifications
+                  .filter((n) => n.type === "donation")
+                  .map((notification) => (
+                    <div key={notification.id} className="p-4 border rounded-lg">
+                      <h3 className="font-medium">{notification.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                    </div>
+                  ))
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -256,14 +301,27 @@ export default function NotificationsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {notifications
-                .filter((n) => n.type === "analytics")
-                .map((notification) => (
-                  <div key={notification.id} className="p-4 border rounded-lg">
-                    <h3 className="font-medium">{notification.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-                  </div>
-                ))}
+              {notifications.filter((n) => n.type === "analytics").length === 0 ? (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <h3 className="font-medium text-foreground mb-2">No Analytics Notifications</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    You'll receive weekly reports and milestone alerts about your {terminology.fundraising.toLowerCase()} performance.
+                  </p>
+                  <Button variant="outline" onClick={() => window.location.href = '/dashboard/analytics'}>
+                    View Analytics Dashboard
+                  </Button>
+                </div>
+              ) : (
+                notifications
+                  .filter((n) => n.type === "analytics")
+                  .map((notification) => (
+                    <div key={notification.id} className="p-4 border rounded-lg">
+                      <h3 className="font-medium">{notification.title}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                    </div>
+                  ))
+              )}
             </CardContent>
           </Card>
         </TabsContent>

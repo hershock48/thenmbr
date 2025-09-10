@@ -123,161 +123,26 @@ export default function CommercePage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {analytics.revenue.total === 0 ? (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mx-auto">
-                    <ShoppingCart className="h-8 w-8 text-cyan-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">No donation data yet</h3>
-                    <p className="text-muted-foreground">
-                      When you create impact stories and donors start contributing, analytics will appear here.
-                    </p>
-                  </div>
-                  <div className="space-y-3">
-                    <Button asChild>
-                      <a href="/dashboard/nmbrs">Create Your First Story</a>
-                    </Button>
-                    <p className="text-sm text-muted-foreground">
-                      Impact stories help donors understand your mission and connect with your cause
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <>
-              {/* Key Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                    <p className="text-2xl font-bold">${analytics.revenue.total.toLocaleString()}</p>
-                    <p className="text-xs text-green-600">+12.5% from last month</p>
-                  </div>
-                  <DollarSign className="w-8 h-8 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total Orders</p>
-                    <p className="text-2xl font-bold">{analytics.orders.total}</p>
-                    <p className="text-xs text-green-600">+8.2% from last month</p>
-                  </div>
-                  <ShoppingCart className="w-8 h-8 text-blue-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Avg Order Value</p>
-                    <p className="text-2xl font-bold">${analytics.orders.averageOrderValue}</p>
-                    <p className="text-xs text-green-600">+5.1% from last month</p>
-                  </div>
-                  <TrendingUp className="w-8 h-8 text-purple-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Conversion Rate</p>
-                    <p className="text-2xl font-bold">{analytics.orders.conversionRate}%</p>
-                    <p className="text-xs text-green-600">+0.8% from last month</p>
-                  </div>
-                  <MousePointer className="w-8 h-8 text-orange-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Revenue by NMBR */}
           <Card>
-            <CardHeader>
-              <CardTitle>Revenue by NMBR</CardTitle>
-              <CardDescription>See which stories are driving the most sales</CardDescription>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-12 text-center">
               <div className="space-y-4">
-                {Object.entries(analytics.revenue.byNmbr)
-                  .sort(([,a], [,b]) => b - a)
-                  .map(([nmbrId, revenue]) => (
-                    <div key={nmbrId} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                          <Hash className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">NMBR {nmbrId.split('-')[1]}</h3>
-                          <p className="text-sm text-muted-foreground">Story-driven sales</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xl font-bold">${revenue.toLocaleString()}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {Math.round((revenue / analytics.revenue.total) * 100)}% of total
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Top Performing Updates */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Performing Email Updates</CardTitle>
-              <CardDescription>Updates that drove the most sales</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {analytics.attribution.topPerformingUpdates.map((update, index) => (
-                  <div key={update.updateId} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-bold text-primary">#{index + 1}</span>
-                      </div>
-                      <div>
-                        <h3 className="font-medium">Update {update.updateId.split('-')[2]}</h3>
-                        <p className="text-sm text-muted-foreground">NMBR {update.nmbrId.split('-')[1]}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-center">
-                        <div className="text-lg font-bold">{update.clicks}</div>
-                        <div className="text-xs text-muted-foreground">Clicks</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold">{update.conversions}</div>
-                        <div className="text-xs text-muted-foreground">Sales</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold">${update.revenue.toLocaleString()}</div>
-                        <div className="text-xs text-muted-foreground">Revenue</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold">
-                          {Math.round((update.conversions / update.clicks) * 100)}%
-                        </div>
-                        <div className="text-xs text-muted-foreground">CVR</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-full flex items-center justify-center mx-auto">
+                  <ShoppingCart className="h-8 w-8 text-cyan-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">No donation data yet</h3>
+                  <p className="text-muted-foreground">
+                    When you create impact stories and donors start contributing, analytics will appear here.
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <Button asChild>
+                    <a href="/dashboard/nmbrs">Create Your First Story</a>
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    Impact stories help donors understand your mission and connect with your cause
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -298,171 +163,23 @@ export default function CommercePage() {
               </div>
             </CardContent>
           </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue by Product</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Object.entries(analytics.revenue.byProduct)
-                    .sort(([,a], [,b]) => b - a)
-                    .map(([product, revenue]) => (
-                      <div key={product} className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{product}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-24 bg-muted rounded-full h-2">
-                            <div 
-                              className="bg-primary h-2 rounded-full" 
-                              style={{ 
-                                width: `${(revenue / Math.max(...Object.values(analytics.revenue.byProduct))) * 100}%` 
-                              }}
-                            />
-                          </div>
-                          <span className="text-sm font-bold">${revenue.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue by Update</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Object.entries(analytics.revenue.byUpdate)
-                    .sort(([,a], [,b]) => b - a)
-                    .map(([update, revenue]) => (
-                      <div key={update} className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{update}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-24 bg-muted rounded-full h-2">
-                            <div 
-                              className="bg-primary h-2 rounded-full" 
-                              style={{ 
-                                width: `${(revenue / Math.max(...Object.values(analytics.revenue.byUpdate))) * 100}%` 
-                              }}
-                            />
-                          </div>
-                          <span className="text-sm font-bold">${revenue.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
 
         <TabsContent value="attribution" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Email Clicks</p>
-                    <p className="text-2xl font-bold">{analytics.attribution.emailClicks.toLocaleString()}</p>
-                  </div>
-                  <Mail className="w-8 h-8 text-blue-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Email Conversions</p>
-                    <p className="text-2xl font-bold">{analytics.attribution.emailConversions}</p>
-                  </div>
-                  <MousePointer className="w-8 h-8 text-green-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Email Revenue</p>
-                    <p className="text-2xl font-bold">${analytics.attribution.emailRevenue.toLocaleString()}</p>
-                  </div>
-                  <DollarSign className="w-8 h-8 text-purple-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
           <Card>
             <CardHeader>
               <CardTitle>Attribution Flow</CardTitle>
-              <CardDescription>Track the customer journey from email to purchase</CardDescription>
+              <CardDescription>Track the donor journey from story to donation</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Mail className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Email Sent</h3>
-                      <p className="text-sm text-muted-foreground">Newsletter delivered</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold">{analytics.attribution.emailClicks.toLocaleString()}</div>
-                    <div className="text-sm text-muted-foreground">recipients</div>
-                  </div>
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Mail className="h-8 w-8 text-blue-600" />
                 </div>
-
-                <div className="flex items-center justify-center">
-                  <div className="w-px h-8 bg-muted" />
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                      <MousePointer className="w-4 h-4 text-green-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Link Clicked</h3>
-                      <p className="text-sm text-muted-foreground">User clicked product link</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold">{analytics.attribution.emailConversions}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {Math.round((analytics.attribution.emailConversions / analytics.attribution.emailClicks) * 100)}% click rate
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center">
-                  <div className="w-px h-8 bg-muted" />
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <ShoppingCart className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Purchase Made</h3>
-                      <p className="text-sm text-muted-foreground">Order completed</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold">${analytics.attribution.emailRevenue.toLocaleString()}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {Math.round((analytics.attribution.emailConversions / analytics.attribution.emailClicks) * 100)}% conversion rate
-                    </div>
-                  </div>
-                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No attribution data yet</h3>
+                <p className="text-muted-foreground">
+                  Attribution tracking will appear here once you start sending newsletters and receiving donations.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -472,31 +189,17 @@ export default function CommercePage() {
           <Card>
             <CardHeader>
               <CardTitle>Product Performance</CardTitle>
-              <CardDescription>Track sales and revenue by product</CardDescription>
+              <CardDescription>Track donations and fundraising by product</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {Object.entries(analytics.revenue.byProduct)
-                  .sort(([,a], [,b]) => b - a)
-                  .map(([product, revenue]) => (
-                    <div key={product} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
-                          <Hash className="w-6 h-6 text-muted-foreground" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{product}</h3>
-                          <p className="text-sm text-muted-foreground">Product sales</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xl font-bold">${revenue.toLocaleString()}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {Math.round((revenue / analytics.revenue.total) * 100)}% of total revenue
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Hash className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No product data yet</h3>
+                <p className="text-muted-foreground">
+                  Product performance will appear here once you start receiving donations through your stories.
+                </p>
               </div>
             </CardContent>
           </Card>

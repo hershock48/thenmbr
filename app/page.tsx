@@ -160,12 +160,12 @@ export default function HomePage() {
                   The Complete Story-Driven Fundraising Platform
                 </Badge>
                 <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
-                  Turn Stories Into
-                  <span className="text-primary"> Impact</span>
+                  Turn Every Donor Into a
+                  <span className="text-primary"> Storyteller</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
-                  The only platform that combines storytelling, multi-channel communications, 
-                  and fundraising to turn your impact stories into sustainable donor relationships and recurring support.
+                  Create numbered bracelets that tell your impact story. When donors search the code, 
+                  they discover the real people behind your cause and become lifelong supporters.
                 </p>
                 
                 {/* Market Timing & Urgency */}
@@ -179,9 +179,9 @@ export default function HomePage() {
                         Why Now? Donors Want Connection
                       </h3>
                       <p className="text-sm text-green-700 dark:text-green-300">
-                        Post-COVID, donors crave authentic connections with causes. 
-                        <strong> 78% of donors</strong> prefer nonprofits that share their impact stories and show real results. 
-                        NMBR helps you build lasting donor relationships in this $2.3T giving market.
+                        <strong>78% of donors</strong> want to know exactly how their money helps real people. 
+                        NMBR bracelets create that connection instantly - donors search the code and see the impact story. 
+                        Join 500+ nonprofits already using this $2.3T giving market strategy.
                       </p>
                     </div>
                 </div>
@@ -189,18 +189,34 @@ export default function HomePage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg px-8 py-6" asChild>
+                <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary" asChild>
                   <Link href="/signup">
-                    Start Free Trial
+                    Create Your First NMBR Story
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                     </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2" asChild>
                 <Link href="/demo/attribution">
                   <Smartphone className="w-5 h-5 mr-2" />
                   View Live Demo
                   </Link>
                   </Button>
+              </div>
+              
+              {/* Trust Indicators */}
+              <div className="flex flex-col sm:flex-row items-center gap-6 pt-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Free 14-day trial</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>No credit card required</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Setup in 5 minutes</span>
+                </div>
               </div>
 
               <div className="flex items-center gap-8 text-sm text-muted-foreground">

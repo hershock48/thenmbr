@@ -69,27 +69,11 @@ export default function ImpactStoriesPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("newest")
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [stories, setStories] = useState<ImpactStory[]>([])
+  const [isCreating, setIsCreating] = useState(false)
 
   // Start with empty array - users will create their own stories
-  const impactStories: ImpactStory[] = [
-    // Example story to show what's possible (can be removed after first real story)
-    {
-      id: "example",
-      code: "EXAMPLE",
-      title: "Example Impact Story",
-      description: "This is an example story to show you how impact stories work. Create your own story to get started!",
-      beneficiary: "Your Beneficiary",
-      category: "Education",
-      donors: 0,
-      fundsRaised: 0,
-      fundingGoal: 1000,
-      status: "draft",
-      image: "/placeholder.svg",
-      createdAt: new Date().toISOString().split('T')[0],
-      impactDescription: "Replace this with your own impact description.",
-      location: "Your Location"
-    }
-  ]
+  const impactStories = stories
 
   const filteredStories = impactStories.filter(story => {
     const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -138,6 +122,41 @@ export default function ImpactStoriesPage() {
     }
   }
 
+  const handleCreateStory = async (formData: FormData) => {
+    setIsCreating(true)
+    try {
+      const newStory: ImpactStory = {
+        id: `story-${Date.now()}`,
+        code: formData.get('code') as string,
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        beneficiary: formData.get('beneficiary') as string,
+        category: formData.get('category') as string || 'Community',
+        donors: 0,
+        fundsRaised: 0,
+        fundingGoal: parseInt(formData.get('goal') as string) || 1000,
+        status: 'draft',
+        image: '/placeholder.svg',
+        createdAt: new Date().toISOString().split('T')[0],
+        impactDescription: formData.get('impactDescription') as string || '',
+        location: formData.get('location') as string || ''
+      }
+
+      setStories(prev => [newStory, ...prev])
+      setShowCreateDialog(false)
+      
+      // Reset form
+      const form = document.getElementById('create-story-form') as HTMLFormElement
+      if (form) form.reset()
+      
+    } catch (error) {
+      console.error('Error creating story:', error)
+      alert('Failed to create story. Please try again.')
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Breadcrumb */}
@@ -178,68 +197,119 @@ export default function ImpactStoriesPage() {
                 Create a new impact story to connect with donors and track your fundraising progress.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-6 py-4">
+            <form id="create-story-form" action={handleCreateStory} className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="code">Story Code</Label>
+                  <Label htmlFor="code">Story Code *</Label>
                   <Input
                     id="code"
+                    name="code"
                     placeholder="e.g., HOPE006"
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="goal">Funding Goal ($)</Label>
+                  <Label htmlFor="goal">Funding Goal ($) *</Label>
                   <Input
                     id="goal"
+                    name="goal"
                     type="number"
                     placeholder="5000"
+                    min="100"
+                    required
                   />
                 </div>
               </div>
+              
               <div className="space-y-2">
-                <Label htmlFor="title">Story Title</Label>
+                <Label htmlFor="title">Story Title *</Label>
                 <Input
                   id="title"
+                  name="title"
                   placeholder="e.g., Supporting Local Families"
+                  required
                 />
               </div>
+              
               <div className="space-y-2">
-                <Label htmlFor="beneficiary">Beneficiary Name</Label>
+                <Label htmlFor="beneficiary">Beneficiary Name *</Label>
                 <Input
                   id="beneficiary"
+                  name="beneficiary"
                   placeholder="e.g., Maria Rodriguez"
+                  required
                 />
               </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select name="category" required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Education">Education</SelectItem>
+                      <SelectItem value="Healthcare">Healthcare</SelectItem>
+                      <SelectItem value="Community">Community</SelectItem>
+                      <SelectItem value="Emergency">Emergency</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    placeholder="e.g., New York, NY"
+                  />
+                </div>
+              </div>
+              
               <div className="space-y-2">
-                <Label htmlFor="description">Story Description</Label>
+                <Label htmlFor="description">Story Description *</Label>
                 <Textarea
                   id="description"
+                  name="description"
                   placeholder="Tell the compelling story behind this impact story..."
                   className="min-h-32"
+                  required
                 />
               </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="impactDescription">Impact Description</Label>
+                <Textarea
+                  id="impactDescription"
+                  name="impactDescription"
+                  placeholder="Describe the positive impact this story will have..."
+                  className="min-h-24"
+                />
+              </div>
+              
               <div className="space-y-2">
                 <Label>Media</Label>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button type="button" variant="outline" size="sm">
                     <ImageIcon className="w-4 h-4 mr-2" />
                     Add Image
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button type="button" variant="outline" size="sm">
                     <Video className="w-4 h-4 mr-2" />
                     Add Video
                   </Button>
                 </div>
               </div>
+              
               <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
                   Cancel
                 </Button>
-                <Button>
-                  Create Story
+                <Button type="submit" disabled={isCreating}>
+                  {isCreating ? 'Creating...' : 'Create Story'}
                 </Button>
               </div>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
@@ -440,28 +510,36 @@ export default function ImpactStoriesPage() {
       {filteredStories.length === 0 && (
         <Card>
           <CardContent className="p-12 text-center">
-            <div className="space-y-4">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
-                <Target className="h-8 w-8 text-muted-foreground" />
+            <div className="space-y-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto">
+                <Target className="h-10 w-10 text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">No stories found</h3>
-                <p className="text-muted-foreground">
-                  {searchTerm || statusFilter !== "all"
-                    ? "Try adjusting your filters to see more stories"
-                    : "Create your first impact story to start connecting with donors"
+              <div className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground">
+                  {searchTerm || statusFilter !== "all" 
+                    ? "No stories found"
+                    : "No impact stories yet"
+                  }
+                </h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  {searchTerm || statusFilter !== "all" 
+                    ? "Try adjusting your search or filters to find stories."
+                    : "Create compelling impact stories to connect with donors and track your fundraising progress. Each story helps you build meaningful relationships with supporters."
                   }
                 </p>
               </div>
               {!searchTerm && statusFilter === "all" && (
-                <div className="space-y-3">
-                  <Button onClick={() => setShowCreateDialog(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
+                <div className="space-y-4">
+                  <Button 
+                    onClick={() => setShowCreateDialog(true)}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
                     Create Your First Story
                   </Button>
-                  <p className="text-sm text-muted-foreground">
-                    Impact stories help donors understand your mission and connect with your cause
-                  </p>
+                  <div className="text-sm text-muted-foreground">
+                    <p>Impact stories help donors understand your mission and connect with your cause</p>
+                  </div>
                 </div>
               )}
             </div>

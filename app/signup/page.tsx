@@ -95,7 +95,7 @@ export default function SignupPage() {
   const [error, setError] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
 
-  const totalSteps = 4
+  const totalSteps = 3
 
   const handleInputChange = (field: keyof SignupFormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -109,9 +109,7 @@ export default function SignupPage() {
       case 2:
         return formData.organizationName.length > 0 && formData.primaryCause.length > 0
       case 3:
-        return formData.projectDescription.length > 50
-      case 4:
-        return formData.agreeToTerms
+        return formData.projectDescription.length > 50 && formData.agreeToTerms
       default:
         return false
     }
@@ -131,7 +129,7 @@ export default function SignupPage() {
   }
 
   const handleSubmit = async () => {
-    if (!validateStep(4)) {
+    if (!validateStep(3)) {
       setError("Please complete all required fields and accept the terms.")
       return
     }
@@ -298,17 +296,14 @@ export default function SignupPage() {
                   {currentStep === 1 && <Mail className="w-5 h-5" />}
                   {currentStep === 2 && <Building2 className="w-5 h-5" />}
                   {currentStep === 3 && <Target className="w-5 h-5" />}
-                  {currentStep === 4 && <Shield className="w-5 h-5" />}
                   {currentStep === 1 && "Create Your Account"}
                   {currentStep === 2 && "Organization Details"}
-                  {currentStep === 3 && "Your Impact Story"}
-                  {currentStep === 4 && "Review & Launch"}
+                  {currentStep === 3 && "Your Impact Story & Launch"}
                 </CardTitle>
                 <CardDescription>
                   {currentStep === 1 && "Set up your secure account to get started"}
                   {currentStep === 2 && "Tell us about your nonprofit organization"}
-                  {currentStep === 3 && "Describe the impact you want to create"}
-                  {currentStep === 4 && "Review your information and launch your fundraising"}
+                  {currentStep === 3 && "Describe your impact story and launch your fundraising"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">

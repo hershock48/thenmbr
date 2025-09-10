@@ -236,21 +236,69 @@ export default function CommunicationsPage() {
               <CardDescription>Latest messages sent across all channels</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Send className="w-8 h-8 text-blue-600" />
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Send className="w-10 h-10 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">No communications yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  When you send newsletters, SMS updates, or post to your supporter feed, they'll appear here.
+                <h3 className="text-2xl font-bold text-foreground mb-3">No Communications Yet</h3>
+                <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
+                  When you send newsletters, SMS updates, or post to your supporter feed, they'll appear here. 
+                  Start engaging with your {terminology.subscribers.toLowerCase()} across multiple channels.
                 </p>
-                <div className="space-y-2">
-                  <Button asChild>
-                    <a href="/dashboard/newsletters">Create Newsletter</a>
+
+                {/* Quick Start Guide */}
+                <div className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                  <h4 className="text-lg font-semibold text-foreground mb-4">Multi-Channel Communication Strategy</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">Email Newsletters</h5>
+                        <p className="text-sm text-muted-foreground">Send detailed updates and impact stories to your donor list.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">SMS Updates</h5>
+                        <p className="text-sm text-muted-foreground">Send instant alerts for urgent needs and quick updates.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">Push Notifications</h5>
+                        <p className="text-sm text-muted-foreground">Engage donors through mobile app notifications.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">Supporter Feed</h5>
+                        <p className="text-sm text-muted-foreground">Create a private community for your most engaged supporters.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    size="lg" 
+                    className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
+                    onClick={() => window.location.href = '/dashboard/newsletters'}
+                  >
+                    <Mail className="w-5 h-5 mr-2" />
+                    Create Newsletter
                   </Button>
-                  <p className="text-sm text-muted-foreground">
-                    Start by creating your first newsletter to engage with donors
-                  </p>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="text-lg px-8 py-6"
+                    onClick={() => window.location.href = '/dashboard/analytics'}
+                  >
+                    <BarChart3 className="w-5 h-5 mr-2" />
+                    View Analytics
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -320,15 +368,63 @@ export default function CommunicationsPage() {
               <CardDescription>Manage your email campaigns and newsletters</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Mail className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Email Campaigns</h3>
-                <p className="text-muted-foreground mb-4">
-                  Use the Newsletter Builder to create and send email campaigns to your {terminology.subscribers.toLowerCase()}.
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Mail className="w-10 h-10 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-3">Email Campaigns</h3>
+                <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
+                  Use the Newsletter Builder to create and send email campaigns to your {terminology.subscribers.toLowerCase()}. 
+                  Track engagement, segment your audience, and build lasting relationships.
                 </p>
-                <Button asChild>
-                  <a href="/dashboard/newsletters">Go to Newsletter Builder</a>
-                </Button>
+
+                {/* Email Benefits */}
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                  <h4 className="text-lg font-semibold text-foreground mb-4">Why Email Marketing Works for Nonprofits</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">High ROI</h5>
+                        <p className="text-sm text-muted-foreground">Email marketing returns $42 for every $1 spent.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">Direct Communication</h5>
+                        <p className="text-sm text-muted-foreground">Reach donors directly in their inbox.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                      <div>
+                        <h5 className="font-medium text-foreground mb-1">Personalization</h5>
+                        <p className="text-sm text-muted-foreground">Segment and personalize your messages.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    size="lg" 
+                    className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6"
+                    onClick={() => window.location.href = '/dashboard/newsletters'}
+                  >
+                    <Mail className="w-5 h-5 mr-2" />
+                    Go to Newsletter Builder
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="text-lg px-8 py-6"
+                    onClick={() => window.location.href = '/dashboard/subscribers'}
+                  >
+                    <Users className="w-5 h-5 mr-2" />
+                    Manage Subscribers
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
