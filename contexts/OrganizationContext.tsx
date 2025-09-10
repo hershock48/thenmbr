@@ -112,6 +112,7 @@ const organizationConfigs = {
       { name: "Mobile App", href: "/mobile", icon: Smartphone, description: "Download and manage the NMBR mobile app" },
       { name: "API Documentation", href: "/api-docs", icon: Code, description: "Integrate NMBR with your existing systems" },
       { name: "Automation", href: "/dashboard/automation", icon: Zap, description: "Automate your fundraising processes and workflows" },
+      { name: "Global Settings", href: "/dashboard/global-settings", icon: Globe, description: "Configure global localization, compliance, and scaling" },
       {
         name: "Donation Widget",
         href: "/dashboard/widget",
