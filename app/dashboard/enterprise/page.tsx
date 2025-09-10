@@ -128,10 +128,10 @@ export default function EnterprisePage() {
   ]
 
   const globalMetrics = [
-    { label: 'Active Regions', value: 12, icon: Globe },
-    { label: 'Languages Supported', value: 25, icon: FileText },
-    { label: 'Currencies', value: 15, icon: TrendingUp },
-    { label: 'Edge Locations', value: 45, icon: Server }
+    { label: 'Active Regions', value: 12, icon: 'Globe' },
+    { label: 'Languages Supported', value: 25, icon: 'FileText' },
+    { label: 'Currencies', value: 15, icon: 'TrendingUp' },
+    { label: 'Edge Locations', value: 45, icon: 'Server' }
   ]
 
   return (
@@ -430,7 +430,10 @@ export default function EnterprisePage() {
               <Card key={index}>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <metric.icon className="w-5 h-5 text-primary" />
+                    {metric.icon === 'Globe' && <Globe className="w-5 h-5 text-primary" />}
+                    {metric.icon === 'FileText' && <FileText className="w-5 h-5 text-primary" />}
+                    {metric.icon === 'TrendingUp' && <TrendingUp className="w-5 h-5 text-primary" />}
+                    {metric.icon === 'Server' && <Server className="w-5 h-5 text-primary" />}
                     <span className="text-sm font-medium text-muted-foreground">{metric.label}</span>
                   </div>
                   <div className="text-2xl font-bold text-primary">{metric.value}</div>

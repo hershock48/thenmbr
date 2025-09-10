@@ -29,6 +29,7 @@ import {
   Smartphone,
   Code,
   Zap,
+  Globe,
 } from "lucide-react"
 
 interface OrganizationTerminology {

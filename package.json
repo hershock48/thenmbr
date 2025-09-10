@@ -65,6 +65,7 @@
     "react-is": "^19.1.1",
     "react-resizable-panels": "latest",
     "recharts": "latest",
+    "resend": "^6.0.3",
     "sonner": "latest",
     "stripe": "latest",
     "svelte": "latest",

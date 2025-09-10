@@ -64,7 +64,6 @@ import {
   Gift,
   Sparkles
 } from "lucide-react"
-import { useOrganization } from "@/contexts/OrganizationContext"
 
 interface MobileFeature {
   id: string
@@ -85,7 +84,17 @@ interface AppVersion {
 }
 
 export default function MobilePage() {
-  const { terminology } = useOrganization()
+  // Use default terminology if not in organization context
+  const terminology = {
+    donations: 'donations',
+    subscribers: 'subscribers', 
+    fundraising: 'fundraising',
+    campaigns: 'campaigns',
+    supporters: 'supporters',
+    stories: 'stories',
+    analytics: 'analytics',
+    engagement: 'engagement'
+  }
   const [selectedPlatform, setSelectedPlatform] = useState<'ios' | 'android' | 'web'>('ios')
   const [showPreview, setShowPreview] = useState(false)
   const [selectedFeature, setSelectedFeature] = useState<MobileFeature | null>(null)

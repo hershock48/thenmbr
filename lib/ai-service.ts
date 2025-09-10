@@ -50,10 +50,13 @@ class AIService {
   }
 
   private initializeOpenAI() {
-    if (process.env.OPENAI_API_KEY) {
+    // Check both server-side and client-side environment variables
+    const apiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY
+    
+    if (apiKey) {
       try {
         this.openai = new OpenAI({
-          apiKey: process.env.OPENAI_API_KEY,
+          apiKey: apiKey,
         })
         this.isInitialized = true
         console.log('✅ OpenAI service initialized successfully')
@@ -62,7 +65,7 @@ class AIService {
         this.isInitialized = false
       }
     } else {
-      console.warn('⚠️ OPENAI_API_KEY not found. AI Review will use mock suggestions.')
+      // Don't show warning - just silently fall back to mock
       this.isInitialized = false
     }
   }

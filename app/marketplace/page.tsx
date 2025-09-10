@@ -44,8 +44,7 @@ import {
   ExternalLink,
   Settings,
   Store,
-  RefreshCw,
-  CheckCircle
+  RefreshCw
 } from "lucide-react"
 import Link from "next/link"
 import { realDropshipService, type RealProduct } from "@/lib/real-dropship-service"

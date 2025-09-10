@@ -36,7 +36,6 @@ import {
   Lightbulb,
   Handshake
 } from "lucide-react"
-import { useOrganization } from "@/contexts/OrganizationContext"
 
 interface CommunityPost {
   id: string
@@ -77,7 +76,17 @@ interface CommunityStats {
 }
 
 export default function CommunityPage() {
-  const { terminology } = useOrganization()
+  // Use default terminology if not in organization context
+  const terminology = {
+    donations: 'donations',
+    subscribers: 'subscribers', 
+    fundraising: 'fundraising',
+    campaigns: 'campaigns',
+    supporters: 'supporters',
+    stories: 'stories',
+    analytics: 'analytics',
+    engagement: 'engagement'
+  }
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [showCreatePost, setShowCreatePost] = useState(false)
