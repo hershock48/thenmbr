@@ -1,238 +1,166 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   ArrowLeft,
   Eye,
   Hash,
-  Coffee,
-  Shirt,
-  Mountain,
-  X,
   ImageIcon,
   Video,
   FileText,
   Users,
-  GraduationCap,
-  Stethoscope,
-  Home,
+  DollarSign,
+  Target,
+  Heart,
+  Save,
+  Share2,
+  CheckCircle,
+  Loader2,
 } from "lucide-react"
 import Link from "next/link"
 import { useOrganization } from "@/contexts/OrganizationContext"
 import { useSubscription } from "@/contexts/SubscriptionContext"
-import { AIWritingAssistant } from "@/components/ui/ai-writing-assistant"
-import { NmbrLimitReachedPrompt } from "@/components/ui/tier-upgrade-prompt"
 
-const industryTemplates = [
-  // Business templates
-  {
-    id: "coffee",
-    name: "Coffee & Beverages",
-    icon: Coffee,
-    description: "Perfect for coffee roasters, tea companies, and beverage brands",
-    orgTypes: ["business"],
-    template: {
-      title: "From Bean to Cup: [Product Name]",
-      content:
-        "Discover the journey of your coffee from the farm where it was grown to the cup in your hands. Meet the farmers who carefully cultivated these beans and learn about the sustainable practices that make each sip meaningful.",
-    },
-  },
-  {
-    id: "fashion",
-    name: "Fashion & Apparel",
-    icon: Shirt,
-    description: "Ideal for clothing brands, accessories, and fashion retailers",
-    orgTypes: ["business"],
-    template: {
-      title: "Crafted with Care: [Product Name]",
-      content:
-        "Every thread tells a story. Learn about the artisans who created this piece, the sustainable materials used, and the positive impact your purchase makes on communities around the world.",
-    },
-  },
-  {
-    id: "outdoor",
-    name: "Outdoor & Adventure",
-    icon: Mountain,
-    description: "Great for outdoor gear, sports equipment, and adventure brands",
-    orgTypes: ["business"],
-    template: {
-      title: "Built for Adventure: [Product Name]",
-      content:
-        "This gear was designed by adventurers, for adventurers. Discover the testing process, meet the athletes who helped develop it, and see how your purchase supports conservation efforts.",
-    },
-  },
+interface StoryData {
+  title: string
+  description: string
+  beneficiaryName: string
+  beneficiaryAge?: number
+  location: string
+  fundingGoal: number
+  currentAmount: number
+  impactDescription: string
+  media: Array<{
+    type: "image" | "video" | "document"
+    url: string
+    name: string
+  }>
+}
+
+const impactTemplates = [
   {
     id: "education",
-    name: "Education & Learning",
-    icon: GraduationCap,
-    description: "Perfect for education nonprofits, scholarship programs, and learning initiatives",
-    orgTypes: ["nonprofit"],
+    name: "Education & Youth",
+    icon: Users,
+    description: "Supporting students and educational programs",
     template: {
-      title: "[Student Name]'s Educational Journey",
-      content:
-        "Meet [Student Name], whose life is being transformed through education. Follow their journey from the classroom to their dreams, and see how your donation is making a real difference in their future. Every dollar helps provide books, supplies, and opportunities that change lives.",
-    },
+      title: "Supporting [Name]'s Educational Journey",
+      description: "Help [Name] achieve their educational dreams and create a brighter future for themselves and their community.",
+      impactDescription: "Your donation will directly fund [Name]'s education, including tuition, books, supplies, and living expenses. This investment in education creates a ripple effect that benefits entire communities."
+    }
   },
   {
     id: "healthcare",
     name: "Healthcare & Medical",
-    icon: Stethoscope,
-    description: "Ideal for medical nonprofits, health programs, and patient care initiatives",
-    orgTypes: ["nonprofit"],
+    icon: Heart,
+    description: "Providing essential medical care and treatment",
     template: {
-      title: "Healing Hope: [Patient Name]'s Story",
-      content:
-        "This is [Patient Name]'s story of courage and recovery. Thanks to donors like you, they're receiving the medical care they desperately need. Follow their healing journey and see the direct impact of your generosity on their path to wellness.",
-    },
-  },
-  {
-    id: "housing",
-    name: "Housing & Shelter",
-    icon: Home,
-    description: "Great for housing nonprofits, homeless shelters, and community development",
-    orgTypes: ["nonprofit"],
-    template: {
-      title: "A Place to Call Home: [Family Name]'s Story",
-      content:
-        "Meet the [Family Name] family, who are building a new life with your help. From homelessness to hope, follow their journey as they work toward stable housing and a brighter future. Your support provides more than shelter—it provides dignity and opportunity.",
-    },
+      title: "Medical Care for [Name]",
+      description: "Help [Name] receive the critical medical care they need to recover and thrive.",
+      impactDescription: "Your donation will cover medical expenses, treatments, medications, and follow-up care, giving [Name] the best chance at recovery and a healthy future."
+    }
   },
   {
     id: "community",
-    name: "Community Impact",
-    icon: Users,
-    description: "Perfect for community development, social services, and local impact programs",
-    orgTypes: ["nonprofit", "grassroots"],
+    name: "Community Development",
+    icon: Target,
+    description: "Building stronger communities and infrastructure",
     template: {
-      title: "Transforming Our Community: [Project Name]",
-      content:
-        "See how your support is creating lasting change in our community. This project brings together neighbors, volunteers, and supporters like you to address real needs and build a stronger, more connected community for everyone.",
-    },
-  },
+      title: "Building Hope in [Location]",
+      description: "Support community development projects that create lasting positive change.",
+      impactDescription: "Your donation will fund community projects, infrastructure improvements, and programs that benefit hundreds of families in the area."
+    }
+  }
 ]
 
 export default function CreateStoryPage() {
-  const { orgType } = useOrganization()
-  const { canCreateNmbr, incrementNmbrUsage, getRemainingNmbrs, tier } = useSubscription()
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
-  const [storyData, setStoryData] = useState({
-    title: "",
-    content: "",
-    productName: "",
-    productSku: "",
-    industry: "",
-    beneficiaryName: "",
-    impactGoal: "",
-    fundingGoal: "",
-    currentFunding: "",
-    media: [] as { type: string; name: string; url: string; file?: File }[],
-  })
+  const { terminology } = useOrganization()
+  const { canCreateNmbr } = useSubscription()
+  const [currentStep, setCurrentStep] = useState(1)
   const [showPreview, setShowPreview] = useState(false)
-  const [nmbrCode, setNmbrCode] = useState<string | null>(null)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
+  
+  const [storyData, setStoryData] = useState<StoryData>({
+    title: "",
+    description: "",
+    beneficiaryName: "",
+    beneficiaryAge: undefined,
+    location: "",
+    fundingGoal: 0,
+    currentAmount: 0,
+    impactDescription: "",
+    media: []
+  })
 
-  const availableTemplates = industryTemplates.filter((template) => template.orgTypes.includes(orgType || "business"))
-
-  // Cleanup object URLs on unmount
-  useEffect(() => {
-    return () => {
-      storyData.media.forEach(media => {
-        if (media.url && media.url.startsWith('blob:')) {
-          URL.revokeObjectURL(media.url)
-        }
-      })
-    }
-  }, [])
+  const totalSteps = 4
 
   const handleTemplateSelect = (templateId: string) => {
-    const template = availableTemplates.find((t) => t.id === templateId)
+    const template = impactTemplates.find(t => t.id === templateId)
     if (template) {
       setSelectedTemplate(templateId)
-      setStoryData((prev) => ({
+      setStoryData(prev => ({
         ...prev,
         title: template.template.title,
-        content: template.template.content,
-        industry: template.name,
+        description: template.template.description,
+        impactDescription: template.template.impactDescription
       }))
     }
   }
 
-  const handleMediaUpload = (type: string) => {
-    // Create file input element
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = type === 'image' ? 'image/*' : type === 'video' ? 'video/*' : '.pdf,.doc,.docx'
-    input.multiple = true
-    
-    input.onchange = (e) => {
-      const files = (e.target as HTMLInputElement).files
-      if (files) {
-        Array.from(files).forEach((file) => {
-          // Create object URL for preview
-          const url = URL.createObjectURL(file)
-          const newMedia = {
-            type,
-            name: file.name,
-            url: url,
-            file: file, // Store the actual file for upload
-          }
-          setStoryData((prev) => ({
-            ...prev,
-            media: [...prev.media, newMedia],
-          }))
-        })
-      }
+  const handleInputChange = (field: keyof StoryData, value: string | number) => {
+    setStoryData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleMediaUpload = (type: "image" | "video" | "document") => {
+    // Simulate file upload
+    const newMedia = {
+      type,
+      url: `https://via.placeholder.com/300x200?text=${type.toUpperCase()}`,
+      name: `uploaded_${type}_${Date.now()}`
     }
-    
-    input.click()
+    setStoryData(prev => ({
+      ...prev,
+      media: [...prev.media, newMedia]
+    }))
   }
 
-  const removeMedia = (index: number) => {
-    setStoryData((prev) => {
-      const mediaToRemove = prev.media[index]
-      // Clean up object URL to prevent memory leaks
-      if (mediaToRemove?.url && mediaToRemove.url.startsWith('blob:')) {
-        URL.revokeObjectURL(mediaToRemove.url)
-      }
-      return {
-        ...prev,
-        media: prev.media.filter((_, i) => i !== index),
-      }
-    })
-  }
-
-  const generateNmbrCode = () => {
-    // Simulate NMBR generation
-    const itemName = orgType === "nonprofit" ? storyData.beneficiaryName || "impact story" : storyData.productName
-    setNmbrCode(`/placeholder.svg?height=200&width=200&query=NMBR for ${itemName}`)
-  }
-
-  const handleSave = () => {
-    console.log("[v0] Saving story:", storyData)
-    // Implement save functionality
-  }
-
-  const handlePublish = () => {
-    if (!canCreateNmbr()) {
-      // Show upgrade prompt instead of publishing
+  const handlePublish = async () => {
+    if (!canCreateNmbr) {
+      // Show upgrade prompt
       return
     }
+
+    setIsPublishing(true)
     
-    console.log("[v0] Publishing story:", storyData)
-    // Implement publish functionality
-    incrementNmbrUsage() // Increment NMBR usage when published
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Redirect to story management
+    window.location.href = "/dashboard/stories"
+  }
+
+  const getProgressPercentage = () => {
+    let completed = 0
+    if (storyData.title) completed++
+    if (storyData.description) completed++
+    if (storyData.beneficiaryName) completed++
+    if (storyData.fundingGoal > 0) completed++
+    if (storyData.impactDescription) completed++
+    return (completed / 5) * 100
   }
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -244,14 +172,8 @@ export default function CreateStoryPage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-card-foreground">
-                  {orgType === "nonprofit" ? "Create Impact Story" : "Create Product Story"}
-                </h1>
-                <p className="text-muted-foreground">
-                  {orgType === "nonprofit"
-                    ? "Build compelling stories that connect donors to the people they help"
-                    : "Build engaging stories that connect customers to your products"}
-                </p>
+                <h1 className="text-2xl font-bold text-foreground">Create Impact Story</h1>
+                <p className="text-muted-foreground">Share your cause and connect with donors</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -259,14 +181,19 @@ export default function CreateStoryPage() {
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
               </Button>
-              <Button variant="outline" onClick={handleSave}>
-                Save Draft
+              <Button onClick={handlePublish} disabled={!canCreateNmbr || isPublishing}>
+                {isPublishing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Publish Story
+                  </>
+                )}
               </Button>
-              {canCreateNmbr() ? (
-                <Button onClick={handlePublish}>Publish Story</Button>
-              ) : (
-                <NmbrLimitReachedPrompt />
-              )}
             </div>
           </div>
         </div>
@@ -276,412 +203,375 @@ export default function CreateStoryPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="template">Template</TabsTrigger>
-                <TabsTrigger value="content">Content</TabsTrigger>
-                <TabsTrigger value="media">Media</TabsTrigger>
-                <TabsTrigger value="details">{orgType === "nonprofit" ? "Impact" : "Product"}</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="template" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Choose a Template</CardTitle>
-                    <CardDescription>
-                      {orgType === "nonprofit"
-                        ? "Start with a template designed for nonprofit impact stories"
-                        : "Start with an industry-specific template to create compelling stories faster"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {availableTemplates.map((template) => (
-                        <Card
-                          key={template.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${
-                            selectedTemplate === template.id ? "ring-2 ring-primary" : ""
-                          }`}
-                          onClick={() => handleTemplateSelect(template.id)}
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex items-start gap-3">
-                              <div className="p-2 bg-primary/10 rounded-lg">
-                                <template.icon className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <h3 className="font-semibold text-card-foreground">{template.name}</h3>
-                                <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+            {/* Progress */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold">Story Progress</h3>
+                    <span className="text-sm text-muted-foreground">
+                      {Math.round(getProgressPercentage())}% Complete
+                    </span>
+                  </div>
+                  <Progress value={getProgressPercentage()} className="h-2" />
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className={`h-4 w-4 ${storyData.title ? 'text-green-600' : 'text-muted-foreground'}`} />
+                      <span>Title</span>
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className={`h-4 w-4 ${storyData.description ? 'text-green-600' : 'text-muted-foreground'}`} />
+                      <span>Description</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className={`h-4 w-4 ${storyData.beneficiaryName ? 'text-green-600' : 'text-muted-foreground'}`} />
+                      <span>Beneficiary</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className={`h-4 w-4 ${storyData.fundingGoal > 0 ? 'text-green-600' : 'text-muted-foreground'}`} />
+                      <span>Funding Goal</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-              <TabsContent value="content" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Story Content</CardTitle>
-                    <CardDescription>
-                      {orgType === "nonprofit"
-                        ? "Craft your impact story that will inspire donors and show real change"
-                        : "Craft your product story that will engage customers and drive sales"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+            {/* Step 1: Template Selection */}
+            {currentStep === 1 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Choose Impact Template</CardTitle>
+                  <CardDescription>
+                    Select a template to get started with your impact story
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {impactTemplates.map((template) => (
+                      <Card
+                        key={template.id}
+                        className={`cursor-pointer transition-all hover:shadow-md ${
+                          selectedTemplate === template.id ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => handleTemplateSelect(template.id)}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="p-2 bg-primary/10 rounded-lg">
+                              <template.icon className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-card-foreground">{template.name}</h3>
+                              <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step 2: Basic Information */}
+            {currentStep === 2 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Story Details</CardTitle>
+                  <CardDescription>
+                    Tell us about the person or cause you're supporting
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="title">Story Title</Label>
+                      <Label htmlFor="title">Story Title *</Label>
                       <Input
                         id="title"
-                        placeholder={
-                          orgType === "nonprofit"
-                            ? "Enter a compelling title for your impact story"
-                            : "Enter a compelling title for your story"
-                        }
+                        placeholder="e.g., Supporting Maria's Education"
                         value={storyData.title}
-                        onChange={(e) => setStoryData((prev) => ({ ...prev, title: e.target.value }))}
-                        className="mt-1"
+                        onChange={(e) => handleInputChange("title", e.target.value)}
                       />
                     </div>
-                    <AIWritingAssistant
-                      currentText={storyData.content}
-                      onTextChange={(text) => setStoryData((prev) => ({ ...prev, content: text }))}
-                      context="story"
-                      placeholder={
-                        orgType === "nonprofit"
-                          ? "Tell the story of impact and transformation..."
-                          : "Tell the story behind your product..."
-                      }
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="media" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Media Assets</CardTitle>
-                    <CardDescription>
-                      Add images, videos, and documents to make your story more engaging
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                      <Button
-                        variant="outline"
-                        className="h-24 flex-col gap-2 bg-transparent"
-                        onClick={() => handleMediaUpload("image")}
-                      >
-                        <ImageIcon className="h-6 w-6" />
-                        <span className="text-sm">Add Image</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="h-24 flex-col gap-2 bg-transparent"
-                        onClick={() => handleMediaUpload("video")}
-                      >
-                        <Video className="h-6 w-6" />
-                        <span className="text-sm">Add Video</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="h-24 flex-col gap-2 bg-transparent"
-                        onClick={() => handleMediaUpload("document")}
-                      >
-                        <FileText className="h-6 w-6" />
-                        <span className="text-sm">Add Document</span>
-                      </Button>
+                    <div>
+                      <Label htmlFor="beneficiaryName">Beneficiary Name *</Label>
+                      <Input
+                        id="beneficiaryName"
+                        placeholder="e.g., Maria Rodriguez"
+                        value={storyData.beneficiaryName}
+                        onChange={(e) => handleInputChange("beneficiaryName", e.target.value)}
+                      />
                     </div>
+                  </div>
 
-                    {storyData.media.length > 0 && (
-                      <div className="space-y-3">
-                        <h3 className="font-medium">Uploaded Media</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          {storyData.media.map((media, index) => (
-                            <div key={index} className="relative group">
-                              <Card>
-                                <CardContent className="p-3">
-                                  <div className="aspect-video bg-muted rounded-md mb-2 flex items-center justify-center overflow-hidden">
-                                    {media.type === "image" ? (
-                                      <img 
-                                        src={media.url} 
-                                        alt={media.name}
-                                        className="w-full h-full object-cover rounded-md"
-                                      />
-                                    ) : media.type === "video" ? (
-                                      <video 
-                                        src={media.url} 
-                                        className="w-full h-full object-cover rounded-md"
-                                        controls
-                                      />
-                                    ) : (
-                                      <FileText className="h-8 w-8 text-muted-foreground" />
-                                    )}
-                                  </div>
-                                  <p className="text-sm font-medium truncate">{media.name}</p>
-                                  <Badge variant="secondary" className="text-xs mt-1">
-                                    {media.type}
-                                  </Badge>
-                                </CardContent>
-                              </Card>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => removeMedia(index)}
-                              >
-                                <X className="h-3 w-3" />
-                              </Button>
+                  <div>
+                    <Label htmlFor="description">Story Description *</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Describe the situation and why help is needed..."
+                      className="min-h-32"
+                      value={storyData.description}
+                      onChange={(e) => handleInputChange("description", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="location">Location</Label>
+                      <Input
+                        id="location"
+                        placeholder="e.g., San Francisco, CA"
+                        value={storyData.location}
+                        onChange={(e) => handleInputChange("location", e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="beneficiaryAge">Age (Optional)</Label>
+                      <Input
+                        id="beneficiaryAge"
+                        type="number"
+                        placeholder="e.g., 25"
+                        value={storyData.beneficiaryAge || ""}
+                        onChange={(e) => handleInputChange("beneficiaryAge", parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step 3: Funding & Impact */}
+            {currentStep === 3 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Funding & Impact</CardTitle>
+                  <CardDescription>
+                    Set your funding goal and explain the impact
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="fundingGoal">Funding Goal ($) *</Label>
+                      <Input
+                        id="fundingGoal"
+                        type="number"
+                        placeholder="e.g., 5000"
+                        value={storyData.fundingGoal || ""}
+                        onChange={(e) => handleInputChange("fundingGoal", parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="currentAmount">Current Amount ($)</Label>
+                      <Input
+                        id="currentAmount"
+                        type="number"
+                        placeholder="e.g., 0"
+                        value={storyData.currentAmount || ""}
+                        onChange={(e) => handleInputChange("currentAmount", parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="impactDescription">Impact Description *</Label>
+                    <Textarea
+                      id="impactDescription"
+                      placeholder="Explain how donations will be used and what impact they'll create..."
+                      className="min-h-32"
+                      value={storyData.impactDescription}
+                      onChange={(e) => handleInputChange("impactDescription", e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Step 4: Media & Final Review */}
+            {currentStep === 4 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add Media (Optional)</CardTitle>
+                  <CardDescription>
+                    Photos and videos help donors connect with your story
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-3 gap-4">
+                    <Button
+                      variant="outline"
+                      className="h-24 flex-col gap-2"
+                      onClick={() => handleMediaUpload("image")}
+                    >
+                      <ImageIcon className="h-6 w-6" />
+                      <span className="text-sm">Add Photo</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="h-24 flex-col gap-2"
+                      onClick={() => handleMediaUpload("video")}
+                    >
+                      <Video className="h-6 w-6" />
+                      <span className="text-sm">Add Video</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="h-24 flex-col gap-2"
+                      onClick={() => handleMediaUpload("document")}
+                    >
+                      <FileText className="h-6 w-6" />
+                      <span className="text-sm">Add Document</span>
+                    </Button>
+                  </div>
+
+                  {storyData.media.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-3">Uploaded Media</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {storyData.media.map((media, index) => (
+                          <div key={index} className="relative group">
+                            <div className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
+                              {media.type === "image" ? (
+                                <img 
+                                  src={media.url} 
+                                  alt={media.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="text-muted-foreground">
+                                  {media.type === "video" ? <Video className="h-8 w-8" /> : <FileText className="h-8 w-8" />}
+                                </div>
+                              )}
                             </div>
-                          ))}
-                        </div>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => setStoryData(prev => ({
+                                ...prev,
+                                media: prev.media.filter((_, i) => i !== index)
+                              }))}
+                            >
+                              ×
+                            </Button>
+                          </div>
+                        ))}
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
-              <TabsContent value="details" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{orgType === "nonprofit" ? "Impact Information" : "Product Information"}</CardTitle>
-                    <CardDescription>
-                      {orgType === "nonprofit"
-                        ? "Add details about the beneficiary and impact goals"
-                        : "Link this story to specific products and generate NMBRs"}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {orgType === "nonprofit" ? (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="beneficiaryName">Beneficiary Name</Label>
-                            <Input
-                              id="beneficiaryName"
-                              placeholder="Enter beneficiary name"
-                              value={storyData.beneficiaryName}
-                              onChange={(e) => setStoryData((prev) => ({ ...prev, beneficiaryName: e.target.value }))}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="impactGoal">Impact Goal</Label>
-                            <Input
-                              id="impactGoal"
-                              placeholder="e.g., 12 months of education"
-                              value={storyData.impactGoal}
-                              onChange={(e) => setStoryData((prev) => ({ ...prev, impactGoal: e.target.value }))}
-                              className="mt-1"
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="fundingGoal">Funding Goal ($)</Label>
-                            <Input
-                              id="fundingGoal"
-                              type="number"
-                              placeholder="Enter funding goal"
-                              value={storyData.fundingGoal}
-                              onChange={(e) => setStoryData((prev) => ({ ...prev, fundingGoal: e.target.value }))}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="currentFunding">Current Funding ($)</Label>
-                            <Input
-                              id="currentFunding"
-                              type="number"
-                              placeholder="Enter current funding"
-                              value={storyData.currentFunding}
-                              onChange={(e) => setStoryData((prev) => ({ ...prev, currentFunding: e.target.value }))}
-                              className="mt-1"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="category">Impact Category</Label>
-                          <Select
-                            value={storyData.industry}
-                            onValueChange={(value) => setStoryData((prev) => ({ ...prev, industry: value }))}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue placeholder="Select impact category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Education & Learning">Education & Learning</SelectItem>
-                              <SelectItem value="Healthcare & Medical">Healthcare & Medical</SelectItem>
-                              <SelectItem value="Housing & Shelter">Housing & Shelter</SelectItem>
-                              <SelectItem value="Community Impact">Community Impact</SelectItem>
-                              <SelectItem value="Food & Nutrition">Food & Nutrition</SelectItem>
-                              <SelectItem value="Environmental">Environmental</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </>
-                    ) : (
-                      // Business product fields remain the same
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="productName">Product Name</Label>
-                            <Input
-                              id="productName"
-                              placeholder="Enter product name"
-                              value={storyData.productName}
-                              onChange={(e) => setStoryData((prev) => ({ ...prev, productName: e.target.value }))}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="productSku">Product SKU</Label>
-                            <Input
-                              id="productSku"
-                              placeholder="Enter product SKU"
-                              value={storyData.productSku}
-                              onChange={(e) => setStoryData((prev) => ({ ...prev, productSku: e.target.value }))}
-                              className="mt-1"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="industry">Industry</Label>
-                          <Select
-                            value={storyData.industry}
-                            onValueChange={(value) => setStoryData((prev) => ({ ...prev, industry: value }))}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue placeholder="Select industry" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Coffee & Beverages">Coffee & Beverages</SelectItem>
-                              <SelectItem value="Fashion & Apparel">Fashion & Apparel</SelectItem>
-                              <SelectItem value="Outdoor & Adventure">Outdoor & Adventure</SelectItem>
-                              <SelectItem value="Food & Grocery">Food & Grocery</SelectItem>
-                              <SelectItem value="Beauty & Personal Care">Beauty & Personal Care</SelectItem>
-                              <SelectItem value="Home & Garden">Home & Garden</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+            {/* Navigation */}
+            <div className="flex justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))}
+                disabled={currentStep === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                onClick={() => setCurrentStep(prev => Math.min(prev + 1, totalSteps))}
+                disabled={currentStep === totalSteps}
+              >
+                Next
+              </Button>
+            </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Tier Status */}
-            {tier && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm">Current Plan</CardTitle>
-                  <CardDescription>
-                    {tier.name} - {getRemainingNmbrs() === -1 ? 'Unlimited' : `${getRemainingNmbrs()} remaining`} NMBRs
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            )}
-
+            {/* NMBR Generation */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Hash className="h-5 w-5" />
-                  NMBR Generation
+                  Your NMBR
                 </CardTitle>
-                <CardDescription>
-                  {orgType === "nonprofit"
-                    ? "Generate NMBRs for fundraising materials and events"
-                    : "Generate NMBRs for your products"}
-                </CardDescription>
               </CardHeader>
               <CardContent>
-                {nmbrCode ? (
-                  <div className="text-center space-y-4">
-                    <div className="bg-white p-4 rounded-lg border inline-block">
-                      <img src={nmbrCode || "/placeholder.svg"} alt="Generated NMBR" className="h-32 w-32" />
-                    </div>
-                    <div className="space-y-2">
-                      <Button variant="outline" size="sm" className="w-full bg-transparent">
-                        Download NMBR
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full bg-transparent"
-                        onClick={() => setNmbrCode(null)}
-                      >
-                        Generate New
-                      </Button>
-                    </div>
+                <div className="text-center py-4">
+                  <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl mx-auto mb-3">
+                    NMBR
                   </div>
-                ) : (
-                  <Button
-                    onClick={generateNmbrCode}
-                    className="w-full"
-                    disabled={orgType === "nonprofit" ? !storyData.beneficiaryName : !storyData.productName}
-                  >
-                    <Hash className="h-4 w-4 mr-2" />
-                    Generate NMBR
-                  </Button>
-                )}
+                  <p className="text-sm text-muted-foreground">
+                    Your unique story code will be generated when you publish
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
+            {/* Story Preview */}
             <Card>
               <CardHeader>
-                <CardTitle>{orgType === "nonprofit" ? "Impact Analytics" : "Story Analytics"}</CardTitle>
-                <CardDescription>Track performance once published</CardDescription>
+                <CardTitle>Story Preview</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3 text-sm text-muted-foreground">
-                  {orgType === "nonprofit" ? (
-                    <>
-                      <div className="flex justify-between">
-                        <span>Story Views</span>
-                        <span>-</span>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold text-lg">{storyData.title || "Your Story Title"}</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {storyData.description || "Your story description will appear here..."}
+                    </p>
+                  </div>
+                  
+                  {storyData.fundingGoal > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Funding Progress</span>
+                        <span>
+                          ${storyData.currentAmount.toLocaleString()} / ${storyData.fundingGoal.toLocaleString()}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Donations</span>
-                        <span>-</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Donor Engagement</span>
-                        <span>-</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Funds Raised</span>
-                        <span>-</span>
-                      </div>
-                    </>
-                  ) : (
-                    // Business analytics remain the same
-                    <>
-                      <div className="flex justify-between">
-                        <span>NMBR Searches</span>
-                        <span>-</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Story Views</span>
-                        <span>-</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Conversion Rate</span>
-                        <span>-</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Revenue Generated</span>
-                        <span>-</span>
-                      </div>
-                    </>
+                      <Progress 
+                        value={(storyData.currentAmount / storyData.fundingGoal) * 100} 
+                        className="h-2" 
+                      />
+                    </div>
                   )}
+
+                  {storyData.media.length > 0 && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {storyData.media.slice(0, 4).map((media, index) => (
+                        <div key={index} className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
+                          {media.type === "image" ? (
+                            <img 
+                              src={media.url} 
+                              alt={media.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="text-muted-foreground">
+                              {media.type === "video" ? <Video className="h-6 w-6" /> : <FileText className="h-6 w-6" />}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tips */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Story Tips</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Heart className="h-4 w-4 text-red-500 mt-0.5" />
+                  <p className="text-sm">Use real names and specific details to create emotional connection</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Target className="h-4 w-4 text-blue-500 mt-0.5" />
+                  <p className="text-sm">Set realistic funding goals that donors can help achieve</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <ImageIcon className="h-4 w-4 text-green-500 mt-0.5" />
+                  <p className="text-sm">High-quality photos and videos increase engagement by 3x</p>
                 </div>
               </CardContent>
             </Card>
@@ -689,91 +579,47 @@ export default function CreateStoryPage() {
         </div>
       </div>
 
-      {/* Preview Modal */}
+      {/* Preview Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
             <DialogTitle>Story Preview</DialogTitle>
             <DialogDescription>
-              {orgType === "nonprofit"
-                ? "This is how donors will see your impact story"
-                : "This is how customers will see your story when they search the NMBR"}
+              This is how your story will appear to donors
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-primary mb-2">{storyData.title || "Your Story Title"}</h3>
-              <Badge variant="secondary">{storyData.industry || "Category"}</Badge>
+              <h2 className="text-3xl font-bold mb-4">{storyData.title || "Your Story Title"}</h2>
+              <p className="text-lg text-muted-foreground mb-6">
+                {storyData.description || "Your story description will appear here..."}
+              </p>
             </div>
-
-            {storyData.media.length > 0 && (
-              <div className="grid grid-cols-2 gap-2">
-                {storyData.media.slice(0, 4).map((media, index) => (
-                  <div key={index} className="aspect-video bg-muted rounded-md flex items-center justify-center overflow-hidden">
-                    {media.type === "image" ? (
-                      <img 
-                        src={media.url} 
-                        alt={media.name}
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                    ) : media.type === "video" ? (
-                      <video 
-                        src={media.url} 
-                        className="w-full h-full object-cover rounded-md"
-                        controls
-                      />
-                    ) : (
-                      <FileText className="h-8 w-8 text-muted-foreground" />
-                    )}
-                  </div>
-                ))}
+            
+            {storyData.fundingGoal > 0 && (
+              <div className="bg-muted p-6 rounded-lg">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold">Funding Goal</h3>
+                  <span className="text-2xl font-bold text-primary">
+                    ${storyData.fundingGoal.toLocaleString()}
+                  </span>
+                </div>
+                <Progress 
+                  value={(storyData.currentAmount / storyData.fundingGoal) * 100} 
+                  className="h-3 mb-2" 
+                />
+                <p className="text-sm text-muted-foreground">
+                  ${storyData.currentAmount.toLocaleString()} raised of ${storyData.fundingGoal.toLocaleString()} goal
+                </p>
               </div>
             )}
 
-            <div className="prose prose-sm max-w-none">
-              <p className="text-foreground leading-relaxed">
-                {storyData.content || "Your story content will appear here..."}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold">Impact</h3>
+              <p className="text-muted-foreground">
+                {storyData.impactDescription || "Your impact description will appear here..."}
               </p>
             </div>
-
-            {orgType === "nonprofit"
-              ? storyData.beneficiaryName && (
-                  <div className="bg-card p-4 rounded-lg border">
-                    <h3 className="font-semibold text-card-foreground mb-1">
-                      Beneficiary: {storyData.beneficiaryName}
-                    </h3>
-                    {storyData.impactGoal && (
-                      <p className="text-sm text-muted-foreground mb-2">Goal: {storyData.impactGoal}</p>
-                    )}
-                    {storyData.fundingGoal && (
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Funding Progress</span>
-                          <span>
-                            ${storyData.currentFunding || 0} / ${storyData.fundingGoal}
-                          </span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div
-                            className="bg-primary h-2 rounded-full"
-                            style={{
-                              width: `${Math.min(100, ((Number(storyData.currentFunding) || 0) / (Number(storyData.fundingGoal) || 1)) * 100)}%`,
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              : // Business preview remains the same
-                storyData.productName && (
-                  <div className="bg-card p-4 rounded-lg border">
-                    <h3 className="font-semibold text-card-foreground mb-1">Product: {storyData.productName}</h3>
-                    {storyData.productSku && (
-                      <p className="text-sm text-muted-foreground">SKU: {storyData.productSku}</p>
-                    )}
-                  </div>
-                )}
           </div>
         </DialogContent>
       </Dialog>
