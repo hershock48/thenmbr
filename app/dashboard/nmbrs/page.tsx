@@ -1,10 +1,31 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Plus, Search, Filter, Edit, Eye, Share2, MoreHorizontal, ImageIcon, Video, Target, Home } from "lucide-react"
+import { 
+  Plus, 
+  Search, 
+  Filter, 
+  Edit, 
+  Eye, 
+  Share2, 
+  MoreHorizontal, 
+  ImageIcon, 
+  Video, 
+  Target, 
+  Home,
+  Heart,
+  Users,
+  DollarSign,
+  Calendar,
+  TrendingUp,
+  BarChart3
+} from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
@@ -26,56 +47,167 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from "next/link"
 
-export default function NMBRsPage() {
-  const nmbrs = [
+interface ImpactStory {
+  id: string
+  code: string
+  title: string
+  description: string
+  beneficiary: string
+  category: string
+  donors: number
+  fundsRaised: number
+  fundingGoal: number
+  status: "active" | "completed" | "draft" | "paused"
+  image: string
+  createdAt: string
+  impactDescription: string
+  location: string
+}
+
+export default function ImpactStoriesPage() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [sortBy, setSortBy] = useState("newest")
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
+
+  const impactStories: ImpactStory[] = [
     {
-      id: 1,
+      id: "1",
       code: "HOPE001",
-      title: "Clean Water for Village",
-      story:
-        "This bracelet represents our mission to bring clean water to a remote village in Kenya. Every donation helps us get closer to installing a sustainable water system that will serve 500 families.",
-      subscribers: 89,
-      raised: 3250,
-      goal: 5000,
+      title: "Maria's Education Journey",
+      description: "Supporting Maria's journey through university with a focus on environmental science",
+      beneficiary: "Maria Rodriguez",
+      category: "Education",
+      donors: 89,
+      fundsRaised: 3250,
+      fundingGoal: 5000,
       status: "active",
       image: "/water-well-village.jpg",
       createdAt: "2024-01-15",
+      impactDescription: "Maria will be the first in her family to attend university, studying environmental science to help her community address climate challenges.",
+      location: "San Francisco, CA"
     },
     {
-      id: 2,
+      id: "2",
       code: "HOPE002",
-      title: "School Supplies Drive",
-      story:
-        "Education is the key to breaking the cycle of poverty. This NMBR supports our school supplies drive, providing books, pencils, and learning materials to children in underserved communities.",
-      subscribers: 156,
-      raised: 4800,
-      goal: 3000,
+      title: "Ahmed's Medical Treatment",
+      description: "Critical surgery needed for Ahmed's recovery and return to his family",
+      beneficiary: "Ahmed Hassan",
+      category: "Healthcare",
+      donors: 156,
+      fundsRaised: 4800,
+      fundingGoal: 3000,
       status: "completed",
       image: "/school-children-books.jpg",
       createdAt: "2024-01-10",
+      impactDescription: "Ahmed's successful surgery has allowed him to return to work and support his family of five.",
+      location: "Chicago, IL"
     },
     {
-      id: 3,
+      id: "3",
       code: "HOPE003",
-      title: "Medical Equipment Fund",
-      story:
-        "Our local clinic desperately needs new medical equipment to serve the community better. This NMBR helps us raise funds for essential medical devices that will save lives.",
-      subscribers: 203,
-      raised: 7200,
-      goal: 10000,
+      title: "Community Garden Project",
+      description: "Building a sustainable community garden to provide fresh food for 200 families",
+      beneficiary: "Westside Community",
+      category: "Community",
+      donors: 203,
+      fundsRaised: 7200,
+      fundingGoal: 10000,
       status: "active",
       image: "/medical-equipment-clinic.jpg",
       createdAt: "2024-01-08",
+      impactDescription: "The community garden will provide fresh, healthy food for 200 families and create a sustainable food source for the neighborhood.",
+      location: "Austin, TX"
     },
+    {
+      id: "4",
+      code: "HOPE004",
+      title: "Youth Sports Program",
+      description: "Providing sports equipment and coaching for underserved youth in the community",
+      beneficiary: "Local Youth",
+      category: "Education",
+      donors: 67,
+      fundsRaised: 1200,
+      fundingGoal: 2500,
+      status: "active",
+      image: "/placeholder.svg",
+      createdAt: "2024-01-20",
+      impactDescription: "This program will provide 50 youth with access to sports equipment, coaching, and positive role models.",
+      location: "Miami, FL"
+    },
+    {
+      id: "5",
+      code: "HOPE005",
+      title: "Emergency Relief Fund",
+      description: "Immediate relief for families affected by natural disaster",
+      beneficiary: "Disaster Victims",
+      category: "Emergency",
+      donors: 234,
+      fundsRaised: 12500,
+      fundingGoal: 10000,
+      status: "completed",
+      image: "/placeholder.svg",
+      createdAt: "2024-01-05",
+      impactDescription: "Emergency relief provided to 25 families, including temporary housing, food, and essential supplies.",
+      location: "Houston, TX"
+    }
   ]
+
+  const filteredStories = impactStories.filter(story => {
+    const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         story.beneficiary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         story.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || story.status === statusFilter
+    
+    return matchesSearch && matchesStatus
+  }).sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      case "oldest":
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      case "most-raised":
+        return b.fundsRaised - a.fundsRaised
+      case "most-donors":
+        return b.donors - a.donors
+      default:
+        return 0
+    }
+  })
+
+  const totalStories = impactStories.length
+  const totalFundsRaised = impactStories.reduce((sum, story) => sum + story.fundsRaised, 0)
+  const totalDonors = impactStories.reduce((sum, story) => sum + story.donors, 0)
+  const activeStories = impactStories.filter(story => story.status === "active").length
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active": return "bg-green-100 text-green-800"
+      case "completed": return "bg-blue-100 text-blue-800"
+      case "draft": return "bg-yellow-100 text-yellow-800"
+      case "paused": return "bg-gray-100 text-gray-800"
+      default: return "bg-gray-100 text-gray-800"
+    }
+  }
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "Education": return <Users className="h-4 w-4 text-blue-500" />
+      case "Healthcare": return <Heart className="h-4 w-4 text-red-500" />
+      case "Community": return <Target className="h-4 w-4 text-green-500" />
+      case "Emergency": return <TrendingUp className="h-4 w-4 text-orange-500" />
+      default: return <Target className="h-4 w-4 text-gray-500" />
+    }
+  }
 
   return (
     <div className="space-y-8">
+      {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard" className="flex items-center gap-1 text-slate-600 hover:text-slate-900">
+              <Link href="/dashboard" className="flex items-center gap-1 text-muted-foreground hover:text-foreground">
                 <Home className="w-4 h-4" />
                 Dashboard
               </Link>
@@ -83,7 +215,7 @@ export default function NMBRsPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-slate-900 font-medium">NMBRs</BreadcrumbPage>
+            <BreadcrumbPage className="text-foreground font-medium">Impact Stories</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -91,86 +223,82 @@ export default function NMBRsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 text-balance">NMBRs</h1>
-          <p className="text-slate-600 text-lg">Manage your bracelet campaigns and their stories</p>
+          <h1 className="text-3xl font-bold text-foreground">Impact Stories</h1>
+          <p className="text-muted-foreground text-lg">Manage your impact stories and track donor engagement</p>
         </div>
-        <Dialog>
+        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 shadow-lg hover:shadow-xl transition-all duration-200">
+            <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Create New NMBR
+              Create Story
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl border-0 shadow-2xl">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-slate-900">Create New NMBR</DialogTitle>
-              <DialogDescription className="text-slate-600">
-                Create a new bracelet campaign with its associated story and fundraising goal.
+              <DialogTitle className="text-2xl font-bold">Create New Impact Story</DialogTitle>
+              <DialogDescription>
+                Create a new impact story to connect with donors and track your fundraising progress.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-6 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="code" className="text-slate-700 font-medium">
-                    NMBR Code
-                  </Label>
+                  <Label htmlFor="code">Story Code</Label>
                   <Input
                     id="code"
-                    placeholder="e.g., HOPE005"
-                    className="border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20"
+                    placeholder="e.g., HOPE006"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="goal" className="text-slate-700 font-medium">
-                    Fundraising Goal ($)
-                  </Label>
+                  <Label htmlFor="goal">Funding Goal ($)</Label>
                   <Input
                     id="goal"
                     type="number"
                     placeholder="5000"
-                    className="border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-slate-700 font-medium">
-                  Campaign Title
-                </Label>
+                <Label htmlFor="title">Story Title</Label>
                 <Input
                   id="title"
-                  placeholder="e.g., Emergency Relief Fund"
-                  className="border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20"
+                  placeholder="e.g., Supporting Local Families"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="story" className="text-slate-700 font-medium">
-                  Story
-                </Label>
+                <Label htmlFor="beneficiary">Beneficiary Name</Label>
+                <Input
+                  id="beneficiary"
+                  placeholder="e.g., Maria Rodriguez"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Story Description</Label>
                 <Textarea
-                  id="story"
-                  placeholder="Tell the compelling story behind this NMBR..."
-                  className="min-h-32 border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20"
+                  id="description"
+                  placeholder="Tell the compelling story behind this impact story..."
+                  className="min-h-32"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-slate-700 font-medium">Media</Label>
+                <Label>Media</Label>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="border-slate-200 hover:bg-slate-50 bg-transparent">
+                  <Button variant="outline" size="sm">
                     <ImageIcon className="w-4 h-4 mr-2" />
                     Add Image
                   </Button>
-                  <Button variant="outline" size="sm" className="border-slate-200 hover:bg-slate-50 bg-transparent">
+                  <Button variant="outline" size="sm">
                     <Video className="w-4 h-4 mr-2" />
                     Add Video
                   </Button>
                 </div>
               </div>
               <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" className="border-slate-200 hover:bg-slate-50 bg-transparent">
-                  Save as Draft
+                <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+                  Cancel
                 </Button>
-                <Button className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800">
-                  Create & Activate
+                <Button>
+                  Create Story
                 </Button>
               </div>
             </div>
@@ -178,19 +306,69 @@ export default function NMBRsPage() {
         </Dialog>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Stories</p>
+                <p className="text-2xl font-bold text-foreground">{totalStories}</p>
+              </div>
+              <Target className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Active Stories</p>
+                <p className="text-2xl font-bold text-foreground">{activeStories}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Donors</p>
+                <p className="text-2xl font-bold text-foreground">{totalDonors}</p>
+              </div>
+              <Users className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Funds Raised</p>
+                <p className="text-2xl font-bold text-foreground">${totalFundsRaised.toLocaleString()}</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Filters */}
-      <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+      <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search NMBRs..."
-                className="pl-9 border-slate-200 focus:border-cyan-500 focus:ring-cyan-500/20"
+                placeholder="Search stories, beneficiaries, or descriptions..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
               />
             </div>
-            <Select defaultValue="all">
-              <SelectTrigger className="w-40 border-slate-200">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40">
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
@@ -202,106 +380,151 @@ export default function NMBRsPage() {
                 <SelectItem value="draft">Draft</SelectItem>
               </SelectContent>
             </Select>
-            <Select defaultValue="newest">
-              <SelectTrigger className="w-40 border-slate-200">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest First</SelectItem>
                 <SelectItem value="oldest">Oldest First</SelectItem>
                 <SelectItem value="most-raised">Most Raised</SelectItem>
-                <SelectItem value="most-subscribers">Most Subscribers</SelectItem>
+                <SelectItem value="most-donors">Most Donors</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* NMBRs Grid */}
+      {/* Stories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {nmbrs.map((nmbr) => (
-          <Card
-            key={nmbr.id}
-            className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm"
-          >
-            <div className="aspect-video bg-slate-100 relative overflow-hidden">
+        {filteredStories.map((story) => (
+          <Card key={story.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+            <div className="aspect-video bg-muted relative overflow-hidden">
               <img
-                src={nmbr.image || "/placeholder.svg"}
-                alt={nmbr.title}
+                src={story.image || "/placeholder.svg"}
+                alt={story.title}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              <Badge
-                className={`absolute top-3 right-3 shadow-lg ${
-                  nmbr.status === "active"
-                    ? "bg-emerald-500 hover:bg-emerald-500 text-white"
-                    : nmbr.status === "completed"
-                      ? "bg-blue-500 hover:bg-blue-500 text-white"
-                      : "bg-slate-500 hover:bg-slate-500 text-white"
-                }`}
-              >
-                {nmbr.status}
+              <Badge className={`absolute top-3 right-3 ${getStatusColor(story.status)}`}>
+                {story.status}
               </Badge>
+              <div className="absolute top-3 left-3">
+                <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1">
+                  {getCategoryIcon(story.category)}
+                  <span className="text-xs font-medium text-foreground">{story.category}</span>
+                </div>
+              </div>
             </div>
+            
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-lg font-bold text-slate-900 mb-1">{nmbr.title}</CardTitle>
-                  <CardDescription className="text-slate-500 font-medium">Code: {nmbr.code}</CardDescription>
+                  <CardTitle className="text-lg font-bold text-foreground mb-1">{story.title}</CardTitle>
+                  <CardDescription className="text-muted-foreground font-medium">
+                    Code: {story.code}
+                  </CardDescription>
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="hover:bg-slate-100">
+                    <Button variant="ghost" size="sm">
                       <MoreHorizontal className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="shadow-lg border-slate-200">
-                    <DropdownMenuItem className="hover:bg-slate-50">
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>
                       <Eye className="w-4 h-4 mr-2" />
                       View Details
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50">
+                    <DropdownMenuItem>
                       <Edit className="w-4 h-4 mr-2" />
                       Edit Story
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50">
+                    <DropdownMenuItem>
                       <Share2 className="w-4 h-4 mr-2" />
-                      Get Widget Code
+                      Share Story
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-slate-50">
-                      <Target className="w-4 h-4 mr-2" />
+                    <DropdownMenuItem>
+                      <BarChart3 className="w-4 h-4 mr-2" />
                       View Analytics
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             </CardHeader>
+            
             <CardContent className="pt-0">
-              <p className="text-sm text-slate-600 mb-6 line-clamp-3 leading-relaxed">{nmbr.story}</p>
-
-              {/* Progress */}
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 font-medium">Progress</span>
-                  <span className="font-bold text-slate-900">
-                    ${nmbr.raised.toLocaleString()} / ${nmbr.goal.toLocaleString()}
-                  </span>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <strong>Beneficiary:</strong> {story.beneficiary}
+                  </p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                    {story.description}
+                  </p>
                 </div>
-                <Progress value={(nmbr.raised / nmbr.goal) * 100} className="h-3 bg-slate-100" />
-                <div className="text-xs text-slate-500 font-medium">
-                  {Math.round((nmbr.raised / nmbr.goal) * 100)}% of goal reached
-                </div>
-              </div>
 
-              {/* Stats */}
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600 font-medium">{nmbr.subscribers} subscribers</span>
-                <span className="text-slate-500">Created {new Date(nmbr.createdAt).toLocaleDateString()}</span>
+                {/* Progress */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground font-medium">Funding Progress</span>
+                    <span className="font-bold text-foreground">
+                      ${story.fundsRaised.toLocaleString()} / ${story.fundingGoal.toLocaleString()}
+                    </span>
+                  </div>
+                  <Progress value={(story.fundsRaised / story.fundingGoal) * 100} className="h-2" />
+                  <div className="text-xs text-muted-foreground font-medium">
+                    {Math.round((story.fundsRaised / story.fundingGoal) * 100)}% of goal reached
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">{story.donors} donors</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        {new Date(story.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {filteredStories.length === 0 && (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <div className="space-y-4">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                <Target className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">No stories found</h3>
+                <p className="text-muted-foreground">
+                  {searchTerm || statusFilter !== "all"
+                    ? "Try adjusting your filters to see more stories"
+                    : "Create your first impact story to get started"
+                  }
+                </p>
+              </div>
+              {!searchTerm && statusFilter === "all" && (
+                <Button onClick={() => setShowCreateDialog(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Story
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
