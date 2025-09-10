@@ -289,9 +289,9 @@ export default function SignupPage() {
           </CardContent>
         </Card>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-5 gap-8">
           {/* Main Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -536,50 +536,39 @@ export default function SignupPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             {/* Why Choose NMBR */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-500" />
-                  Why Choose NMBR?
-                </CardTitle>
+                <CardTitle className="text-lg">Why Choose NMBR?</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Target className="w-4 h-4 text-primary" />
-                  </div>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Target className="w-5 h-5 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-sm">Story-Driven Fundraising</h4>
-                    <p className="text-xs text-muted-foreground">Connect donors directly to the people they help</p>
+                    <h4 className="font-medium text-sm">Story-Driven Fundraising</h4>
+                    <p className="text-xs text-muted-foreground">Connect donors directly to impact</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <BarChart3 className="w-4 h-4 text-primary" />
-                  </div>
+                <div className="flex items-center gap-3">
+                  <BarChart3 className="w-5 h-5 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-sm">Complete Attribution</h4>
-                    <p className="text-xs text-muted-foreground">Track every donation from story to impact</p>
+                    <h4 className="font-medium text-sm">Complete Attribution</h4>
+                    <p className="text-xs text-muted-foreground">Track every donation to impact</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Users className="w-4 h-4 text-primary" />
-                  </div>
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-sm">Donor Relationships</h4>
-                    <p className="text-xs text-muted-foreground">Build lasting connections with supporters</p>
+                    <h4 className="font-medium text-sm">Donor Relationships</h4>
+                    <p className="text-xs text-muted-foreground">Build lasting connections</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-4 h-4 text-primary" />
-                  </div>
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5 text-primary" />
                   <div>
-                    <h4 className="font-semibold text-sm">Easy Setup</h4>
-                    <p className="text-xs text-muted-foreground">Get started in minutes, not months</p>
+                    <h4 className="font-medium text-sm">Easy Setup</h4>
+                    <p className="text-xs text-muted-foreground">Get started in minutes</p>
                   </div>
                 </div>
               </CardContent>
@@ -588,75 +577,24 @@ export default function SignupPage() {
             {/* Success Stories */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-green-500" />
-                  Success Stories
-                </CardTitle>
+                <CardTitle className="text-lg">Success Stories</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Maria's Education Fund</span>
-                    <Badge variant="secondary" className="text-xs">+245% ROI</Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Raised $8,400 in 3 months through story-driven fundraising</p>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Maria's Education Fund</span>
+                  <Badge variant="secondary" className="text-xs">+245% ROI</Badge>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Clean Water Initiative</span>
-                    <Badge variant="secondary" className="text-xs">+200% ROI</Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Connected 200+ donors to families getting clean water</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Clean Water Initiative</span>
+                  <Badge variant="secondary" className="text-xs">+200% ROI</Badge>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Medical Care Program</span>
-                    <Badge variant="secondary" className="text-xs">+200% ROI</Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Treated 15 children with personalized donor stories</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Medical Care Program</span>
+                  <Badge variant="secondary" className="text-xs">+200% ROI</Badge>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Quick Start Guide */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-500" />
-                  Quick Start Guide
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
-                    <span className="text-sm font-medium">Create Your Account</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground ml-8">Set up your secure login credentials</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
-                    <span className="text-sm font-medium">Add Organization Details</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground ml-8">Tell us about your nonprofit</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">3</div>
-                    <span className="text-sm font-medium">Share Your Impact Story</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground ml-8">Describe the people you help</p>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">4</div>
-                    <span className="text-sm font-medium">Launch & Start Fundraising</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground ml-8">Begin your story-driven fundraising</p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
