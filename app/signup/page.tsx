@@ -1,561 +1,180 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ArrowRight, Heart, Users, CheckCircle, Sparkles, Building2, ArrowLeft, Info } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { 
+  ArrowRight, 
+  Heart, 
+  Users, 
+  CheckCircle, 
+  Sparkles, 
+  Building2, 
+  ArrowLeft, 
+  Info,
+  Target,
+  BarChart3,
+  Mail,
+  Shield,
+  Zap,
+  Star,
+  TrendingUp,
+  Globe,
+  Clock,
+  DollarSign,
+  Eye,
+  MousePointer,
+  CreditCard,
+  MessageSquare
+} from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Confetti } from "@/components/ui/confetti"
-import { supabase } from "@/lib/supabase"
-import type { OrganizationType } from "@/types"
 
-interface OrganizationTypeOption {
-  id: OrganizationType
-  name: string
-  description: string
-  icon: any
-  color: string
-  features: string[]
-  terminology: {
-    donations: string
-    supporters: string
-    action: string
-  }
+interface SignupFormData {
+  email: string
+  password: string
+  confirmPassword: string
+  organizationName: string
+  organizationWebsite: string
+  einNumber: string
+  projectDescription: string
+  expectedMonthlyDonations: string
+  primaryCause: string
+  agreeToTerms: boolean
+  subscribeToUpdates: boolean
 }
 
-const organizationTypes: OrganizationTypeOption[] = [
-  {
-    id: "nonprofit",
-    name: "Nonprofit (501c3)",
-    description: "Tax-exempt organizations focused on charitable causes and community impact",
-    icon: Heart,
-    color: "from-rose-500 to-pink-600",
-    features: ["Tax-deductible donations", "Donor management", "Grant tracking", "Compliance tools"],
-    terminology: {
-      donations: "Donations",
-      supporters: "Donors",
-      action: "fundraising",
-    },
-  },
-  {
-    id: "grassroots",
-    name: "Grassroots Organization",
-    description: "Community-driven projects and informal groups making local impact",
-    icon: Users,
-    color: "from-emerald-500 to-teal-600",
-    features: ["Community engagement", "Project management", "Volunteer coordination", "Local impact tracking"],
-    terminology: {
-      donations: "Support",
-      supporters: "Community Members",
-      action: "community building",
-    },
-  },
-  {
-    id: "business",
-    name: "Business",
-    description: "Companies focused on corporate social responsibility and customer engagement",
-    icon: Building2,
-    color: "from-blue-500 to-indigo-600",
-    features: ["Customer engagement", "CSR tracking", "Brand storytelling", "Impact marketing"],
-    terminology: {
-      donations: "Purchases",
-      supporters: "Customers",
-      action: "customer engagement",
-    },
-  },
+const primaryCauses = [
+  "Education & Youth Development",
+  "Healthcare & Medical Research", 
+  "Environmental Conservation",
+  "Poverty Alleviation",
+  "Human Rights & Social Justice",
+  "Disaster Relief & Emergency Response",
+  "Arts & Culture",
+  "Animal Welfare",
+  "Community Development",
+  "Religious & Spiritual",
+  "Other"
+]
+
+const expectedDonationRanges = [
+  "Under $1,000/month",
+  "$1,000 - $5,000/month", 
+  "$5,000 - $25,000/month",
+  "$25,000 - $100,000/month",
+  "Over $100,000/month"
 ]
 
 export default function SignupPage() {
   const { signUp } = useAuth()
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
-  const [selectedOrgType, setSelectedOrgType] = useState<OrganizationType | null>(null)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SignupFormData>({
     email: "",
     password: "",
     confirmPassword: "",
     organizationName: "",
     organizationWebsite: "",
     einNumber: "",
-    taxExemptStatus: false,
-    fiscalSponsor: "",
-    businessRegistration: "",
-    industry: "",
-    csrFocusAreas: [] as string[],
     projectDescription: "",
+    expectedMonthlyDonations: "",
+    primaryCause: "",
+    agreeToTerms: false,
+    subscribeToUpdates: true
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
-  const [isCheckingConfirmation, setIsCheckingConfirmation] = useState(false)
-  const [showExistingAccountMessage, setShowExistingAccountMessage] = useState(false)
 
-  const checkEmailConfirmation = async () => {
-    setIsCheckingConfirmation(true)
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      })
+  const totalSteps = 4
 
-      if (error) {
-        if (error.message.includes("Email not confirmed")) {
-          console.log("Email not confirmed yet")
-        } else {
-          throw error
-        }
-      } else if (data.user && data.session) {
-        console.log("Email confirmed! Redirecting to dashboard...")
-        router.push("/dashboard")
-        return
-      }
-    } catch (err) {
-      console.error("Error checking confirmation:", err)
-    } finally {
-      setIsCheckingConfirmation(false)
+  const handleInputChange = (field: keyof SignupFormData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    setError("")
+  }
+
+  const validateStep = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        return formData.email.includes("@") && formData.password.length >= 8 && formData.password === formData.confirmPassword
+      case 2:
+        return formData.organizationName.length > 0 && formData.primaryCause.length > 0
+      case 3:
+        return formData.projectDescription.length > 50
+      case 4:
+        return formData.agreeToTerms
+      default:
+        return false
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => Math.min(prev + 1, totalSteps))
+    } else {
+      setError("Please fill in all required fields correctly.")
+    }
+  }
+
+  const handleBack = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1))
+    setError("")
+  }
+
+  const handleSubmit = async () => {
+    if (!validateStep(4)) {
+      setError("Please complete all required fields and accept the terms.")
+      return
+    }
+
     setLoading(true)
     setError("")
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      setLoading(false)
-      return
-    }
-
-    if (!selectedOrgType) {
-      setError("Please select an organization type")
-      setLoading(false)
-      return
-    }
-
-    let formattedWebsite = formData.organizationWebsite
-    if (formattedWebsite && !/^https?:\/\//i.test(formattedWebsite)) {
-      formattedWebsite = `https://${formattedWebsite}`
-    }
-
     try {
-      await signUp(formData.email, formData.password, formData.organizationName, formattedWebsite, selectedOrgType, {
-        einNumber: formData.einNumber,
-        taxExemptStatus: formData.taxExemptStatus,
-        fiscalSponsor: formData.fiscalSponsor,
-        businessRegistration: formData.businessRegistration,
-        industry: formData.industry,
-        csrFocusAreas: formData.csrFocusAreas,
-        projectDescription: formData.projectDescription,
+      await signUp(formData.email, formData.password, {
+        organization_name: formData.organizationName,
+        organization_website: formData.organizationWebsite,
+        ein_number: formData.einNumber,
+        project_description: formData.projectDescription,
+        expected_monthly_donations: formData.expectedMonthlyDonations,
+        primary_cause: formData.primaryCause,
+        organization_type: "nonprofit"
       })
+      
       setShowSuccess(true)
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 3000)
     } catch (err: any) {
-      console.error("Signup error:", err)
-
-      if (
-        err.message?.includes("User already registered") ||
-        err.message?.includes("already registered") ||
-        err.message?.includes("email address is already registered")
-      ) {
-        setShowExistingAccountMessage(true)
-        setError("")
-      } else if (err.message?.includes("Password should be at least")) {
-        setError("Password must be at least 6 characters long.")
-      } else if (err.message?.includes("Invalid email")) {
-        setError("Please enter a valid email address.")
-      } else {
-        setError("Failed to create account. Please try again.")
-      }
+      setError(err.message || "An error occurred during signup. Please try again.")
     } finally {
       setLoading(false)
-    }
-  }
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-foreground mb-2">Choose Your Organization Type</h2>
-              <p className="text-muted-foreground">Select the option that best describes your organization</p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {organizationTypes.map((type) => {
-                const IconComponent = type.icon
-                const isSelected = selectedOrgType === type.id
-
-                return (
-                  <Card
-                    key={type.id}
-                    className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
-                      isSelected ? "ring-2 ring-primary border-primary/20 bg-primary/5" : "hover:border-primary/20"
-                    }`}
-                    onClick={() => setSelectedOrgType(type.id)}
-                  >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start space-x-4">
-                        <div
-                          className={`w-12 h-12 bg-gradient-to-br ${type.color} rounded-xl flex items-center justify-center flex-shrink-0`}
-                        >
-                          <IconComponent className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">{type.name}</CardTitle>
-                            {isSelected && <CheckCircle className="w-5 h-5 text-primary" />}
-                          </div>
-                          <CardDescription className="text-sm mt-1">{type.description}</CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground">Key Features:</p>
-                        <ul className="text-xs text-muted-foreground space-y-1">
-                          {type.features.map((feature, index) => (
-                            <li key={index} className="flex items-center">
-                              <CheckCircle className="w-3 h-3 text-primary mr-2 flex-shrink-0" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-
-            <Button
-              onClick={() => setCurrentStep(2)}
-              disabled={!selectedOrgType}
-              className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground"
-            >
-              Continue
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-          </div>
-        )
-
-      case 2:
-        const selectedType = organizationTypes.find((type) => type.id === selectedOrgType)
-
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center space-x-4 mb-6">
-              <Button variant="ghost" size="sm" onClick={() => setCurrentStep(1)} className="p-2">
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Organization Details</h2>
-                <p className="text-muted-foreground">Tell us about your {selectedType?.name.toLowerCase()}</p>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Basic Information */}
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="email" className="text-sm font-medium text-foreground">
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1 h-12 text-base"
-                    placeholder="your@organization.org"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="orgName" className="text-sm font-medium text-foreground">
-                    Organization Name
-                  </Label>
-                  <Input
-                    id="orgName"
-                    type="text"
-                    required
-                    value={formData.organizationName}
-                    onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
-                    className="mt-1 h-12 text-base"
-                    placeholder={`Your ${selectedType?.name} Name`}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="website" className="text-sm font-medium text-foreground">
-                    Website (Optional)
-                  </Label>
-                  <Input
-                    id="website"
-                    type="text"
-                    value={formData.organizationWebsite}
-                    onChange={(e) => setFormData({ ...formData, organizationWebsite: e.target.value })}
-                    className="mt-1 h-12 text-base"
-                    placeholder="www.yourorganization.org"
-                  />
-                </div>
-
-                {selectedOrgType === "nonprofit" && (
-                  <>
-                    <div>
-                      <Label htmlFor="einNumber" className="text-sm font-medium text-foreground">
-                        EIN Number (Optional)
-                      </Label>
-                      <Input
-                        id="einNumber"
-                        type="text"
-                        value={formData.einNumber}
-                        onChange={(e) => setFormData({ ...formData, einNumber: e.target.value })}
-                        className="mt-1 h-12 text-base"
-                        placeholder="XX-XXXXXXX"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Your Employer Identification Number for tax-exempt status
-                      </p>
-                    </div>
-                    <div>
-                      <Label htmlFor="fiscalSponsor" className="text-sm font-medium text-foreground">
-                        Fiscal Sponsor (Optional)
-                      </Label>
-                      <Input
-                        id="fiscalSponsor"
-                        type="text"
-                        value={formData.fiscalSponsor}
-                        onChange={(e) => setFormData({ ...formData, fiscalSponsor: e.target.value })}
-                        className="mt-1 h-12 text-base"
-                        placeholder="Name of fiscal sponsor organization"
-                      />
-                    </div>
-                  </>
-                )}
-
-                {selectedOrgType === "grassroots" && (
-                  <div>
-                    <Label htmlFor="projectDescription" className="text-sm font-medium text-foreground">
-                      Project Description
-                    </Label>
-                    <Textarea
-                      id="projectDescription"
-                      value={formData.projectDescription}
-                      onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
-                      className="mt-1 text-base"
-                      placeholder="Describe your community project and its impact..."
-                      rows={3}
-                    />
-                  </div>
-                )}
-
-                {selectedOrgType === "business" && (
-                  <>
-                    <div>
-                      <Label htmlFor="industry" className="text-sm font-medium text-foreground">
-                        Industry
-                      </Label>
-                      <Input
-                        id="industry"
-                        type="text"
-                        value={formData.industry}
-                        onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                        className="mt-1 h-12 text-base"
-                        placeholder="e.g., Technology, Healthcare, Retail"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="businessRegistration" className="text-sm font-medium text-foreground">
-                        Business Registration (Optional)
-                      </Label>
-                      <Input
-                        id="businessRegistration"
-                        type="text"
-                        value={formData.businessRegistration}
-                        onChange={(e) => setFormData({ ...formData, businessRegistration: e.target.value })}
-                        className="mt-1 h-12 text-base"
-                        placeholder="Business registration number"
-                      />
-                    </div>
-                  </>
-                )}
-
-                <div>
-                  <Label htmlFor="password" className="text-sm font-medium text-foreground">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="mt-1 h-12 text-base"
-                    placeholder="Create a strong password"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
-                    Confirm Password
-                  </Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="mt-1 h-12 text-base"
-                    placeholder="Confirm your password"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                <div className="flex items-center space-x-2 mb-3">
-                  <Info className="w-4 h-4 text-primary" />
-                  <h3 className="font-medium text-foreground">Your Dashboard Preview</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Here's how your dashboard will look for {selectedType?.name.toLowerCase()}:
-                </p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-background rounded p-2 border">
-                    <span className="font-medium">{selectedType?.terminology.donations}</span>
-                  </div>
-                  <div className="bg-background rounded p-2 border">
-                    <span className="font-medium">{selectedType?.terminology.supporters}</span>
-                  </div>
-                  <div className="bg-background rounded p-2 border">
-                    <span className="font-medium">Stories</span>
-                  </div>
-                  <div className="bg-background rounded p-2 border">
-                    <span className="font-medium">Analytics</span>
-                  </div>
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground"
-              >
-                {loading ? (
-                  <LoadingSpinner />
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Create My Account
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
-        )
-
-      default:
-        return null
     }
   }
 
   if (showSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center">
-          <CardContent className="p-8">
+          <CardContent className="pt-6">
             <Confetti />
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Check Your Email!</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to NMBR!</h2>
             <p className="text-muted-foreground mb-6">
-              We've sent you a confirmation link. Please check your email and click the link to activate your account.
+              Your nonprofit account has been created successfully. Redirecting to your dashboard...
             </p>
-            <div className="space-y-4">
-              <Button onClick={checkEmailConfirmation} disabled={isCheckingConfirmation} className="w-full">
-                {isCheckingConfirmation ? (
-                  <>
-                    <LoadingSpinner />
-                    <span className="ml-2">Checking...</span>
-                  </>
-                ) : (
-                  "I've Confirmed My Email - Continue"
-                )}
-              </Button>
-              <p className="text-xs text-muted-foreground text-center">
-                Click the button above after you've clicked the confirmation link in your email.
-              </p>
-              <div className="text-center">
-                <Link href="/login" className="text-sm text-blue-600 hover:text-blue-800 underline">
-                  Or go to login page
-                </Link>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
-  if (showExistingAccountMessage) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="p-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Users className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Account Already Exists</h2>
-            <p className="text-muted-foreground mb-6">
-              An account with <strong>{formData.email}</strong> already exists. Please log in instead of creating a new
-              account.
-            </p>
-            <div className="space-y-4">
-              <Button onClick={() => router.push("/login")} className="w-full">
-                Go to Login
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowExistingAccountMessage(false)
-                  setFormData({
-                    email: "",
-                    password: "",
-                    confirmPassword: "",
-                    organizationName: "",
-                    organizationWebsite: "",
-                    einNumber: "",
-                    taxExemptStatus: false,
-                    fiscalSponsor: "",
-                    businessRegistration: "",
-                    industry: "",
-                    csrFocusAreas: [] as string[],
-                    projectDescription: "",
-                  })
-                }}
-                className="w-full"
-              >
-                Try Different Email
-              </Button>
-            </div>
+            <LoadingSpinner />
           </CardContent>
         </Card>
       </div>
@@ -563,57 +182,482 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-primary-foreground font-bold text-xl">N</span>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      {/* Header */}
+      <div className="border-b bg-card/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-lg">N</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center">
+                  <span className="text-primary-foreground font-bold text-xs">#</span>
+                </div>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-secondary to-secondary/80 rounded-full flex items-center justify-center">
-                <span className="text-secondary-foreground font-bold text-xs">#</span>
+              <span className="text-xl font-bold text-foreground">The NMBR</span>
+            </Link>
+            <div className="flex items-center space-x-4">
+              <Link href="/login">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <Badge variant="secondary" className="mb-4">
+            <Heart className="w-4 h-4 mr-2" />
+            Nonprofit Signup
+          </Badge>
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            Start Your <span className="text-primary">Story-Driven</span> Fundraising Journey
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-6">
+            Join hundreds of nonprofits already using NMBR to turn their impact stories into sustainable donor relationships and recurring support.
+          </p>
+          
+          {/* Sign In Option */}
+          <div className="bg-muted/50 rounded-lg p-4 max-w-md mx-auto">
+            <p className="text-sm text-muted-foreground mb-3">Already have an account?</p>
+            <Link href="/login">
+              <Button variant="outline" className="w-full">
+                <ArrowRight className="w-4 h-4 mr-2" />
+                Sign In to Your Account
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-muted-foreground">Step {currentStep} of {totalSteps}</span>
+            <span className="text-sm font-medium text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}% Complete</span>
+          </div>
+          <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
+        </div>
+
+        {/* What You'll Get - Prominent Section */}
+        <Card className="mb-8 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
+          <CardContent className="pt-6">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-foreground mb-2">What You'll Get with NMBR</h2>
+              <p className="text-muted-foreground">Everything you need to turn stories into sustainable donor relationships</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                  <Target className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium">Unlimited Stories</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                  <BarChart3 className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium">Real-time Analytics</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                  <Users className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium">Donor Tracking</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                  <Mail className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium">Email & SMS</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                  <Globe className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium">White-label Pages</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                  <Clock className="w-6 h-6 text-primary" />
+                </div>
+                <span className="text-sm font-medium">14-day Free Trial</span>
               </div>
             </div>
-            <span className="text-2xl font-bold text-foreground">The NMBR</span>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Start Your Impact Story</h1>
-          <p className="text-muted-foreground">
-            Join organizations worldwide transforming engagement with personalized impact stories
-          </p>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="flex items-center justify-center space-x-4 mb-8">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              currentStep >= 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-            }`}
-          >
-            1
-          </div>
-          <div className={`w-16 h-1 rounded ${currentStep >= 2 ? "bg-primary" : "bg-muted"}`} />
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              currentStep >= 2 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-            }`}
-          >
-            2
-          </div>
-        </div>
-
-        <Card className="shadow-xl border-0 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-8">{renderStepContent()}</CardContent>
+          </CardContent>
         </Card>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:text-primary/80 font-medium">
-              Sign in here
-            </Link>
-          </p>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  {currentStep === 1 && <Mail className="w-5 h-5" />}
+                  {currentStep === 2 && <Building2 className="w-5 h-5" />}
+                  {currentStep === 3 && <Target className="w-5 h-5" />}
+                  {currentStep === 4 && <Shield className="w-5 h-5" />}
+                  {currentStep === 1 && "Create Your Account"}
+                  {currentStep === 2 && "Organization Details"}
+                  {currentStep === 3 && "Your Impact Story"}
+                  {currentStep === 4 && "Review & Launch"}
+                </CardTitle>
+                <CardDescription>
+                  {currentStep === 1 && "Set up your secure account to get started"}
+                  {currentStep === 2 && "Tell us about your nonprofit organization"}
+                  {currentStep === 3 && "Describe the impact you want to create"}
+                  {currentStep === 4 && "Review your information and launch your fundraising"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {error && (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                    {error}
+                  </div>
+                )}
+
+                {/* Step 1: Account Creation */}
+                {currentStep === 1 && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your@organization.org"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password *</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Minimum 8 characters"
+                        value={formData.password}
+                        onChange={(e) => handleInputChange("password", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 2: Organization Details */}
+                {currentStep === 2 && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="organizationName">Organization Name *</Label>
+                      <Input
+                        id="organizationName"
+                        placeholder="Your Nonprofit Name"
+                        value={formData.organizationName}
+                        onChange={(e) => handleInputChange("organizationName", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="organizationWebsite">Website (Optional)</Label>
+                      <Input
+                        id="organizationWebsite"
+                        placeholder="https://yourorganization.org"
+                        value={formData.organizationWebsite}
+                        onChange={(e) => handleInputChange("organizationWebsite", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="einNumber">EIN Number (Optional)</Label>
+                      <Input
+                        id="einNumber"
+                        placeholder="12-3456789"
+                        value={formData.einNumber}
+                        onChange={(e) => handleInputChange("einNumber", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="primaryCause">Primary Cause *</Label>
+                      <select
+                        id="primaryCause"
+                        className="w-full p-2 border border-input rounded-md bg-background"
+                        value={formData.primaryCause}
+                        onChange={(e) => handleInputChange("primaryCause", e.target.value)}
+                      >
+                        <option value="">Select your primary cause</option>
+                        {primaryCauses.map((cause) => (
+                          <option key={cause} value={cause}>{cause}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="expectedMonthlyDonations">Expected Monthly Donations</Label>
+                      <select
+                        id="expectedMonthlyDonations"
+                        className="w-full p-2 border border-input rounded-md bg-background"
+                        value={formData.expectedMonthlyDonations}
+                        onChange={(e) => handleInputChange("expectedMonthlyDonations", e.target.value)}
+                      >
+                        <option value="">Select expected range</option>
+                        {expectedDonationRanges.map((range) => (
+                          <option key={range} value={range}>{range}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Impact Story */}
+                {currentStep === 3 && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="projectDescription">Describe Your Impact Story *</Label>
+                      <Textarea
+                        id="projectDescription"
+                        placeholder="Tell us about the people, communities, or causes you help. What makes your work unique? What impact do you want to create? (Minimum 50 characters)"
+                        className="min-h-32"
+                        value={formData.projectDescription}
+                        onChange={(e) => handleInputChange("projectDescription", e.target.value)}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        {formData.projectDescription.length}/50 characters minimum
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 4: Review & Launch */}
+                {currentStep === 4 && (
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="font-semibold">Account Information</h3>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Email:</span>
+                          <p className="font-medium">{formData.email}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Organization:</span>
+                          <p className="font-medium">{formData.organizationName}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Primary Cause:</span>
+                          <p className="font-medium">{formData.primaryCause}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Expected Donations:</span>
+                          <p className="font-medium">{formData.expectedMonthlyDonations || "Not specified"}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="font-semibold">Your Impact Story</h3>
+                      <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
+                        {formData.projectDescription}
+                      </p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-start space-x-2">
+                        <input
+                          type="checkbox"
+                          id="agreeToTerms"
+                          checked={formData.agreeToTerms}
+                          onChange={(e) => handleInputChange("agreeToTerms", e.target.checked)}
+                          className="mt-1"
+                        />
+                        <Label htmlFor="agreeToTerms" className="text-sm">
+                          I agree to the <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link> *
+                        </Label>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <input
+                          type="checkbox"
+                          id="subscribeToUpdates"
+                          checked={formData.subscribeToUpdates}
+                          onChange={(e) => handleInputChange("subscribeToUpdates", e.target.checked)}
+                          className="mt-1"
+                        />
+                        <Label htmlFor="subscribeToUpdates" className="text-sm">
+                          Subscribe to product updates and fundraising tips
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div className="flex justify-between pt-6">
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    disabled={currentStep === 1}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back
+                  </Button>
+                  
+                  {currentStep < totalSteps ? (
+                    <Button onClick={handleNext} disabled={!validateStep(currentStep)}>
+                      Next
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={handleSubmit} 
+                      disabled={loading || !validateStep(4)}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      {loading ? (
+                        <>
+                          <LoadingSpinner />
+                          Creating Account...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Launch My Fundraising
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Why Choose NMBR */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-500" />
+                  Why Choose NMBR?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Target className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Story-Driven Fundraising</h4>
+                    <p className="text-xs text-muted-foreground">Connect donors directly to the people they help</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BarChart3 className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Complete Attribution</h4>
+                    <p className="text-xs text-muted-foreground">Track every donation from story to impact</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Users className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Donor Relationships</h4>
+                    <p className="text-xs text-muted-foreground">Build lasting connections with supporters</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">Easy Setup</h4>
+                    <p className="text-xs text-muted-foreground">Get started in minutes, not months</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Success Stories */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-green-500" />
+                  Success Stories
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Maria's Education Fund</span>
+                    <Badge variant="secondary" className="text-xs">+245% ROI</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Raised $8,400 in 3 months through story-driven fundraising</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Clean Water Initiative</span>
+                    <Badge variant="secondary" className="text-xs">+200% ROI</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Connected 200+ donors to families getting clean water</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Medical Care Program</span>
+                    <Badge variant="secondary" className="text-xs">+200% ROI</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Treated 15 children with personalized donor stories</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Start Guide */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-yellow-500" />
+                  Quick Start Guide
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                    <span className="text-sm font-medium">Create Your Account</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground ml-8">Set up your secure login credentials</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                    <span className="text-sm font-medium">Add Organization Details</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground ml-8">Tell us about your nonprofit</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">3</div>
+                    <span className="text-sm font-medium">Share Your Impact Story</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground ml-8">Describe the people you help</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">4</div>
+                    <span className="text-sm font-medium">Launch & Start Fundraising</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground ml-8">Begin your story-driven fundraising</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
