@@ -104,6 +104,8 @@ export default function MarketplacePage() {
   const [selectedProvider, setSelectedProvider] = useState('')
   const [apiKey, setApiKey] = useState('')
   const [isConnecting, setIsConnecting] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<ProductTemplate | RealProduct | null>(null)
+  const [showProductModal, setShowProductModal] = useState(false)
 
   // Load products and integrations on mount
   useEffect(() => {
@@ -155,10 +157,22 @@ export default function MarketplacePage() {
   const handleConnectProvider = async () => {
     if (!apiKey.trim()) return
 
+    // Basic API key validation
+    if (apiKey.length < 10) {
+      alert('API key appears to be too short. Please check your key and try again.')
+      return
+    }
+
     setIsConnecting(true)
     try {
       // Store API key in localStorage for demo purposes
       localStorage.setItem(`${selectedProvider.toLowerCase()}_api_key`, apiKey)
+      
+      // Test the connection
+      const testProducts = await realDropshipService.getRealProducts()
+      if (testProducts.length === 0) {
+        throw new Error('No products found with this API key')
+      }
       
       // Reload integrations
       loadIntegrations()
@@ -171,6 +185,7 @@ export default function MarketplacePage() {
       setSelectedProvider('')
     } catch (error) {
       console.error('Error connecting provider:', error)
+      alert(`Failed to connect to ${selectedProvider}. Please check your API key and try again.`)
     } finally {
       setIsConnecting(false)
     }
@@ -191,6 +206,11 @@ export default function MarketplacePage() {
     setCart(prev => [...prev, cartItem])
   }
 
+  const openProductModal = (product: ProductTemplate | RealProduct) => {
+    setSelectedProduct(product)
+    setShowProductModal(true)
+  }
+
   const removeFromCart = (itemId: string) => {
     setCart(prev => prev.filter(item => item.id !== itemId))
   }
@@ -203,7 +223,7 @@ export default function MarketplacePage() {
 
     setCart(prev => prev.map(item => 
       item.id === itemId 
-        ? { ...item, quantity, totalPrice: (product.price || product.basePrice) * quantity }
+        ? { ...item, quantity, totalPrice: (item.product.price || item.product.basePrice) * quantity }
         : item
     ))
   }
@@ -435,7 +455,12 @@ export default function MarketplacePage() {
                       )}
                     </div>
                   </div>
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                  <CardTitle 
+                    className="text-lg cursor-pointer hover:text-primary transition-colors"
+                    onClick={() => openProductModal(product)}
+                  >
+                    {product.name}
+                  </CardTitle>
                   <CardDescription className="text-sm">
                     {product.description}
                   </CardDescription>
@@ -616,6 +641,146 @@ export default function MarketplacePage() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Product Detail Modal */}
+      <Dialog open={showProductModal} onOpenChange={setShowProductModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{selectedProduct?.name}</DialogTitle>
+            <DialogDescription className="text-lg">
+              {selectedProduct?.description}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedProduct && (
+            <div className="space-y-6">
+              {/* Product Image and Basic Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="w-full h-64 bg-gradient-to-br from-cyan-100 to-purple-100 rounded-lg flex items-center justify-center">
+                    {getCategoryIcon(selectedProduct.category)({ className: "w-24 h-24 text-cyan-600" })}
+                  </div>
+                  <div className="flex gap-2">
+                    {selectedProduct.bestseller && (
+                      <Badge className="bg-orange-500 text-white">
+                        <Star className="w-3 h-3 mr-1" />
+                        Bestseller
+                      </Badge>
+                    )}
+                    {selectedProduct.nmbrReady && (
+                      <Badge className="bg-green-500 text-white">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        NMBR Ready
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-3xl font-bold">
+                      ${selectedProduct.price || selectedProduct.basePrice}
+                    </h3>
+                    <p className="text-muted-foreground">per item</p>
+                  </div>
+                  
+                  {/* Features */}
+                  <div>
+                    <h4 className="font-semibold mb-2">Features:</h4>
+                    <ul className="space-y-1">
+                      {selectedProduct.features.map((feature, index) => (
+                        <li key={index} className="flex items-center gap-2 text-sm">
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Colors */}
+                  {selectedProduct.colors && selectedProduct.colors.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Available Colors:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProduct.colors.map((color, index) => (
+                          <div
+                            key={index}
+                            className="w-8 h-8 rounded-full border-2 border-gray-200 cursor-pointer hover:border-primary transition-colors"
+                            style={{ backgroundColor: color }}
+                            title={color}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sizes */}
+                  {selectedProduct.sizes && selectedProduct.sizes.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Available Sizes:</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProduct.sizes.map((size, index) => (
+                          <Badge key={index} variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                            {size}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Provider Info */}
+                  {selectedProduct.provider && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Globe className="w-4 h-4" />
+                      <span>Fulfilled by {selectedProduct.provider}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* NMBR Integration Details */}
+              <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-lg border border-primary/20">
+                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Hash className="w-5 h-5 text-primary" />
+                  NMBR Integration
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium mb-2">Story Attribution</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Each product can be linked to specific impact stories, allowing donors to follow the journey of their contribution.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-2">Donor Engagement</h4>
+                    <p className="text-sm text-muted-foreground">
+                      When donors enter the NMBR code, they receive updates about the impact of their specific purchase.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-4">
+                <Button 
+                  onClick={() => {
+                    addToCart(selectedProduct)
+                    setShowProductModal(false)
+                  }}
+                  className="flex-1 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Add to Cart
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowProductModal(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

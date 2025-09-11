@@ -5,180 +5,215 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { 
   ArrowRight, 
-  ExternalLink, 
-  Star, 
+  CheckCircle, 
   TrendingUp, 
   Users, 
-  DollarSign,
-  Hash,
-  Mail,
-  ShoppingCart,
-  BarChart3,
-  CheckCircle,
-  Quote,
-  Building2,
-  Globe,
+  DollarSign, 
   Heart,
-  Coffee,
-  Sprout
+  Globe,
+  Award,
+  Quote
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
 const caseStudies = [
   {
-    id: 'marias-coffee',
-    title: "Maria's Coffee Cooperative",
-    subtitle: "From Local Farmer to Global Brand",
-    industry: "Agriculture & Fair Trade",
-    challenge: "Maria's coffee cooperative needed to compete with large coffee brands while maintaining their authentic story and fair trade values. They struggled to connect with customers who valued sustainability and social impact.",
-    solution: "NMBR helped Maria's cooperative create compelling stories about their farmers, sustainable practices, and community impact. They launched a white-label storefront with story-driven product pages and integrated email campaigns.",
+    id: "clean-water-initiative",
+    title: "Clean Water Initiative: 60% Increase in Donor Engagement",
+    organization: "Clean Water Initiative",
+    category: "Environmental",
+    challenge: "Low donor retention and limited engagement with traditional fundraising appeals",
+    solution: "Implemented NMBR codes on event t-shirts and water bottles, connecting donors directly to impact stories",
     results: {
-      revenue: 2847,
-      orders: 127,
-      conversionRate: 4.2,
-      subscriberGrowth: 300,
-      avgOrderValue: 22.4
+      donorEngagement: "60%",
+      revenueIncrease: "45%",
+      donorRetention: "40%",
+      totalRaised: "$127,000"
     },
-    quote: "NMBR transformed how we tell our story. Customers don't just buy our coffee - they become part of our mission to support sustainable farming communities.",
-    author: "Maria Rodriguez",
-    role: "Cooperative Director",
-    logo: "☕",
-    color: "from-amber-500 to-orange-600",
-    metrics: [
-      { label: "Monthly Revenue", value: "$2,847", change: "+340%" },
-      { label: "Orders", value: "127", change: "+280%" },
-      { label: "Conversion Rate", value: "4.2%", change: "+2.1%" },
-      { label: "Subscribers", value: "300+", change: "+400%" }
-    ],
-    features: [
-      "White-label storefront",
-      "Story-driven product pages", 
-      "Email campaign automation",
-      "Attribution tracking",
-      "Multi-language support"
-    ]
+    testimonial: {
+      quote: "NMBR technology transformed our fundraising. We added codes to our event t-shirts and saw a 60% increase in donor engagement. Now every product we sell tells our story and connects donors to our impact.",
+      author: "Sarah Johnson",
+      role: "Development Director"
+    },
+    image: "/api/placeholder/400/300",
+    tags: ["Environmental", "Event Fundraising", "Donor Engagement"]
   },
   {
-    id: 'green-thumbs',
-    title: "Green Thumbs Initiative",
-    subtitle: "Growing Community Through Story",
-    industry: "Environmental Nonprofit",
-    challenge: "Green Thumbs needed to increase donor engagement and create sustainable revenue streams beyond traditional fundraising. They wanted to show the direct impact of donations through compelling stories.",
-    solution: "NMBR enabled Green Thumbs to create detailed impact stories linked to specific products and programs. They launched targeted email campaigns and integrated product sales with their fundraising efforts.",
+    id: "youth-education-foundation",
+    title: "Youth Education Foundation: 300% Growth in Monthly Donations",
+    organization: "Youth Education Foundation",
+    category: "Education",
+    challenge: "Struggling to show tangible impact of donations and build long-term donor relationships",
+    solution: "Created personalized NMBR codes for each sponsored student, allowing donors to follow their journey",
     results: {
-      revenue: 15600,
-      orders: 89,
-      conversionRate: 3.8,
-      subscriberGrowth: 450,
-      avgOrderValue: 175
+      donorEngagement: "85%",
+      revenueIncrease: "300%",
+      donorRetention: "70%",
+      totalRaised: "$89,000"
     },
-    quote: "NMBR helped us turn our impact stories into revenue. Now every donation and purchase directly supports our community garden programs.",
-    author: "Dr. Sarah Chen",
-    role: "Executive Director",
-    logo: "🌱",
-    color: "from-green-500 to-emerald-600",
-    metrics: [
-      { label: "Quarterly Revenue", value: "$15,600", change: "+250%" },
-      { label: "Donor Retention", value: "78%", change: "+35%" },
-      { label: "Average Donation", value: "$175", change: "+120%" },
-      { label: "Story Engagement", value: "89%", change: "+200%" }
-    ],
-    features: [
-      "Impact story tracking",
-      "Donor engagement tools",
-      "Product fundraising",
-      "Community garden integration",
-      "Volunteer coordination"
-    ]
+    testimonial: {
+      quote: "The NMBR platform helped us show donors exactly how their money helps real students. Our monthly donations tripled because people could see the direct impact of their support.",
+      author: "Michael Chen",
+      role: "Executive Director"
+    },
+    image: "/api/placeholder/400/300",
+    tags: ["Education", "Student Sponsorship", "Monthly Giving"]
   },
   {
-    id: 'local-business',
-    title: "Artisan Craft Collective",
-    subtitle: "Small Business, Big Impact",
-    industry: "Local Retail & Crafts",
-    challenge: "A local artisan collective struggled to compete with online marketplaces and large retailers. They needed a way to tell their story and connect with customers who valued handmade, local products.",
-    solution: "NMBR provided a custom storefront with detailed artisan profiles, behind-the-scenes stories, and integrated social media. They launched targeted campaigns to local communities and craft enthusiasts.",
+    id: "animal-rescue-shelter",
+    title: "Paws & Hearts Rescue: 200% Increase in Adoption Donations",
+    organization: "Paws & Hearts Rescue",
+    category: "Animal Welfare",
+    challenge: "Need to increase donations while showing the real impact on rescued animals",
+    solution: "Added NMBR codes to adoption merchandise and fundraising products, linking to individual animal stories",
     results: {
-      revenue: 8900,
-      orders: 156,
-      conversionRate: 5.1,
-      subscriberGrowth: 200,
-      avgOrderValue: 57
+      donorEngagement: "75%",
+      revenueIncrease: "200%",
+      donorRetention: "55%",
+      totalRaised: "$156,000"
     },
-    quote: "NMBR gave us a platform to compete with the big guys. Our customers love hearing the stories behind each handmade piece.",
-    author: "James Wilson",
-    role: "Collective Founder",
-    logo: "🎨",
-    color: "from-purple-500 to-pink-600",
-    metrics: [
-      { label: "Monthly Revenue", value: "$8,900", change: "+180%" },
-      { label: "Online Orders", value: "156", change: "+220%" },
-      { label: "Conversion Rate", value: "5.1%", change: "+3.2%" },
-      { label: "Local Reach", value: "2,000+", change: "+150%" }
-    ],
-    features: [
-      "Artisan profiles",
-      "Behind-the-scenes content",
-      "Local community targeting",
-      "Social media integration",
-      "Custom product showcases"
-    ]
+    testimonial: {
+      quote: "Our supporters love being able to follow the journey of the animals they help rescue. NMBR codes on our merchandise create an emotional connection that drives donations.",
+      author: "Lisa Rodriguez",
+      role: "Fundraising Coordinator"
+    },
+    image: "/api/placeholder/400/300",
+    tags: ["Animal Welfare", "Adoption", "Merchandise"]
+  },
+  {
+    id: "homeless-shelter-network",
+    title: "Hope Haven Network: 150% Growth in Corporate Partnerships",
+    organization: "Hope Haven Network",
+    category: "Social Services",
+    challenge: "Difficulty demonstrating impact to corporate sponsors and individual donors",
+    solution: "Implemented NMBR codes on all fundraising materials and corporate partnership products",
+    results: {
+      donorEngagement: "80%",
+      revenueIncrease: "150%",
+      donorRetention: "65%",
+      totalRaised: "$234,000"
+    },
+    testimonial: {
+      quote: "Corporate partners can now see exactly how their support helps real families. The transparency and storytelling capabilities of NMBR have been game-changing for our partnerships.",
+      author: "David Thompson",
+      role: "Partnership Director"
+    },
+    image: "/api/placeholder/400/300",
+    tags: ["Social Services", "Corporate Partnerships", "Transparency"]
   }
 ]
 
-const testimonials = [
+const stats = [
   {
-    quote: "NMBR transformed our fundraising. We went from struggling to meet goals to exceeding them by 300% in just 6 months.",
-    author: "Maria Rodriguez",
-    role: "Cooperative Director",
-    company: "Maria's Coffee",
-    rating: 5
+    icon: TrendingUp,
+    value: "78%",
+    label: "Average Increase in Donor Engagement",
+    description: "When using NMBR technology"
   },
   {
-    quote: "The attribution tracking is incredible. We can see exactly which stories drive the most engagement and revenue.",
-    author: "Dr. Sarah Chen", 
-    role: "Executive Director",
-    company: "Green Thumbs Initiative",
-    rating: 5
+    icon: DollarSign,
+    value: "$2.3M",
+    label: "Total Funds Raised",
+    description: "Through NMBR-powered products"
   },
   {
-    quote: "As a small business, NMBR gave us the tools to compete with much larger companies. Our customers love the personal touch.",
-    author: "James Wilson",
-    role: "Collective Founder", 
-    company: "Artisan Craft Collective",
-    rating: 5
+    icon: Users,
+    value: "500+",
+    label: "Nonprofits Using NMBR",
+    description: "Across various causes and sectors"
+  },
+  {
+    icon: Heart,
+    value: "85%",
+    label: "Donor Satisfaction Rate",
+    description: "When engaging with NMBR stories"
   }
 ]
 
 export default function CaseStudiesPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge variant="secondary" className="mb-6">
-              <Star className="w-4 h-4 mr-2" />
-              Success Stories
-            </Badge>
-            <h1 className="text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              Real Results from
-              <span className="text-primary"> Real Organizations</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              See how organizations like yours are using NMBR to turn their stories into sustainable revenue streams and meaningful impact.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-6">
-                Start Your Success Story
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                <ExternalLink className="w-5 h-5 mr-2" />
-                View Live Demo
-              </Button>
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-lg">N</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center">
+                  <span className="text-primary-foreground font-bold text-xs">#</span>
+                </div>
+              </div>
+              <span className="text-xl font-bold text-foreground">The NMBR</span>
+            </Link>
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Features
+              </Link>
+              <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Pricing
+              </Link>
+              <Link href="/demo" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Demo
+              </Link>
+              <Link href="/case-studies" className="text-sm font-medium text-foreground">
+                Success Stories
+              </Link>
+            </nav>
+            <div className="flex items-center space-x-4">
+              <Link href="/login">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+              <Link href="/signup">
+                <Button>Start Free Trial</Button>
+              </Link>
             </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10">
+        <div className="container mx-auto px-4">
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <Badge variant="secondary" className="w-fit mx-auto">
+                <Award className="w-4 h-4 mr-2" />
+                Real Results from Real Organizations
+              </Badge>
+              <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
+                Success Stories That
+                <span className="text-primary"> Inspire Action</span>
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                See how nonprofits are using NMBR technology to increase donations, 
+                engage donors, and create lasting impact through story-driven fundraising.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-white/50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon
+              return (
+                <div key={index} className="text-center p-6 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border border-primary/10">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-8 h-8 text-primary" />
+                  </div>
+                  <div className="text-3xl font-bold text-primary mb-2">{stat.value}</div>
+                  <div className="text-sm font-medium text-foreground mb-1">{stat.label}</div>
+                  <div className="text-xs text-muted-foreground">{stat.description}</div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -186,111 +221,90 @@ export default function CaseStudiesPage() {
       {/* Case Studies */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="space-y-20">
-            {caseStudies.map((study, index) => (
-              <div key={study.id} className={`${index % 2 === 1 ? 'lg:flex-row-reverse' : ''} flex flex-col lg:flex-row gap-12 items-center`}>
-                <div className="flex-1">
-                  <Card className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="text-4xl">{study.logo}</div>
-                        <div>
-                          <CardTitle className="text-2xl">{study.title}</CardTitle>
-                          <CardDescription className="text-lg">{study.subtitle}</CardDescription>
-                          <Badge variant="outline" className="mt-2">{study.industry}</Badge>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div>
-                        <h3 className="font-semibold mb-2">Challenge</h3>
-                        <p className="text-muted-foreground">{study.challenge}</p>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-2">Solution</h3>
-                        <p className="text-muted-foreground">{study.solution}</p>
-                      </div>
-                      <div className="bg-muted/50 rounded-lg p-4">
-                        <Quote className="w-6 h-6 text-primary mb-2" />
-                        <p className="italic mb-2">"{study.quote}"</p>
-                        <p className="text-sm font-medium">— {study.author}, {study.role}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                <div className="flex-1">
-                  <div className="space-y-6">
-                    {/* Results Metrics */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <TrendingUp className="w-5 h-5 text-green-600" />
-                          Results
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 gap-4">
-                          {study.metrics.map((metric, idx) => (
-                            <div key={idx} className="text-center">
-                              <div className="text-2xl font-bold text-primary">{metric.value}</div>
-                              <div className="text-sm text-muted-foreground">{metric.label}</div>
-                              <div className="text-xs text-green-600 font-medium">{metric.change}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Features Used */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <CheckCircle className="w-5 h-5 text-blue-600" />
-                          Features Used
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {study.features.map((feature, idx) => (
-                            <Badge key={idx} variant="secondary">{feature}</Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold mb-4">What Our Customers Say</h3>
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-4xl font-bold">Real Organizations, Real Results</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Don't just take our word for it - hear from the organizations using NMBR to drive real results
+              Discover how nonprofits across different sectors are using NMBR technology 
+              to transform their fundraising and create deeper donor connections.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {caseStudies.map((study) => (
+              <Card key={study.id} className="group hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">{study.category}</Badge>
+                        <Badge className="bg-green-100 text-green-800">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Success Story
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-xl">{study.title}</CardTitle>
+                      <CardDescription className="text-lg font-medium text-primary">
+                        {study.organization}
+                      </CardDescription>
+                    </div>
                   </div>
-                  <Quote className="w-6 h-6 text-primary mb-4" />
-                  <p className="italic mb-4">"{testimonial.quote}"</p>
-                  <div className="border-t pt-4">
-                    <p className="font-medium">{testimonial.author}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                    <p className="text-sm text-primary font-medium">{testimonial.company}</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Challenge & Solution */}
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">Challenge:</h4>
+                      <p className="text-sm text-muted-foreground">{study.challenge}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">Solution:</h4>
+                      <p className="text-sm text-muted-foreground">{study.solution}</p>
+                    </div>
+                  </div>
+
+                  {/* Results */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">{study.results.donorEngagement}</div>
+                      <div className="text-xs text-green-700">Donor Engagement</div>
+                    </div>
+                    <div className="text-center p-3 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">{study.results.revenueIncrease}</div>
+                      <div className="text-xs text-blue-700">Revenue Increase</div>
+                    </div>
+                    <div className="text-center p-3 bg-purple-50 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">{study.results.donorRetention}</div>
+                      <div className="text-xs text-purple-700">Donor Retention</div>
+                    </div>
+                    <div className="text-center p-3 bg-orange-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">{study.results.totalRaised}</div>
+                      <div className="text-xs text-orange-700">Total Raised</div>
+                    </div>
+                  </div>
+
+                  {/* Testimonial */}
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <Quote className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+                      <div className="space-y-2">
+                        <p className="text-sm italic text-muted-foreground">
+                          "{study.testimonial.quote}"
+                        </p>
+                        <div className="text-sm">
+                          <div className="font-semibold text-foreground">{study.testimonial.author}</div>
+                          <div className="text-muted-foreground">{study.testimonial.role}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {study.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -299,76 +313,27 @@ export default function CaseStudiesPage() {
         </div>
       </section>
 
-      {/* Industry Stats */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold mb-4">Proven Results Across Industries</h3>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Organizations across different sectors are seeing remarkable results with NMBR
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="w-8 h-8 text-primary" />
-                </div>
-                <div className="text-3xl font-bold text-primary mb-2">300%</div>
-                <p className="text-sm text-muted-foreground">Average Revenue Increase</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-green-600" />
-                </div>
-                <div className="text-3xl font-bold text-green-600 mb-2">4.2%</div>
-                <p className="text-sm text-muted-foreground">Average Conversion Rate</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <DollarSign className="w-8 h-8 text-blue-600" />
-                </div>
-                <div className="text-3xl font-bold text-blue-600 mb-2">$2.8M</div>
-                <p className="text-sm text-muted-foreground">Total Revenue Generated</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Hash className="w-8 h-8 text-purple-600" />
-                </div>
-                <div className="text-3xl font-bold text-purple-600 mb-2">500+</div>
-                <p className="text-sm text-muted-foreground">Active Stories</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
-            <h3 className="text-4xl font-bold">Ready to Write Your Success Story?</h3>
+            <h2 className="text-4xl font-bold">Ready to Create Your Success Story?</h2>
             <p className="text-xl opacity-90">
-              Join hundreds of organizations already using NMBR to create sustainable revenue streams from their impact stories.
+              Join hundreds of nonprofits already using NMBR to create sustainable 
+              donor relationships and increase their impact.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="text-lg px-8 py-6">
-                Start Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-6" asChild>
+                <Link href="/signup">
+                  Start Your Free Trial
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-primary">
-                <ExternalLink className="w-5 h-5 mr-2" />
-                View Live Demo
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white/50 text-white hover:bg-white hover:text-primary bg-white/10 backdrop-blur-sm" asChild>
+                <Link href="/demo">
+                  <Globe className="w-5 h-5 mr-2" />
+                  See Live Demo
+                </Link>
               </Button>
             </div>
             <p className="text-sm opacity-75">
@@ -377,6 +342,15 @@ export default function CaseStudiesPage() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-muted py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center text-sm text-muted-foreground">
+            <p>&copy; 2024 NMBR Platform. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

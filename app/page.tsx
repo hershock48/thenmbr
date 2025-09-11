@@ -218,21 +218,6 @@ export default function HomePage() {
                   <span>Setup in 5 minutes</span>
                 </div>
               </div>
-
-              <div className="flex items-center gap-8 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>14-day free trial</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>No credit card required</span>
-            </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>Setup in 5 minutes</span>
-          </div>
-        </div>
             </div>
 
             <div className="relative">
