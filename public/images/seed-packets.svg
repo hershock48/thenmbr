@@ -1,0 +1,20 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F0F8FF"/>
+  <rect x="50" y="50" width="80" height="120" rx="5" fill="#90EE90"/>
+  <rect x="60" y="60" width="60" height="100" rx="3" fill="#98FB98"/>
+  <circle cx="90" cy="90" r="15" fill="#228B22"/>
+  <text x="90" y="95" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">🌱</text>
+  <text x="90" y="130" text-anchor="middle" fill="#228B22" font-family="Arial" font-size="8">SEEDS</text>
+  
+  <rect x="160" y="50" width="80" height="120" rx="5" fill="#FFB6C1"/>
+  <rect x="170" y="60" width="60" height="100" rx="3" fill="#FFC0CB"/>
+  <circle cx="200" cy="90" r="15" fill="#FF69B4"/>
+  <text x="200" y="95" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">🌸</text>
+  <text x="200" y="130" text-anchor="middle" fill="#FF69B4" font-family="Arial" font-size="8">FLOWERS</text>
+  
+  <rect x="270" y="50" width="80" height="120" rx="5" fill="#DDA0DD"/>
+  <rect x="280" y="60" width="60" height="100" rx="3" fill="#EE82EE"/>
+  <circle cx="310" cy="90" r="15" fill="#9370DB"/>
+  <text x="310" y="95" text-anchor="middle" fill="white" font-family="Arial" font-size="10" font-weight="bold">🥕</text>
+  <text x="310" y="130" text-anchor="middle" fill="#9370DB" font-family="Arial" font-size="8">VEGGIES</text>
+</svg>
