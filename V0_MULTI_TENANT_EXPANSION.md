@@ -43,7 +43,7 @@
 **Current Problem:** Homepage says "Join hundreds of nonprofits" - excludes 2/3 of target market
 
 **V0 Solution:**
-```
+\`\`\`
 Create a dynamic homepage that adapts messaging for three audience types:
 
 COMPONENTS NEEDED:
@@ -73,14 +73,14 @@ EXISTING FILES TO MODIFY:
 - components/ui/hero-section.tsx
 - components/ui/features-showcase.tsx
 - components/ui/testimonials.tsx
-```
+\`\`\`
 
 ### **Task 2: Enhanced Organization Creation Flow**
 
 **Current Problem:** Signup assumes nonprofit context, no organization type selection
 
 **V0 Solution:**
-```
+\`\`\`
 Create an intelligent organization setup flow with type-specific onboarding:
 
 COMPONENTS NEEDED:
@@ -127,14 +127,14 @@ EXISTING FILES TO MODIFY:
 - app/select-org/page.tsx
 - contexts/AuthContext.tsx (add org type)
 - types/index.ts (add org type enum)
-```
+\`\`\`
 
 ### **Task 3: Dynamic Dashboard with Contextual Language**
 
 **Current Problem:** Dashboard uses nonprofit-specific terminology throughout
 
 **V0 Solution:**
-```
+\`\`\`
 Create a context-aware dashboard that adapts language and features:
 
 COMPONENTS NEEDED:
@@ -189,14 +189,14 @@ EXISTING FILES TO MODIFY:
 - components/dashboard/header.tsx
 - All dashboard page components
 - contexts/AuthContext.tsx
-```
+\`\`\`
 
 ### **Task 4: Audience-Specific Marketing Pages**
 
 **Current Problem:** No dedicated landing pages for different audiences
 
 **V0 Solution:**
-```
+\`\`\`
 Create dedicated landing pages for each audience type:
 
 COMPONENTS NEEDED:
@@ -241,14 +241,14 @@ EXISTING FILES TO CREATE:
 - app/grassroots/page.tsx
 - app/businesses/page.tsx
 - components/marketing/audience-specific/
-```
+\`\`\`
 
 ### **Task 5: Intelligent Widget System with Context Awareness**
 
 **Current Problem:** Widgets use nonprofit-specific language and CTAs
 
 **V0 Solution:**
-```
+\`\`\`
 Create context-aware widgets that adapt to organization type:
 
 COMPONENTS NEEDED:
@@ -293,7 +293,7 @@ EXISTING FILES TO MODIFY:
 - components/widget/widget-config.tsx
 - components/widget/widget-preview.tsx
 - lib/widget-generator.ts
-```
+\`\`\`
 
 ---
 
@@ -319,29 +319,29 @@ EXISTING FILES TO MODIFY:
 ## 🚀 **Ready-to-Execute V0 Prompts:**
 
 ### **Prompt 1: Homepage Transformation**
-```
+\`\`\`
 Transform our nonprofit-focused homepage into a multi-audience platform that serves nonprofits, grassroots organizations, and businesses. Create dynamic content that adapts based on audience type, with three-column feature showcases, audience-specific value propositions, and contextual CTAs. Maintain the existing design structure but make the language inclusive of all organization types. Use Next.js 14, TypeScript, and Tailwind CSS.
-```
+\`\`\`
 
 ### **Prompt 2: Organization Creation Flow**
-```
+\`\`\`
 Create an intelligent organization creation flow that collects organization type (Nonprofit/501c3, Grassroots Project, Business) and dynamically adapts the form fields, validation rules, and onboarding experience. Include type-specific legal compliance information, integration setup, and a preview of how the dashboard will look for each organization type. Use React Hook Form, multi-step validation, and mobile-first design.
-```
+\`\`\`
 
 ### **Prompt 3: Dynamic Dashboard System**
-```
+\`\`\`
 Build a context-aware dashboard system that dynamically changes language and features based on organization type. Nonprofits see 'Donations' and 'Fundraising', Grassroots see 'Support' and 'Community', Businesses see 'Sales' and 'Customers'. Create a context provider system and dynamic component rendering while maintaining all existing functionality. Use React Context, TypeScript, and responsive design.
-```
+\`\`\`
 
 ### **Prompt 4: Audience-Specific Marketing Pages**
-```
+\`\`\`
 Create audience-specific marketing pages with dedicated landing pages for nonprofits, grassroots organizations, and businesses. Each page should have tailored content, case studies, pricing tiers, and contact forms while sharing common components and maintaining SEO optimization. Use Next.js dynamic routing, TypeScript, and mobile-first design.
-```
+\`\`\`
 
 ### **Prompt 5: Intelligent Widget System**
-```
+\`\`\`
 Build an intelligent widget system that adapts to organization type with contextual call-to-action buttons, type-specific styling options, and audience-appropriate messaging. Nonprofits get donation buttons, Grassroots get support buttons, Businesses get product links - all using the same underlying system. Use dynamic component generation, context awareness, and real-time preview updates.
-```
+\`\`\`
 
 ---
 
@@ -367,7 +367,7 @@ Build an intelligent widget system that adapts to organization type with context
 ## 🔧 **Technical Architecture:**
 
 ### **Context System:**
-```typescript
+\`\`\`typescript
 interface OrganizationType {
   id: 'nonprofit' | 'grassroots' | 'business'
   name: string
@@ -380,10 +380,10 @@ interface OrganizationType {
   features: string[]
   integrations: string[]
 }
-```
+\`\`\`
 
 ### **Dynamic Content System:**
-```typescript
+\`\`\`typescript
 const getContentByOrgType = (orgType: OrganizationType) => {
   return {
     hero: content[orgType].hero,
@@ -391,15 +391,15 @@ const getContentByOrgType = (orgType: OrganizationType) => {
     cta: content[orgType].cta
   }
 }
-```
+\`\`\`
 
 ### **Component Adaptation:**
-```typescript
+\`\`\`typescript
 const DynamicComponent = ({ orgType }: { orgType: OrganizationType }) => {
   const content = getContentByOrgType(orgType)
   return <Component {...content} />
 }
-```
+\`\`\`
 
 ---
 

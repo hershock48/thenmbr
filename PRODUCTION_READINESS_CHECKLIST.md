@@ -219,7 +219,7 @@
 ## **🔧 Production Configuration**
 
 ### **Environment Variables**
-```bash
+\`\`\`bash
 # Production Environment
 NODE_ENV=production
 NEXT_PUBLIC_APP_ENV=production
@@ -243,7 +243,7 @@ GOOGLE_ANALYTICS_ID=GA-XXXXXXXXX-PRODUCTION
 JWT_SECRET=your-production-jwt-secret
 ENCRYPTION_KEY=your-production-encryption-key
 CSRF_SECRET=your-production-csrf-secret
-```
+\`\`\`
 
 ### **Database Configuration**
 - **Connection Pooling** - Configured for production load

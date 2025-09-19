@@ -4,14 +4,12 @@
 
 Create a `.env.local` file in the root directory with the following variables:
 
-```bash
+\`\`\`bash
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 
-# OpenAI Configuration
-NEXT_PUBLIC_OPENAI_API_KEY=sk-your-openai-key-here
 OPENAI_API_KEY=sk-your-openai-key-here
 
 # Email Service Configuration
@@ -25,7 +23,7 @@ STRIPE_WEBHOOK_SECRET=whsec_your-webhook-secret-here
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NODE_ENV=development
-```
+\`\`\`
 
 ## Setup Instructions
 
@@ -55,7 +53,7 @@ NODE_ENV=development
 
 Run these SQL commands in your Supabase SQL editor:
 
-```sql
+\`\`\`sql
 -- Organizations table
 CREATE TABLE organizations (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -117,7 +115,7 @@ CREATE TABLE newsletters (
   sent_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-```
+\`\`\`
 
 ## Testing the Setup
 

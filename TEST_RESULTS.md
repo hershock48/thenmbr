@@ -76,13 +76,13 @@
 4. Improve logger mocking in error handler tests
 
 ### **Test Commands Available:**
-```bash
+\`\`\`bash
 npm test                    # Run all tests
 npm run test:watch         # Watch mode
 npm run test:coverage      # Coverage report
 npm run test:ci            # CI mode
 node scripts/run-tests.js  # Custom test runner
-```
+\`\`\`
 
 ## **Conclusion:**
 The unit testing framework is **fully functional** with comprehensive coverage of utility functions, error handling, validation, and external integrations. The minor issues are cosmetic and don't affect the core functionality. The platform now has a solid foundation for testing with 86%+ test coverage.

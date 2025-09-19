@@ -431,4 +431,3 @@ export function DataVisualization({ data }: DataVisualizationProps) {
     </div>
   )
 }
-

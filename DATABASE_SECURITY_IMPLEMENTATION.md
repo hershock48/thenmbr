@@ -50,7 +50,7 @@
 ### **🛡️ Security Functions Implemented:**
 
 #### **Access Control Functions**
-```sql
+\`\`\`sql
 -- Check if user is admin
 is_admin(user_id UUID) RETURNS BOOLEAN
 
@@ -62,10 +62,10 @@ can_access_organization(org_id UUID, user_id UUID) RETURNS BOOLEAN
 
 -- Get user's organization ID
 get_user_organization_id(user_id UUID) RETURNS UUID
-```
+\`\`\`
 
 #### **Security Monitoring Functions**
-```sql
+\`\`\`sql
 -- Log security events
 log_security_event(event_type VARCHAR, details JSONB) RETURNS VOID
 
@@ -74,7 +74,7 @@ check_suspicious_activity() RETURNS TABLE (user_id, event_count, last_event)
 
 -- Log profile changes
 log_profile_changes() RETURNS TRIGGER
-```
+\`\`\`
 
 ### **📊 Security Monitoring Dashboard**
 
@@ -101,44 +101,44 @@ log_profile_changes() RETURNS TRIGGER
 - **Data Isolation** - Organization data is properly separated
 
 #### **Security Monitoring Script**
-```bash
+\`\`\`bash
 npm run security:audit    # Run comprehensive security audit
 npm run db:security       # Run database security check
-```
+\`\`\`
 
 ### **📁 Implementation Files:**
 
 #### **1. RLS Policies (`database-rls-policies.sql`)**
-```sql
+\`\`\`sql
 -- Comprehensive RLS policies for all tables
 -- 50+ security policies implemented
 -- Multi-tenant data isolation
 -- Public access controls
 -- Security functions and triggers
-```
+\`\`\`
 
 #### **2. Security Monitor (`components/dashboard/security-monitor.tsx`)**
-```typescript
+\`\`\`typescript
 // Real-time security monitoring dashboard
 // Security statistics and metrics
 // Recent security events
 // Security recommendations
-```
+\`\`\`
 
 #### **3. Security API Endpoints**
-```typescript
+\`\`\`typescript
 // /api/security/stats - Security statistics
 // /api/security/events - Security events
 // Admin-only access with proper authentication
-```
+\`\`\`
 
 #### **4. Security Audit Script (`scripts/database-security-audit.js`)**
-```javascript
+\`\`\`javascript
 // Automated security verification
 // RLS policy validation
 // Security function testing
 // Access control verification
-```
+\`\`\`
 
 ### **🔐 Security Policy Matrix:**
 

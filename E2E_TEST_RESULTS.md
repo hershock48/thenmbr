@@ -80,13 +80,13 @@
 8. **✅ Cross-browser Testing** - Chrome, Firefox, Safari
 
 ### **Test Scripts Available:**
-```bash
+\`\`\`bash
 npm run test:e2e              # Run E2E tests
 npm run test:playwright       # Run Playwright tests
 npm run test:playwright:ui    # Run with UI mode
 npm run test:playwright:headed # Run with browser visible
 npm run test:all              # Run all tests (unit + integration + e2e)
-```
+\`\`\`
 
 ### **Key Test Scenarios:**
 

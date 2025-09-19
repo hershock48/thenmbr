@@ -7,7 +7,7 @@
 **Current Issues**: Basic drag-and-drop, limited styling, poor UX
 
 **v0 Prompt**:
-```
+\`\`\`
 "Completely redesign the newsletter builder component to match Mailchimp's interface. 
 
 Requirements:
@@ -25,7 +25,7 @@ Requirements:
 - Export to HTML/PDF
 
 Make it intuitive for non-technical users to create beautiful, professional newsletters that rival Mailchimp's quality."
-```
+\`\`\`
 
 ---
 
@@ -34,7 +34,7 @@ Make it intuitive for non-technical users to create beautiful, professional news
 **Current Issues**: Basic form, low conversion potential, poor mobile UX
 
 **v0 Prompt**:
-```
+\`\`\`
 "Redesign the fundraising widget to maximize conversions and engagement.
 
 Requirements:
@@ -51,7 +51,7 @@ Requirements:
 - Easy theming for different organizations
 
 Focus on reducing friction and increasing donation completion rates. Make it feel premium and trustworthy."
-```
+\`\`\`
 
 ---
 
@@ -60,7 +60,7 @@ Focus on reducing friction and increasing donation completion rates. Make it fee
 **Current Issues**: Basic stats cards, poor data visualization
 
 **v0 Prompt**:
-```
+\`\`\`
 "Create a professional, data-rich dashboard for fundraising management.
 
 Requirements:
@@ -77,7 +77,7 @@ Requirements:
 - Breadcrumb navigation
 
 Make it feel like a premium SaaS product with modern UI patterns. Focus on data clarity and actionable insights."
-```
+\`\`\`
 
 ---
 
@@ -86,7 +86,7 @@ Make it feel like a premium SaaS product with modern UI patterns. Focus on data 
 **Current Issues**: Basic text templates, no visual appeal
 
 **v0 Prompt**:
-```
+\`\`\`
 "Design professional, responsive email templates for a fundraising platform.
 
 Requirements:
@@ -102,7 +102,7 @@ Requirements:
 - Compliant unsubscribe flow
 
 Create templates that look professional and trustworthy, similar to major charity organizations like Charity Water or Doctors Without Borders."
-```
+\`\`\`
 
 ---
 
@@ -111,7 +111,7 @@ Create templates that look professional and trustworthy, similar to major charit
 **Current Issues**: Basic table, limited functionality
 
 **v0 Prompt**:
-```
+\`\`\`
 "Create an advanced subscriber management interface with professional features.
 
 Requirements:
@@ -127,7 +127,7 @@ Requirements:
 - GDPR compliance tools
 
 Make it feel like a professional email marketing platform with powerful subscriber management capabilities."
-```
+\`\`\`
 
 ---
 
@@ -136,7 +136,7 @@ Make it feel like a professional email marketing platform with powerful subscrib
 **Current Issues**: Basic file upload, no management features
 
 **v0 Prompt**:
-```
+\`\`\`
 "Design a professional media management system for the platform.
 
 Requirements:
@@ -152,7 +152,7 @@ Requirements:
 - Alt text management for accessibility
 
 Create an intuitive media management experience similar to Unsplash or Dropbox."
-```
+\`\`\`
 
 ---
 
@@ -162,7 +162,7 @@ Create an intuitive media management experience similar to Unsplash or Dropbox."
 **New File**: `components/ui/` (enhance existing)
 
 **v0 Prompt**:
-```
+\`\`\`
 "Create a comprehensive, modern UI component library for the fundraising platform.
 
 Components needed:
@@ -177,7 +177,7 @@ Components needed:
 - Media (image gallery, video player, file upload)
 
 Use the brand colors (#2563eb, #ffffff) and ensure all components are accessible, responsive, and follow modern design principles."
-```
+\`\`\`
 
 ---
 
@@ -185,7 +185,7 @@ Use the brand colors (#2563eb, #ffffff) and ensure all components are accessible
 **New Files**: Mobile-specific components
 
 **v0 Prompt**:
-```
+\`\`\`
 "Create mobile-optimized components for the fundraising platform.
 
 Requirements:
@@ -201,7 +201,7 @@ Requirements:
 - Performance-optimized animations
 
 Focus on creating a native app-like experience that works perfectly on mobile devices."
-```
+\`\`\`
 
 ---
 
@@ -211,7 +211,7 @@ Focus on creating a native app-like experience that works perfectly on mobile de
 **New File**: `components/dashboard/analytics.tsx`
 
 **v0 Prompt**:
-```
+\`\`\`
 "Create a comprehensive analytics dashboard for fundraising insights.
 
 Requirements:
@@ -227,7 +227,7 @@ Requirements:
 - Real-time data updates
 
 Make it visually appealing and easy to understand for non-technical users."
-```
+\`\`\`
 
 ---
 
@@ -235,7 +235,7 @@ Make it visually appealing and easy to understand for non-technical users."
 **New File**: `components/onboarding/`
 
 **v0 Prompt**:
-```
+\`\`\`
 "Design a comprehensive onboarding flow for new users.
 
 Requirements:
@@ -251,41 +251,41 @@ Requirements:
 - Support contact options
 
 Create an engaging onboarding experience that helps users get started quickly and successfully."
-```
+\`\`\`
 
 ---
 
 ## 📋 **Quick v0 Prompts for Each Task**
 
 ### **Newsletter Builder**
-```
+\`\`\`
 "Redesign newsletter builder to match Mailchimp's quality with drag-and-drop, templates, and real-time preview. Brand colors: #2563eb, #ffffff"
-```
+\`\`\`
 
 ### **Widget Optimization**
-```
+\`\`\`
 "Create conversion-optimized fundraising widget with progress bars, social proof, and mobile-first design. Focus on increasing donations."
-```
+\`\`\`
 
 ### **Dashboard Interface**
-```
+\`\`\`
 "Build professional dashboard with data visualization, KPI cards, and modern UI patterns. Make it feel like a premium SaaS product."
-```
+\`\`\`
 
 ### **Email Templates**
-```
+\`\`\`
 "Design responsive email templates for fundraising platform. Include story updates, receipts, and newsletters. Ensure perfect email client compatibility."
-```
+\`\`\`
 
 ### **Subscriber Management**
-```
+\`\`\`
 "Create advanced subscriber management with tables, segmentation, and analytics. Make it feel like a professional email marketing platform."
-```
+\`\`\`
 
 ### **Media System**
-```
+\`\`\`
 "Build professional media management with drag-drop upload, gallery, and editing tools. Similar to Unsplash or Dropbox experience."
-```
+\`\`\`
 
 ---
 

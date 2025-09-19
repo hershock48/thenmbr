@@ -16,4 +16,3 @@ export default function robots(): MetadataRoute.Robots {
     sitemap: 'https://www.thenmbr.com/sitemap.xml',
   }
 }
-

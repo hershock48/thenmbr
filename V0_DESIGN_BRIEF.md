@@ -238,24 +238,24 @@ A comprehensive fundraising platform that connects donors to personalized impact
 ## 📋 **v0 Prompt Examples**
 
 ### **For Newsletter Builder**
-```
+\`\`\`
 "Create a modern newsletter builder interface similar to Mailchimp. Include drag-and-drop functionality, real-time preview, template gallery, and professional styling. Use the brand colors #2563eb and #ffffff. Make it intuitive for non-technical users to create beautiful newsletters."
-```
+\`\`\`
 
 ### **For Widget Redesign**
-```
+\`\`\`
 "Design a conversion-optimized fundraising widget that encourages donations and subscriptions. Include progress bars, social proof, urgency elements, and smooth animations. Focus on mobile-first design with touch-friendly interactions."
-```
+\`\`\`
 
 ### **For Dashboard**
-```
+\`\`\`
 "Create a professional dashboard for managing fundraising campaigns. Include data visualization, KPI cards, quick actions, and responsive design. Make it feel like a premium SaaS product with modern UI patterns."
-```
+\`\`\`
 
 ### **For Email Templates**
-```
+\`\`\`
 "Design responsive email templates for a fundraising platform. Include story updates, donation receipts, welcome series, and newsletter layouts. Ensure perfect rendering across all email clients with mobile optimization."
-```
+\`\`\`
 
 ---
 

@@ -13,14 +13,14 @@ The newsletter builder now includes real AI-powered content review and optimizat
 
 ### 2. Set Environment Variable
 Add to your `.env.local` file:
-```
+\`\`\`
 OPENAI_API_KEY=sk-your-actual-api-key-here
-```
+\`\`\`
 
 ### 3. Install OpenAI Package
-```bash
+\`\`\`bash
 npm install openai
-```
+\`\`\`
 
 ### 4. Features Enabled
 With OpenAI integration, the AI Review feature provides:
@@ -58,14 +58,14 @@ The newsletter builder also supports real email sending via Resend:
 
 ### 2. Set Environment Variable
 Add to your `.env.local` file:
-```
+\`\`\`
 RESEND_API_KEY=re_your_actual_api_key_here
-```
+\`\`\`
 
 ### 3. Install Resend Package
-```bash
+\`\`\`bash
 npm install resend
-```
+\`\`\`
 
 ### 4. Features Enabled
 - Real email sending

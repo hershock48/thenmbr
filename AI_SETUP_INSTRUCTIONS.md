@@ -10,18 +10,14 @@
 
 ### 2. Add to Environment
 Create/edit `.env.local` in your project root:
-```bash
-# For client-side usage (recommended)
-NEXT_PUBLIC_OPENAI_API_KEY=sk-your-key-here
-
-# For server-side usage (if needed)
+\`\`\`bash
 OPENAI_API_KEY=sk-your-key-here
-```
+\`\`\`
 
 ### 3. Restart Development Server
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ## What the AI Review Does
 

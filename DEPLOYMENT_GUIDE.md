@@ -12,7 +12,7 @@
 ### **Deployment Options**
 
 #### **Option 1: Vercel (Recommended)**
-```bash
+\`\`\`bash
 # Install Vercel CLI
 npm i -g vercel
 
@@ -21,32 +21,32 @@ vercel
 
 # Set up custom domain
 vercel domains add thenmbr.com
-```
+\`\`\`
 
 #### **Option 2: Netlify**
-```bash
+\`\`\`bash
 # Build the project
 npm run build
 
 # Deploy to Netlify
 # Upload .next folder to Netlify
 # Or connect GitHub repository
-```
+\`\`\`
 
 #### **Option 3: AWS/GCP/Azure**
-```bash
+\`\`\`bash
 # Build for production
 npm run build
 
 # Deploy using your preferred cloud provider
 # Configure environment variables
 # Set up CDN and caching
-```
+\`\`\`
 
 ### **Environment Variables Needed**
 
 Create `.env.production`:
-```env
+\`\`\`env
 NEXT_PUBLIC_APP_URL=https://thenmbr.com
 NEXT_PUBLIC_API_URL=https://api.thenmbr.com
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
@@ -54,7 +54,7 @@ STRIPE_SECRET_KEY=sk_live_...
 DATABASE_URL=postgresql://...
 NEXTAUTH_SECRET=your-secret-key
 NEXTAUTH_URL=https://thenmbr.com
-```
+\`\`\`
 
 ### **Pre-Deployment Checklist**
 
@@ -190,4 +190,3 @@ NEXTAUTH_URL=https://thenmbr.com
 ## **Ready for Launch! 🚀**
 
 The NMBR demo page is production-ready with comprehensive features, excellent performance, and professional polish. Minor functionality additions can be made post-launch based on user feedback.
-

@@ -55,7 +55,7 @@
 ### **🛠️ Technical Implementation:**
 
 #### **Cache Service (`lib/cache.ts`)**
-```typescript
+\`\`\`typescript
 // Multi-tier caching system with advanced features
 class CacheService {
   - get<T>(key, namespace): T | null
@@ -70,10 +70,10 @@ class CacheService {
   - on(event, listener): void
   - off(event, listener): void
 }
-```
+\`\`\`
 
 #### **Database Optimizer (`lib/database-optimizer.ts`)**
-```typescript
+\`\`\`typescript
 // Advanced database query optimization
 class DatabaseOptimizer {
   - select<T>(table, config, filters): Promise<QueryResult<T>>
@@ -85,12 +85,12 @@ class DatabaseOptimizer {
   - getSlowQueries(threshold): QueryMetrics[]
   - getQueryStats(): QueryStatistics
 }
-```
+\`\`\`
 
 ### **📁 Implementation Files:**
 
 #### **1. Cache Service (`lib/cache.ts`)**
-```typescript
+\`\`\`typescript
 // Multi-tier caching system
 - CacheService class with LRU eviction
 - Predefined cache configurations
@@ -98,10 +98,10 @@ class DatabaseOptimizer {
 - Memory management and cleanup
 - Event system for cache monitoring
 - Cache decorators and middleware
-```
+\`\`\`
 
 #### **2. Database Optimizer (`lib/database-optimizer.ts`)**
-```typescript
+\`\`\`typescript
 // Query optimization and performance monitoring
 - DatabaseOptimizer class with advanced features
 - Query performance tracking
@@ -109,10 +109,10 @@ class DatabaseOptimizer {
 - Query timeout handling
 - Batch operation optimization
 - Performance metrics collection
-```
+\`\`\`
 
 #### **3. Database Performance Dashboard (`components/dashboard/database-performance.tsx`)**
-```typescript
+\`\`\`typescript
 // Real-time database performance monitoring
 - Query performance metrics
 - Cache hit rate analysis
@@ -120,18 +120,18 @@ class DatabaseOptimizer {
 - Resource usage monitoring
 - Performance trend analysis
 - Cache management controls
-```
+\`\`\`
 
 #### **4. Database Monitoring API Endpoints**
-```typescript
+\`\`\`typescript
 // /api/monitoring/database/stats - Database statistics
 // /api/monitoring/database/cache/clear - Cache management
-```
+\`\`\`
 
 ### **🔧 Cache Configuration Options:**
 
 #### **Cache Tiers**
-```typescript
+\`\`\`typescript
 const CACHE_CONFIGS = {
   SHORT: { ttl: 60 * 1000, maxSize: 1000, strategy: 'lru' },
   MEDIUM: { ttl: 5 * 60 * 1000, maxSize: 5000, strategy: 'lru' },
@@ -140,10 +140,10 @@ const CACHE_CONFIGS = {
   API: { ttl: 15 * 60 * 1000, maxSize: 2000, strategy: 'lru' },
   DATABASE: { ttl: 30 * 60 * 1000, maxSize: 5000, strategy: 'lru' }
 }
-```
+\`\`\`
 
 #### **Query Configuration**
-```typescript
+\`\`\`typescript
 interface QueryConfig {
   useCache: boolean
   cacheTTL?: number
@@ -157,7 +157,7 @@ interface QueryConfig {
   limit?: number
   offset?: number
 }
-```
+\`\`\`
 
 ### **📊 Performance Optimizations:**
 
@@ -179,7 +179,7 @@ interface QueryConfig {
 ### **🔍 Usage Examples:**
 
 #### **Basic Caching**
-```typescript
+\`\`\`typescript
 import { shortCache, mediumCache, longCache } from '@/lib/cache'
 
 // Short-term cache (1 minute)
@@ -190,10 +190,10 @@ mediumCache.set('posts:recent', posts, 5 * 60 * 1000, 'posts', ['posts', 'recent
 
 // Long-term cache (1 hour)
 longCache.set('config:settings', settings, 60 * 60 * 1000, 'config')
-```
+\`\`\`
 
 #### **Database Query Optimization**
-```typescript
+\`\`\`typescript
 import { db } from '@/lib/database-optimizer'
 
 // Optimized select with caching
@@ -212,10 +212,10 @@ const { data, error } = await db.insert('subscribers', subscriberData, {
   useCache: false,
   cacheTags: ['subscribers', `org:${orgId}`]
 })
-```
+\`\`\`
 
 #### **Cache Decorators**
-```typescript
+\`\`\`typescript
 import { cached, shortCache } from '@/lib/cache'
 
 // Cache function results
@@ -228,10 +228,10 @@ const getCachedUser = cached(
   // Expensive user lookup
   return await fetchUserFromDatabase(userId)
 })
-```
+\`\`\`
 
 #### **API Route Caching**
-```typescript
+\`\`\`typescript
 import { withCache, apiCache } from '@/lib/cache'
 
 // Cache API responses
@@ -244,7 +244,7 @@ const cachedHandler = withCache(
   // Your API handler
   return NextResponse.json(data)
 })
-```
+\`\`\`
 
 ### **📈 Performance Monitoring:**
 
@@ -265,27 +265,27 @@ const cachedHandler = withCache(
 ### **🔧 Advanced Features:**
 
 #### **Tag-based Cache Invalidation**
-```typescript
+\`\`\`typescript
 // Invalidate all cache entries with specific tags
 databaseCache.invalidateByTag('subscribers', 'database')
 databaseCache.invalidateByTag(`org:${orgId}`, 'database')
-```
+\`\`\`
 
 #### **Batch Operations**
-```typescript
+\`\`\`typescript
 // Batch insert for better performance
 const { data, error } = await db.batchInsert('subscribers', subscriberData, 1000, {
   useCache: false,
   cacheTags: ['subscribers']
 })
-```
+\`\`\`
 
 #### **Query Performance Analysis**
-```typescript
+\`\`\`typescript
 // Get query performance statistics
 const stats = dbOptimizer.getQueryStats()
 const slowQueries = dbOptimizer.getSlowQueries(1000) // Queries > 1s
-```
+\`\`\`
 
 ### **📋 Optimization Checklist:**
 
@@ -326,7 +326,7 @@ const slowQueries = dbOptimizer.getSlowQueries(1000) // Queries > 1s
 ### **🔧 Configuration Examples:**
 
 #### **Cache Configuration**
-```typescript
+\`\`\`typescript
 // Custom cache configuration
 const customCache = new CacheService({
   ttl: 10 * 60 * 1000, // 10 minutes
@@ -334,10 +334,10 @@ const customCache = new CacheService({
   strategy: 'lru',
   namespace: 'custom'
 })
-```
+\`\`\`
 
 #### **Query Configuration**
-```typescript
+\`\`\`typescript
 // Optimized query configuration
 const queryConfig: QueryConfig = {
   useCache: true,
@@ -349,7 +349,7 @@ const queryConfig: QueryConfig = {
   orderBy: 'created_at desc',
   limit: 100
 }
-```
+\`\`\`
 
 ## **Conclusion:**
 

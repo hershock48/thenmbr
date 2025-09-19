@@ -1,13 +1,13 @@
 // Enhanced AI Service for Newsletter Content Analysis
 // Professional implementation with usage tracking and tier management
 
-import OpenAI from 'openai'
+import OpenAI from "openai"
 
 export interface AISuggestion {
   id: string
   blockId: string
-  type: 'tone' | 'clarity' | 'engagement' | 'length' | 'cta' | 'subject' | 'overall'
-  priority: 'high' | 'medium' | 'low'
+  type: "tone" | "clarity" | "engagement" | "length" | "cta" | "subject" | "overall"
+  priority: "high" | "medium" | "low"
   title: string
   description: string
   suggestion: string
@@ -28,7 +28,7 @@ export interface NewsletterContent {
 export interface UsageStats {
   monthlyUsage: number
   monthlyLimit: number
-  tier: 'free' | 'starter' | 'growth' | 'pro'
+  tier: "free" | "starter" | "growth" | "pro"
   canUseAI: boolean
   resetDate: string
 }
@@ -36,7 +36,7 @@ export interface UsageStats {
 class AIService {
   private static instance: AIService
   private openai: OpenAI | null = null
-  private isInitialized: boolean = false
+  private isInitialized = false
 
   constructor() {
     this.initializeOpenAI()
@@ -50,18 +50,17 @@ class AIService {
   }
 
   private initializeOpenAI() {
-    // Check both server-side and client-side environment variables
-    const apiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY
-    
+    const apiKey = process.env.OPENAI_API_KEY
+
     if (apiKey) {
       try {
         this.openai = new OpenAI({
           apiKey: apiKey,
         })
         this.isInitialized = true
-        console.log('✅ OpenAI service initialized successfully')
+        console.log("✅ OpenAI service initialized successfully")
       } catch (error) {
-        console.error('❌ Failed to initialize OpenAI:', error)
+        console.error("❌ Failed to initialize OpenAI:", error)
         this.isInitialized = false
       }
     } else {
@@ -75,12 +74,12 @@ class AIService {
     // In a real app, this would fetch from your database
     // For now, we'll use localStorage to simulate user data
     const stored = localStorage.getItem(`ai_usage_${userId}`)
-    
+
     if (stored) {
       const data = JSON.parse(stored)
       const now = new Date()
       const resetDate = new Date(data.resetDate)
-      
+
       // Check if we need to reset monthly usage
       if (now > resetDate) {
         const newResetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1)
@@ -88,27 +87,27 @@ class AIService {
           monthlyUsage: 0,
           monthlyLimit: data.monthlyLimit,
           tier: data.tier,
-          resetDate: newResetDate.toISOString()
+          resetDate: newResetDate.toISOString(),
         }
         localStorage.setItem(`ai_usage_${userId}`, JSON.stringify(resetData))
         return { ...resetData, canUseAI: true }
       }
-      
+
       return {
         ...data,
-        canUseAI: data.monthlyUsage < data.monthlyLimit
+        canUseAI: data.monthlyUsage < data.monthlyLimit,
       }
     }
-    
+
     // Default to free tier for new users
     const defaultStats: UsageStats = {
       monthlyUsage: 0,
       monthlyLimit: 10, // Free tier: 10 AI reviews per month
-      tier: 'free',
+      tier: "free",
       canUseAI: true,
-      resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString()
+      resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
     }
-    
+
     localStorage.setItem(`ai_usage_${userId}`, JSON.stringify(defaultStats))
     return defaultStats
   }
@@ -116,16 +115,16 @@ class AIService {
   // Check if user can use AI Review
   async canUserUseAI(userId: string): Promise<{ canUse: boolean; reason?: string; usage?: UsageStats }> {
     const usage = await this.getUserUsageStats(userId)
-    
+
     if (!usage.canUseAI) {
       const resetDate = new Date(usage.resetDate).toLocaleDateString()
       return {
         canUse: false,
         reason: `You've reached your monthly limit of ${usage.monthlyLimit} AI reviews. Limit resets on ${resetDate}.`,
-        usage
+        usage,
       }
     }
-    
+
     return { canUse: true, usage }
   }
 
@@ -135,26 +134,25 @@ class AIService {
     const newUsage = {
       ...usage,
       monthlyUsage: usage.monthlyUsage + 1,
-      canUseAI: (usage.monthlyUsage + 1) < usage.monthlyLimit
+      canUseAI: usage.monthlyUsage + 1 < usage.monthlyLimit,
     }
     localStorage.setItem(`ai_usage_${userId}`, JSON.stringify(newUsage))
   }
 
   // Main AI analysis function
   async analyzeNewsletterContent(
-    content: NewsletterContent, 
-    userId: string
+    content: NewsletterContent,
+    userId: string,
   ): Promise<{ suggestions: AISuggestion[]; usage: UsageStats }> {
-    
     // Check if user can use AI
     const { canUse, reason, usage } = await this.canUserUseAI(userId)
     if (!canUse) {
-      throw new Error(reason || 'AI Review not available')
+      throw new Error(reason || "AI Review not available")
     }
 
     // Check if OpenAI is available
     if (!this.isInitialized || !this.openai) {
-      console.warn('OpenAI not available, using mock suggestions')
+      console.warn("OpenAI not available, using mock suggestions")
       const mockSuggestions = this.generateMockSuggestions(content)
       await this.incrementUsage(userId)
       return { suggestions: mockSuggestions, usage: await this.getUserUsageStats(userId) }
@@ -165,7 +163,7 @@ class AIService {
       await this.incrementUsage(userId)
       return { suggestions, usage: await this.getUserUsageStats(userId) }
     } catch (error) {
-      console.error('AI analysis failed:', error)
+      console.error("AI analysis failed:", error)
       // Fallback to mock suggestions
       const mockSuggestions = this.generateMockSuggestions(content)
       await this.incrementUsage(userId)
@@ -174,10 +172,10 @@ class AIService {
   }
 
   private async performAIAnalysis(content: NewsletterContent): Promise<AISuggestion[]> {
-    if (!this.openai) throw new Error('OpenAI not initialized')
+    if (!this.openai) throw new Error("OpenAI not initialized")
 
     const prompt = this.buildAnalysisPrompt(content)
-    
+
     const response = await this.openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -208,29 +206,27 @@ Return your analysis as a JSON array of suggestion objects with this exact struc
     "improvedText": "Suggested improved text",
     "reasoning": "Why this change will help"
   }
-]`
+]`,
         },
         {
           role: "user",
-          content: prompt
-        }
+          content: prompt,
+        },
       ],
       temperature: 0.7,
       max_tokens: 2000,
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
     })
 
     const responseContent = response.choices[0]?.message?.content
-    if (!responseContent) throw new Error('No response from OpenAI')
+    if (!responseContent) throw new Error("No response from OpenAI")
 
     const parsed = JSON.parse(responseContent)
     return Array.isArray(parsed.suggestions) ? parsed.suggestions : []
   }
 
   private buildAnalysisPrompt(content: NewsletterContent): string {
-    const blocksText = content.blocks.map(block => 
-      `${block.type.toUpperCase()}: ${block.content}`
-    ).join('\n\n')
+    const blocksText = content.blocks.map((block) => `${block.type.toUpperCase()}: ${block.content}`).join("\n\n")
 
     return `Analyze this nonprofit newsletter content:
 
@@ -244,52 +240,52 @@ Provide specific suggestions to improve donor engagement and fundraising effecti
 
   private generateMockSuggestions(content: NewsletterContent): AISuggestion[] {
     const suggestions: AISuggestion[] = []
-    
+
     // Analyze subject line
     if (content.subject.length < 20) {
       suggestions.push({
-        id: 'mock-subject-1',
-        blockId: 'subject',
-        type: 'subject',
-        priority: 'high',
-        title: 'Subject Line Too Short',
-        description: 'Your subject line is quite brief and may not capture attention',
-        suggestion: 'Expand your subject line to be more descriptive and compelling',
+        id: "mock-subject-1",
+        blockId: "subject",
+        type: "subject",
+        priority: "high",
+        title: "Subject Line Too Short",
+        description: "Your subject line is quite brief and may not capture attention",
+        suggestion: "Expand your subject line to be more descriptive and compelling",
         currentText: content.subject,
         improvedText: `${content.subject} - See How Your Support Makes a Real Difference`,
-        reasoning: 'Longer subject lines (30-50 characters) typically have higher open rates for nonprofit emails'
+        reasoning: "Longer subject lines (30-50 characters) typically have higher open rates for nonprofit emails",
       })
     }
 
     // Analyze content blocks
     content.blocks.forEach((block, index) => {
-      if (block.type === 'text' && block.content.length < 100) {
+      if (block.type === "text" && block.content.length < 100) {
         suggestions.push({
           id: `mock-content-${index}`,
           blockId: block.id,
-          type: 'length',
-          priority: 'medium',
-          title: 'Content Too Brief',
-          description: 'This section could provide more detail to engage donors',
-          suggestion: 'Add more specific details about impact and beneficiaries',
+          type: "length",
+          priority: "medium",
+          title: "Content Too Brief",
+          description: "This section could provide more detail to engage donors",
+          suggestion: "Add more specific details about impact and beneficiaries",
           currentText: block.content,
           improvedText: `${block.content} Your donation directly helps real people in need, creating measurable change in our community.`,
-          reasoning: 'Detailed impact stories increase donor confidence and engagement'
+          reasoning: "Detailed impact stories increase emotional connection and donation likelihood by 40%",
         })
       }
 
-      if (block.type === 'button' && !block.content.toLowerCase().includes('donate')) {
+      if (block.type === "button" && !block.content.toLowerCase().includes("donate")) {
         suggestions.push({
           id: `mock-cta-${index}`,
           blockId: block.id,
-          type: 'cta',
-          priority: 'high',
-          title: 'Call-to-Action Could Be Stronger',
-          description: 'Your button text doesn\'t clearly indicate the donation action',
-          suggestion: 'Make the call-to-action more direct and action-oriented',
+          type: "cta",
+          priority: "high",
+          title: "Call-to-Action Could Be Stronger",
+          description: "Your button text doesn't clearly indicate the donation action",
+          suggestion: "Make the call-to-action more direct and action-oriented",
           currentText: block.content,
-          improvedText: 'Donate Now - Make a Difference',
-          reasoning: 'Clear, action-oriented CTAs increase conversion rates by 20-30%'
+          improvedText: "Donate Now - Make a Difference",
+          reasoning: "Clear, action-oriented CTAs increase conversion rates by 20-30%",
         })
       }
     })
@@ -297,16 +293,16 @@ Provide specific suggestions to improve donor engagement and fundraising effecti
     // Add overall suggestion if we have content
     if (content.blocks.length > 0) {
       suggestions.push({
-        id: 'mock-overall-1',
-        blockId: 'overall',
-        type: 'overall',
-        priority: 'medium',
-        title: 'Add Impact Story',
-        description: 'Consider including a specific beneficiary story',
-        suggestion: 'Add a brief story about someone your organization has helped',
-        currentText: 'No specific story included',
+        id: "mock-overall-1",
+        blockId: "overall",
+        type: "overall",
+        priority: "medium",
+        title: "Add Impact Story",
+        description: "Consider including a specific beneficiary story",
+        suggestion: "Add a brief story about someone your organization has helped",
+        currentText: "No specific story included",
         improvedText: 'Include: "Meet Sarah, a single mother who... [brief impact story]"',
-        reasoning: 'Personal stories increase emotional connection and donation likelihood by 40%'
+        reasoning: "Personal stories increase emotional connection and donation likelihood by 40%",
       })
     }
 
@@ -314,21 +310,21 @@ Provide specific suggestions to improve donor engagement and fundraising effecti
   }
 
   // Upgrade user tier (for admin/testing purposes)
-  async upgradeUserTier(userId: string, newTier: 'free' | 'starter' | 'growth' | 'pro'): Promise<void> {
+  async upgradeUserTier(userId: string, newTier: "free" | "starter" | "growth" | "pro"): Promise<void> {
     const limits = {
       free: 10,
       starter: 100,
       growth: 500,
-      pro: 999999 // Unlimited
+      pro: 999999, // Unlimited
     }
-    
+
     const usage = await this.getUserUsageStats(userId)
     const newUsage = {
       ...usage,
       tier: newTier,
-      monthlyLimit: limits[newTier]
+      monthlyLimit: limits[newTier],
     }
-    
+
     localStorage.setItem(`ai_usage_${userId}`, JSON.stringify(newUsage))
   }
 }

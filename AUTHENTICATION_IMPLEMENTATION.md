@@ -73,7 +73,7 @@
 ### **📁 Implementation Files:**
 
 #### **1. Core Authentication (`lib/auth.ts`)**
-```typescript
+\`\`\`typescript
 // User roles and permissions
 enum UserRole {
   SUPER_ADMIN = 'super_admin',
@@ -98,38 +98,38 @@ enum Permission {
 - getCurrentUser()
 - hasPermission()
 - canAccessOrganization()
-```
+\`\`\`
 
 #### **2. Enhanced Auth Context (`contexts/EnhancedAuthContext.tsx`)**
-```typescript
+\`\`\`typescript
 // Enhanced authentication context with:
 - User state management
 - Permission checking
 - Role validation
 - Organization switching
 - Profile management
-```
+\`\`\`
 
 #### **3. Permission Guards (`components/auth/permission-guard.tsx`)**
-```typescript
+\`\`\`typescript
 // Component-level access control:
 - PermissionGuard component
 - withPermissionGuard HOC
 - usePermissions hook
 - Access denied handling
-```
+\`\`\`
 
 #### **4. Role-Based Navigation (`components/auth/role-based-nav.tsx`)**
-```typescript
+\`\`\`typescript
 // Dynamic navigation based on user role:
 - Role-based menu items
 - Permission-based visibility
 - Hierarchical navigation
 - Access control
-```
+\`\`\`
 
 #### **5. API Middleware (`lib/auth-middleware.ts`)**
-```typescript
+\`\`\`typescript
 // API endpoint protection:
 - withAuthentication()
 - withPermission()
@@ -137,10 +137,10 @@ enum Permission {
 - withOrganizationAccess()
 - Rate limiting per user
 - Audit logging
-```
+\`\`\`
 
 #### **6. Database Schema (`auth-schema.sql`)**
-```sql
+\`\`\`sql
 -- Complete authentication database:
 - user_profiles table
 - user_sessions table
@@ -149,7 +149,7 @@ enum Permission {
 - audit_logs table
 - RLS policies
 - Security functions
-```
+\`\`\`
 
 ### **🛡️ Security Policies:**
 
@@ -170,7 +170,7 @@ enum Permission {
 ### **🔧 Usage Examples:**
 
 #### **Component-Level Protection**
-```tsx
+\`\`\`tsx
 import { PermissionGuard } from '@/components/auth/permission-guard'
 import { Permission } from '@/lib/auth'
 
@@ -181,10 +181,10 @@ function AdminPanel() {
     </PermissionGuard>
   )
 }
-```
+\`\`\`
 
 #### **API Endpoint Protection**
-```typescript
+\`\`\`typescript
 import { withPermission } from '@/lib/auth-middleware'
 import { Permission } from '@/lib/auth'
 
@@ -193,10 +193,10 @@ export const POST = withPermission(Permission.MANAGE_STORIES)(
     // Protected endpoint logic
   }
 )
-```
+\`\`\`
 
 #### **Permission Checking in Components**
-```tsx
+\`\`\`tsx
 import { usePermissions } from '@/components/auth/permission-guard'
 
 function MyComponent() {
@@ -206,7 +206,7 @@ function MyComponent() {
     // Show story management UI
   }
 }
-```
+\`\`\`
 
 ### **📊 Permission Matrix:**
 

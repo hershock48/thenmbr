@@ -53,18 +53,18 @@ The NMBR marketplace connects to real dropship services to provide actual produc
 
 Create/edit `.env.local` in your project root:
 
-```bash
+\`\`\`bash
 # Dropship Service API Keys
 PRINTFUL_API_KEY=pf_your_key_here
 GOOTEN_API_KEY=your_gooten_key_here
 CUSTOMINK_API_KEY=your_customink_key_here
-```
+\`\`\`
 
 ### Step 3: Restart Application
 
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ## What Happens Next
 

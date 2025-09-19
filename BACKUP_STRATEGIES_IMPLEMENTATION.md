@@ -21,7 +21,7 @@
 ### **🔧 Backup Architecture:**
 
 #### **Core Backup Service (lib/backup-service.ts)**
-```typescript
+\`\`\`typescript
 // Comprehensive backup management
 export class BackupService {
   // Configuration management
@@ -42,7 +42,7 @@ export class BackupService {
   downloadFromStorage(location: string, configId: string): Promise<Buffer>
   deleteBackup(location: string, storage: StorageConfig): Promise<void>
 }
-```
+\`\`\`
 
 #### **Backup Types Supported**
 - **Database** - PostgreSQL database dumps with schema and data
@@ -54,7 +54,7 @@ export class BackupService {
 ### **📊 Backup Configuration:**
 
 #### **Backup Configuration Interface**
-```typescript
+\`\`\`typescript
 interface BackupConfig {
   id: string
   name: string
@@ -76,7 +76,7 @@ interface BackupConfig {
   compression: boolean
   metadata?: Record<string, any>
 }
-```
+\`\`\`
 
 #### **Default Backup Configurations**
 - **Daily Database Backup** - 2 AM daily, 30 days retention
@@ -92,7 +92,7 @@ interface BackupConfig {
 - **Local Storage** - Local file system storage
 
 #### **Storage Configuration**
-```typescript
+\`\`\`typescript
 // S3 Configuration
 {
   provider: StorageProvider.S3,
@@ -111,7 +111,7 @@ interface BackupConfig {
     maxSize: '100GB'
   }
 }
-```
+\`\`\`
 
 ### **🔐 Security Features:**
 
@@ -149,7 +149,7 @@ interface BackupConfig {
 ### **🔌 API Endpoints:**
 
 #### **Backup Configuration API**
-```typescript
+\`\`\`typescript
 // GET /api/backup/configs
 // POST /api/backup/configs
 // PUT /api/backup/configs
@@ -157,25 +157,25 @@ interface BackupConfig {
 
 // GET /api/backup/configs/[configId]/backup
 // POST /api/backup/configs/[configId]/backup
-```
+\`\`\`
 
 #### **Backup Jobs API**
-```typescript
+\`\`\`typescript
 // GET /api/backup/jobs
 // POST /api/backup/jobs/[jobId]/restore
 // DELETE /api/backup/jobs/[jobId]
-```
+\`\`\`
 
 #### **Restore Operations API**
-```typescript
+\`\`\`typescript
 // GET /api/backup/restores
 // POST /api/backup/restores
-```
+\`\`\`
 
 ### **🛠️ Backup Automation:**
 
 #### **Backup Automation Script (scripts/backup-automation.js)**
-```bash
+\`\`\`bash
 # Database backup
 node scripts/backup-automation.js database
 
@@ -193,7 +193,7 @@ node scripts/backup-automation.js all
 
 # Cleanup old backups
 node scripts/backup-automation.js cleanup
-```
+\`\`\`
 
 #### **Automated Features**
 - **Scheduled Backups** - Cron-based automatic backups
@@ -223,7 +223,7 @@ node scripts/backup-automation.js cleanup
 ### **🔧 Configuration and Setup:**
 
 #### **Environment Variables**
-```bash
+\`\`\`bash
 # Backup Configuration
 BACKUP_DIR=./backups
 BACKUP_RETENTION_DAYS=30
@@ -240,10 +240,10 @@ BACKUP_S3_BUCKET=nmbr-platform-backups
 
 # Database Configuration
 SUPABASE_DB_URL=postgresql://user:pass@host:port/db
-```
+\`\`\`
 
 #### **Backup Directory Structure**
-```
+\`\`\`
 backups/
 ├── database/
 │   ├── 2024-01-01/
@@ -263,7 +263,7 @@ backups/
 └── reports/
     ├── backup-report-2024-01-01.json
     └── backup-report-2024-01-02.json
-```
+\`\`\`
 
 ### **📈 Backup Monitoring:**
 

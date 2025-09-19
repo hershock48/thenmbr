@@ -23,7 +23,7 @@
 ### **🔧 Staging Configuration:**
 
 #### **Environment Variables (staging.env.example)**
-```bash
+\`\`\`bash
 # Application Environment
 NODE_ENV=staging
 NEXT_PUBLIC_APP_ENV=staging
@@ -44,10 +44,10 @@ PROFILING_ENABLED=true
 TEST_MODE=true
 MOCK_EXTERNAL_SERVICES=true
 SAMPLE_DATA_ENABLED=true
-```
+\`\`\`
 
 #### **Next.js Configuration (next.config.staging.js)**
-```javascript
+\`\`\`javascript
 // Staging-specific configuration
 const nextConfig = {
   env: {
@@ -76,10 +76,10 @@ const nextConfig = {
     ]
   }
 }
-```
+\`\`\`
 
 #### **TypeScript Configuration (tsconfig.staging.json)**
-```json
+\`\`\`json
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
@@ -96,7 +96,7 @@ const nextConfig = {
     "staging/**/*.tsx"
   ]
 }
-```
+\`\`\`
 
 ### **📁 Implementation Files:**
 
@@ -127,7 +127,7 @@ const nextConfig = {
 ### **🚀 Staging Setup Process:**
 
 #### **1. Initial Setup**
-```bash
+\`\`\`bash
 # Run staging setup script
 npm run staging:setup
 
@@ -138,31 +138,31 @@ npm run staging:setup
 # - Install staging dependencies
 # - Create configuration files
 # - Set up database scripts
-```
+\`\`\`
 
 #### **2. Environment Configuration**
-```bash
+\`\`\`bash
 # Update staging environment variables
 cp staging.env.example .env.staging
 # Edit .env.staging with your actual staging values
-```
+\`\`\`
 
 #### **3. Database Setup**
-```bash
+\`\`\`bash
 # Set up staging database with sample data
 node scripts/setup-staging-db.js
-```
+\`\`\`
 
 #### **4. Validation**
-```bash
+\`\`\`bash
 # Validate staging environment
 npm run validate:staging
-```
+\`\`\`
 
 ### **🔧 Staging Commands:**
 
 #### **Development Commands**
-```bash
+\`\`\`bash
 # Start staging development server
 npm run dev:staging
 
@@ -171,10 +171,10 @@ npm run build:staging
 
 # Start staging production server
 npm run start:staging
-```
+\`\`\`
 
 #### **Deployment Commands**
-```bash
+\`\`\`bash
 # Deploy to staging
 npm run deploy:staging
 
@@ -183,16 +183,16 @@ npm run staging:health
 
 # Reset staging environment
 npm run staging:reset
-```
+\`\`\`
 
 #### **Database Commands**
-```bash
+\`\`\`bash
 # Set up staging database
 node scripts/setup-staging-db.js
 
 # Reset staging database
 RESET_DATABASE=true npm run staging:reset
-```
+\`\`\`
 
 ### **📊 Staging Features:**
 

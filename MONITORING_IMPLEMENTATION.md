@@ -71,7 +71,7 @@
 ### **🛠️ Technical Implementation:**
 
 #### **Monitoring Service (`lib/monitoring.ts`)**
-```typescript
+\`\`\`typescript
 // Core monitoring service with advanced features
 class MonitoringService {
   - log(level, category, message, context): void
@@ -84,10 +84,10 @@ class MonitoringService {
   - getSystemHealth(): SystemHealth
   - getLogStatistics(): LogStatistics
 }
-```
+\`\`\`
 
 #### **Log Entry Structure**
-```typescript
+\`\`\`typescript
 interface LogEntry {
   id: string
   timestamp: string
@@ -109,10 +109,10 @@ interface LogEntry {
   tags?: string[]
   metadata?: Record<string, any>
 }
-```
+\`\`\`
 
 #### **Performance Metrics Structure**
-```typescript
+\`\`\`typescript
 interface PerformanceMetrics {
   timestamp: string
   endpoint: string
@@ -127,12 +127,12 @@ interface PerformanceMetrics {
   cacheHits: number
   cacheMisses: number
 }
-```
+\`\`\`
 
 ### **📁 Implementation Files:**
 
 #### **1. Core Monitoring Service (`lib/monitoring.ts`)**
-```typescript
+\`\`\`typescript
 // Comprehensive monitoring and logging system
 - MonitoringService class with advanced features
 - Multi-level logging with categories
@@ -141,10 +141,10 @@ interface PerformanceMetrics {
 - System health monitoring
 - Log querying and filtering
 - Statistics and analytics
-```
+\`\`\`
 
 #### **2. Monitoring Dashboard (`components/dashboard/monitoring-dashboard.tsx`)**
-```typescript
+\`\`\`typescript
 // Real-time monitoring dashboard
 - System health overview
 - Log statistics and analytics
@@ -152,10 +152,10 @@ interface PerformanceMetrics {
 - Log filtering and search
 - Error tracking and analysis
 - Performance metrics display
-```
+\`\`\`
 
 #### **3. Performance Monitor (`components/dashboard/performance-monitor.tsx`)**
-```typescript
+\`\`\`typescript
 // Performance monitoring dashboard
 - Response time analysis
 - Memory and CPU usage
@@ -163,20 +163,20 @@ interface PerformanceMetrics {
 - Cache performance tracking
 - Slow endpoint identification
 - Throughput analysis
-```
+\`\`\`
 
 #### **4. Monitoring API Endpoints**
-```typescript
+\`\`\`typescript
 // /api/monitoring/stats - System statistics
 // /api/monitoring/logs - Log querying
 // /api/monitoring/performance/stats - Performance statistics
 // /api/monitoring/performance/metrics - Performance metrics
-```
+\`\`\`
 
 ### **🔧 Usage Examples:**
 
 #### **Basic Logging**
-```typescript
+\`\`\`typescript
 import { log } from '@/lib/monitoring'
 
 // Log different levels
@@ -185,10 +185,10 @@ log.info(LogCategory.BUSINESS, 'User subscribed', { email: 'user@example.com' })
 log.warn(LogCategory.PERFORMANCE, 'Slow query detected', { queryTime: 5000 })
 log.error(LogCategory.DATABASE, 'Database connection failed', error)
 log.fatal(LogCategory.SYSTEM, 'System critical error', error)
-```
+\`\`\`
 
 #### **Performance Monitoring**
-```typescript
+\`\`\`typescript
 import { metrics } from '@/lib/monitoring'
 
 // Record performance metrics
@@ -205,10 +205,10 @@ metrics.recordPerformance({
   cacheHits: 1,
   cacheMisses: 1
 })
-```
+\`\`\`
 
 #### **Business Metrics**
-```typescript
+\`\`\`typescript
 // Record business events
 metrics.recordBusinessEvent('subscription_created', {
   storyId: 'story-123',
@@ -220,10 +220,10 @@ metrics.recordBusinessEvent('donation_completed', {
   currency: 'USD',
   paymentMethod: 'stripe'
 }, 'user-789', 'org-456', 50.00)
-```
+\`\`\`
 
 #### **System Health Monitoring**
-```typescript
+\`\`\`typescript
 // Record system health
 metrics.recordSystemHealth({
   timestamp: new Date().toISOString(),
@@ -238,7 +238,7 @@ metrics.recordSystemHealth({
   responseTime: 250,
   throughput: 45.2
 })
-```
+\`\`\`
 
 ### **📊 Monitoring Dashboard Features:**
 

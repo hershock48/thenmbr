@@ -25,7 +25,7 @@
 ### **🔧 Rate Limiting Configuration:**
 
 #### **Rate Limiter Classes**
-```typescript
+\`\`\`typescript
 // Core RateLimiter class with advanced features
 class RateLimiter {
   - checkLimit(req: NextRequest): Promise<RateLimitResult>
@@ -34,10 +34,10 @@ class RateLimiter {
   - reset(key: string): void
   - getAllStatuses(): Map<string, RateLimitResult>
 }
-```
+\`\`\`
 
 #### **Predefined Configurations**
-```typescript
+\`\`\`typescript
 const RATE_LIMIT_CONFIGS = {
   AUTH: { maxRequests: 5, windowMs: 15 * 60 * 1000, blockDurationMs: 30 * 60 * 1000 },
   API: { maxRequests: 100, windowMs: 15 * 60 * 1000, blockDurationMs: 15 * 60 * 1000 },
@@ -48,7 +48,7 @@ const RATE_LIMIT_CONFIGS = {
   DONATION: { maxRequests: 10, windowMs: 15 * 60 * 1000, blockDurationMs: 30 * 60 * 1000 },
   HEALTH: { maxRequests: 1000, windowMs: 15 * 60 * 1000, blockDurationMs: 5 * 60 * 1000 }
 }
-```
+\`\`\`
 
 ### **📊 Rate Limiting Dashboard:**
 
@@ -81,32 +81,32 @@ const RATE_LIMIT_CONFIGS = {
 ### **📁 Implementation Files:**
 
 #### **1. Core Rate Limiter (`lib/rate-limiter.ts`)**
-```typescript
+\`\`\`typescript
 // Comprehensive rate limiting system
 - RateLimiter class with advanced features
 - Predefined configurations for different endpoint types
 - Middleware factory for easy integration
 - Utility functions for status checking and resetting
-```
+\`\`\`
 
 #### **2. Rate Limit Monitor (`components/dashboard/rate-limit-monitor.tsx`)**
-```typescript
+\`\`\`typescript
 // Real-time rate limiting dashboard
 - Live metrics and statistics
 - Active rate limits monitoring
 - Block management and reset functionality
 - Top endpoints and recent blocks
-```
+\`\`\`
 
 #### **3. Rate Limit API Endpoints**
-```typescript
+\`\`\`typescript
 // /api/rate-limit/stats - Rate limiting statistics
 // /api/rate-limit/status - Active rate limits
 // /api/rate-limit/reset - Reset specific rate limits
-```
+\`\`\`
 
 #### **4. API Integration Examples**
-```typescript
+\`\`\`typescript
 // Subscribers API with rate limiting
 const rateLimitedPOST = createRateLimitMiddleware({
   ...RATE_LIMIT_CONFIGS.API,
@@ -116,7 +116,7 @@ const rateLimitedPOST = createRateLimitMiddleware({
     logger.warn('Rate limit exceeded', { key, ip: req.headers.get('x-forwarded-for') })
   }
 })
-```
+\`\`\`
 
 ### **🔍 Rate Limiting Matrix:**
 
@@ -176,7 +176,7 @@ const rateLimitedPOST = createRateLimitMiddleware({
 ### **🔧 Usage Examples:**
 
 #### **Basic Rate Limiting**
-```typescript
+\`\`\`typescript
 import { createRateLimitMiddleware, RATE_LIMIT_CONFIGS } from '@/lib/rate-limiter'
 
 const rateLimitedHandler = createRateLimitMiddleware(RATE_LIMIT_CONFIGS.API)
@@ -184,10 +184,10 @@ const rateLimitedHandler = createRateLimitMiddleware(RATE_LIMIT_CONFIGS.API)
 export const POST = rateLimitedHandler(async (req: NextRequest) => {
   // Your API handler
 })
-```
+\`\`\`
 
 #### **Custom Rate Limiting**
-```typescript
+\`\`\`typescript
 const customRateLimit = createRateLimitMiddleware({
   maxRequests: 50,
   windowMs: 15 * 60 * 1000,
@@ -197,17 +197,17 @@ const customRateLimit = createRateLimitMiddleware({
     console.log('Custom rate limit exceeded:', key)
   }
 })
-```
+\`\`\`
 
 #### **Rate Limit Status Checking**
-```typescript
+\`\`\`typescript
 import { getRateLimitStatus } from '@/lib/rate-limiter'
 
 const status = await getRateLimitStatus(req, RATE_LIMIT_CONFIGS.API)
 if (status && !status.allowed) {
   // Handle rate limit exceeded
 }
-```
+\`\`\`
 
 ### **📋 Rate Limiting Checklist:**
 

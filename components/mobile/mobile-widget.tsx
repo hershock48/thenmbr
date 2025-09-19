@@ -566,4 +566,3 @@ export function MobileWidget({ organization, onSubscribe, onDonate }: MobileWidg
     </div>
   )
 }
-

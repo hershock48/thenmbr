@@ -149,11 +149,11 @@
 - **Detailed Reporting** - Comprehensive test results
 
 #### **How to Test:**
-```bash
+\`\`\`bash
 npm run test          # Run all tests
 npm run test:coverage # Run with coverage
 npm run test:watch    # Watch mode
-```
+\`\`\`
 
 ---
 

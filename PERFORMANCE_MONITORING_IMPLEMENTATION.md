@@ -21,7 +21,7 @@
 ### **🔧 Performance Monitoring Architecture:**
 
 #### **Core Performance Monitor (lib/performance-monitor.ts)**
-```typescript
+\`\`\`typescript
 // Performance metrics collection
 export class PerformanceMonitor {
   // Record various performance metrics
@@ -42,10 +42,10 @@ export class PerformanceMonitor {
   getMetrics(filters)
   getAlerts(filters)
 }
-```
+\`\`\`
 
 #### **Alerting Service (lib/alerting-service.ts)**
-```typescript
+\`\`\`typescript
 // Multi-channel alerting system
 export class AlertingService {
   // Channel management
@@ -63,7 +63,7 @@ export class AlertingService {
   // Notification history
   getNotifications(filters)
 }
-```
+\`\`\`
 
 ### **📊 Performance Metrics Tracked:**
 
@@ -120,7 +120,7 @@ export class AlertingService {
 - **Teams** - Microsoft Teams notifications
 
 #### **Channel Configuration**
-```typescript
+\`\`\`typescript
 interface NotificationChannel {
   type: ChannelType
   config: Record<string, any>
@@ -130,7 +130,7 @@ interface NotificationChannel {
     maxPerDay: number
   }
 }
-```
+\`\`\`
 
 ### **📈 Performance Dashboards:**
 
@@ -151,7 +151,7 @@ interface NotificationChannel {
 ### **🔌 API Endpoints:**
 
 #### **Performance Metrics API**
-```typescript
+\`\`\`typescript
 // GET /api/monitoring/performance/metrics
 // Query parameters: type, name, startTime, endTime, limit, period
 // Returns: metrics, report, typeStats, pagination
@@ -159,10 +159,10 @@ interface NotificationChannel {
 // POST /api/monitoring/performance/metrics
 // Body: { type, name, value, unit, tags, metadata }
 // Records: custom performance metric
-```
+\`\`\`
 
 #### **Alert Management API**
-```typescript
+\`\`\`typescript
 // GET /api/monitoring/alerts
 // Query parameters: severity, status, type, limit, startTime, endTime
 // Returns: alerts, stats, pagination
@@ -170,27 +170,27 @@ interface NotificationChannel {
 // POST /api/monitoring/alerts
 // Body: { action, alertId, channelId, message }
 // Actions: acknowledge, resolve, suppress, send_notification
-```
+\`\`\`
 
 #### **Individual Alert Actions**
-```typescript
+\`\`\`typescript
 // POST /api/monitoring/alerts/[alertId]/acknowledge
 // POST /api/monitoring/alerts/[alertId]/resolve
 // POST /api/monitoring/alerts/[alertId]/suppress
-```
+\`\`\`
 
 #### **Alerting Configuration API**
-```typescript
+\`\`\`typescript
 // GET /api/monitoring/alerting/channels
 // POST /api/monitoring/alerting/channels
 // PUT /api/monitoring/alerting/channels
 // DELETE /api/monitoring/alerting/channels
-```
+\`\`\`
 
 ### **🛠️ Performance Middleware:**
 
 #### **Automatic Performance Tracking (lib/performance-middleware.ts)**
-```typescript
+\`\`\`typescript
 // API performance tracking
 export function withPerformanceTracking(handler)
 
@@ -205,7 +205,7 @@ export function trackPageLoad(page, loadTime, metadata)
 
 // Function performance tracking
 export function withPerformanceTracking<T, R>(fn, metricName, metricType)
-```
+\`\`\`
 
 ### **📊 Performance Thresholds:**
 
@@ -243,7 +243,7 @@ export function withPerformanceTracking<T, R>(fn, metricName, metricType)
 ### **🔧 Configuration and Setup:**
 
 #### **Environment Variables**
-```bash
+\`\`\`bash
 # Performance Monitoring
 PERFORMANCE_MONITORING_ENABLED=true
 PERFORMANCE_METRICS_RETENTION_DAYS=30
@@ -264,10 +264,10 @@ API_RESPONSE_TIME_WARNING=1000
 API_RESPONSE_TIME_CRITICAL=5000
 MEMORY_USAGE_WARNING=80
 MEMORY_USAGE_CRITICAL=90
-```
+\`\`\`
 
 #### **Initialization**
-```typescript
+\`\`\`typescript
 // Initialize performance monitoring
 import { performanceMonitor } from '@/lib/performance-monitor'
 import { alertingService } from '@/lib/alerting-service'
@@ -281,7 +281,7 @@ alertingService.addChannel('email', {
 
 // Set custom thresholds
 performanceMonitor.setThreshold('api_response_time', 1000, 5000, 'ms')
-```
+\`\`\`
 
 ### **📊 Performance Benefits:**
 

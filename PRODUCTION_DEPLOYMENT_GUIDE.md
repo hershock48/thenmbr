@@ -39,7 +39,7 @@
 ## **🔧 Step 1: Server Setup**
 
 ### **1.1 Server Requirements**
-```bash
+\`\`\`bash
 # Minimum Requirements
 CPU: 2 cores
 RAM: 4GB
@@ -51,10 +51,10 @@ CPU: 4 cores
 RAM: 8GB
 Storage: 100GB SSD
 OS: Ubuntu 22.04 LTS
-```
+\`\`\`
 
 ### **1.2 Server Configuration**
-```bash
+\`\`\`bash
 # Update system
 sudo apt update && sudo apt upgrade -y
 
@@ -76,10 +76,10 @@ sudo ufw allow 22
 sudo ufw allow 80
 sudo ufw allow 443
 sudo ufw enable
-```
+\`\`\`
 
 ### **1.3 Application Setup**
-```bash
+\`\`\`bash
 # Create application directory
 sudo mkdir -p /var/www/nmbr-platform
 sudo chown -R $USER:$USER /var/www/nmbr-platform
@@ -93,7 +93,7 @@ npm install
 
 # Build application
 npm run build
-```
+\`\`\`
 
 ---
 
@@ -106,19 +106,19 @@ npm run build
    - Note down the project URL and API keys
 
 2. **Database Schema Deployment**
-   ```sql
+   \`\`\`sql
    -- Run the production schema
    -- This includes all tables, RLS policies, and functions
-   ```
+   \`\`\`
 
 3. **Environment Variables**
-   ```bash
+   \`\`\`bash
    # Add to .env.production
    NEXT_PUBLIC_SUPABASE_URL=https://your-production-project.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your-production-service-role-key
    SUPABASE_DB_URL=postgresql://postgres:password@db.your-production-project.supabase.co:5432/postgres
-   ```
+   \`\`\`
 
 ### **2.2 Database Security**
 - **Enable RLS** - Row-level security enabled
@@ -131,16 +131,16 @@ npm run build
 ## **🔐 Step 3: Security Configuration**
 
 ### **3.1 SSL Certificate**
-```bash
+\`\`\`bash
 # Obtain SSL certificate
 sudo certbot --nginx -d your-domain.com -d www.your-domain.com
 
 # Verify certificate
 sudo certbot certificates
-```
+\`\`\`
 
 ### **3.2 Nginx Configuration**
-```nginx
+\`\`\`nginx
 # /etc/nginx/sites-available/nmbr-platform
 server {
     listen 80;
@@ -181,10 +181,10 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
-```
+\`\`\`
 
 ### **3.3 Enable Site**
-```bash
+\`\`\`bash
 # Enable site
 sudo ln -s /etc/nginx/sites-available/nmbr-platform /etc/nginx/sites-enabled/
 
@@ -193,14 +193,14 @@ sudo nginx -t
 
 # Restart Nginx
 sudo systemctl restart nginx
-```
+\`\`\`
 
 ---
 
 ## **⚙️ Step 4: Application Configuration**
 
 ### **4.1 Environment Variables**
-```bash
+\`\`\`bash
 # Create production environment file
 cat > .env.production << EOF
 # Application
@@ -248,10 +248,10 @@ AWS_ACCESS_KEY_ID=your-aws-access-key
 AWS_SECRET_ACCESS_KEY=your-aws-secret-key
 AWS_REGION=us-east-1
 EOF
-```
+\`\`\`
 
 ### **4.2 PM2 Configuration**
-```javascript
+\`\`\`javascript
 // ecosystem.config.js
 module.exports = {
   apps: [{
@@ -273,10 +273,10 @@ module.exports = {
     node_args: '--max-old-space-size=1024'
   }]
 }
-```
+\`\`\`
 
 ### **4.3 Start Application**
-```bash
+\`\`\`bash
 # Start with PM2
 pm2 start ecosystem.config.js
 
@@ -285,20 +285,20 @@ pm2 save
 
 # Setup PM2 startup
 pm2 startup
-```
+\`\`\`
 
 ---
 
 ## **📊 Step 5: Monitoring Setup**
 
 ### **5.1 System Monitoring**
-```bash
+\`\`\`bash
 # Install monitoring tools
 sudo apt install htop iotop nethogs -y
 
 # Configure log rotation
 sudo nano /etc/logrotate.d/nmbr-platform
-```
+\`\`\`
 
 ### **5.2 Application Monitoring**
 - **Sentry** - Error tracking and performance monitoring
@@ -317,14 +317,14 @@ sudo nano /etc/logrotate.d/nmbr-platform
 ## **🔄 Step 6: Backup Configuration**
 
 ### **6.1 Database Backups**
-```bash
+\`\`\`bash
 # Configure automated database backups
 # This is handled by Supabase automatically
 # Verify backup configuration in Supabase dashboard
-```
+\`\`\`
 
 ### **6.2 Application Backups**
-```bash
+\`\`\`bash
 # Create backup script
 cat > /usr/local/bin/backup-nmbr-platform.sh << 'EOF'
 #!/bin/bash
@@ -348,14 +348,14 @@ chmod +x /usr/local/bin/backup-nmbr-platform.sh
 
 # Add to crontab
 echo "0 2 * * * /usr/local/bin/backup-nmbr-platform.sh" | crontab -
-```
+\`\`\`
 
 ---
 
 ## **🧪 Step 7: Testing & Validation**
 
 ### **7.1 Health Checks**
-```bash
+\`\`\`bash
 # Test application health
 curl -f http://localhost:3000/api/health || exit 1
 
@@ -364,10 +364,10 @@ curl -f http://localhost:3000/api/health/database || exit 1
 
 # Test external services
 curl -f http://localhost:3000/api/health/external || exit 1
-```
+\`\`\`
 
 ### **7.2 Performance Testing**
-```bash
+\`\`\`bash
 # Run performance tests
 npm run test:performance
 
@@ -376,7 +376,7 @@ npm run accessibility:test
 
 # Run security tests
 npm run security:audit
-```
+\`\`\`
 
 ### **7.3 User Acceptance Testing**
 - **Registration Flow** - Test user registration
@@ -390,14 +390,14 @@ npm run security:audit
 ## **🚀 Step 8: Go Live**
 
 ### **8.1 DNS Configuration**
-```bash
+\`\`\`bash
 # Update DNS records
 # A record: your-domain.com -> server-ip
 # CNAME record: www.your-domain.com -> your-domain.com
-```
+\`\`\`
 
 ### **8.2 Final Verification**
-```bash
+\`\`\`bash
 # Check application status
 pm2 status
 
@@ -409,7 +409,7 @@ sudo certbot certificates
 
 # Test website
 curl -I https://your-domain.com
-```
+\`\`\`
 
 ### **8.3 Monitoring Setup**
 - **Enable Alerts** - Configure monitoring alerts
@@ -422,20 +422,20 @@ curl -I https://your-domain.com
 ## **📈 Step 9: Post-Deployment**
 
 ### **9.1 Performance Optimization**
-```bash
+\`\`\`bash
 # Enable Gzip compression
 # Configure caching headers
 # Optimize images
 # Setup CDN
-```
+\`\`\`
 
 ### **9.2 Security Hardening**
-```bash
+\`\`\`bash
 # Update firewall rules
 # Configure fail2ban
 # Setup intrusion detection
 # Regular security updates
-```
+\`\`\`
 
 ### **9.3 Monitoring & Maintenance**
 - **Daily Health Checks** - Monitor system health
@@ -450,7 +450,7 @@ curl -I https://your-domain.com
 ### **Common Issues**
 
 #### **Application Won't Start**
-```bash
+\`\`\`bash
 # Check logs
 pm2 logs nmbr-platform
 
@@ -459,10 +459,10 @@ pm2 env 0
 
 # Restart application
 pm2 restart nmbr-platform
-```
+\`\`\`
 
 #### **Database Connection Issues**
-```bash
+\`\`\`bash
 # Check database status
 curl -f http://localhost:3000/api/health/database
 
@@ -471,10 +471,10 @@ grep SUPABASE .env.production
 
 # Test database connection
 npm run db:test
-```
+\`\`\`
 
 #### **SSL Certificate Issues**
-```bash
+\`\`\`bash
 # Check certificate status
 sudo certbot certificates
 
@@ -483,10 +483,10 @@ sudo certbot renew
 
 # Test SSL
 openssl s_client -connect your-domain.com:443
-```
+\`\`\`
 
 #### **Performance Issues**
-```bash
+\`\`\`bash
 # Check system resources
 htop
 
@@ -495,7 +495,7 @@ pm2 logs nmbr-platform
 
 # Check database performance
 npm run db:performance
-```
+\`\`\`
 
 ---
 

@@ -80,3 +80,63 @@ export interface WidgetProps {
   amount?: number
   showPoweredBy?: boolean
 }
+
+export const ORGANIZATION_TYPES: OrganizationTypeConfig[] = [
+  {
+    id: "nonprofit",
+    name: "Nonprofit Organization",
+    description: "501(c)(3) tax-exempt charitable organizations",
+    icon: "heart",
+    color: "#10B981",
+    terminology: {
+      donations: "Donations",
+      subscribers: "Supporters",
+      fundraising: "Fundraising",
+      campaigns: "Campaigns",
+      supporters: "Donors",
+    },
+    features: ["Tax-deductible receipts", "Grant tracking", "Volunteer management"],
+    requiredFields: ["ein_number", "tax_exempt_status"],
+    validationRules: {
+      ein_number: { required: true, pattern: /^\d{2}-\d{7}$/ },
+    },
+  },
+  {
+    id: "grassroots",
+    name: "Grassroots Initiative",
+    description: "Community-driven movements and local causes",
+    icon: "users",
+    color: "#F59E0B",
+    terminology: {
+      donations: "Contributions",
+      subscribers: "Community Members",
+      fundraising: "Community Funding",
+      campaigns: "Initiatives",
+      supporters: "Contributors",
+    },
+    features: ["Community organizing", "Event coordination", "Social media integration"],
+    requiredFields: ["fiscal_sponsor"],
+    validationRules: {
+      fiscal_sponsor: { required: true },
+    },
+  },
+  {
+    id: "business",
+    name: "Business/Corporate",
+    description: "For-profit companies with social impact initiatives",
+    icon: "building",
+    color: "#3B82F6",
+    terminology: {
+      donations: "Investments",
+      subscribers: "Stakeholders",
+      fundraising: "Impact Funding",
+      campaigns: "CSR Programs",
+      supporters: "Partners",
+    },
+    features: ["CSR reporting", "Employee engagement", "Impact measurement"],
+    requiredFields: ["business_registration", "csr_focus_areas"],
+    validationRules: {
+      business_registration: { required: true },
+    },
+  },
+]

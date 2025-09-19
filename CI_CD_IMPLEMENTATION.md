@@ -23,7 +23,7 @@
 ### **🔧 Pipeline Configuration:**
 
 #### **GitHub Actions Workflows**
-```yaml
+\`\`\`yaml
 # Main CI/CD Pipeline (.github/workflows/ci-cd.yml)
 - Quality Checks: TypeScript, ESLint, Prettier, Security
 - Test Suite: Unit, Integration, E2E, Performance tests
@@ -31,20 +31,20 @@
 - Staging Deploy: Automated staging deployment
 - Production Deploy: Automated production deployment
 - Health Checks: Post-deployment validation
-```
+\`\`\`
 
 #### **Pull Request Validation (.github/workflows/pr-validation.yml)**
-```yaml
+\`\`\`yaml
 # PR Validation Pipeline
 - Quick validation for pull requests
 - Code quality checks
 - Build verification
 - Test execution
 - PR comment with results
-```
+\`\`\`
 
 #### **Automated Release (.github/workflows/release.yml)**
-```yaml
+\`\`\`yaml
 # Release Pipeline
 - Version management
 - Changelog generation
@@ -52,7 +52,7 @@
 - GitHub release creation
 - Production deployment
 - Notification system
-```
+\`\`\`
 
 ### **📊 Pipeline Stages:**
 
@@ -89,7 +89,7 @@
 ### **🛠️ Infrastructure Configuration:**
 
 #### **Vercel Configuration (vercel.json)**
-```json
+\`\`\`json
 {
   "version": 2,
   "name": "nmbr-platform-v2",
@@ -118,10 +118,10 @@
     {"path": "/api/cron/backup", "schedule": "0 3 * * *"}
   ]
 }
-```
+\`\`\`
 
 #### **Docker Configuration (Dockerfile)**
-```dockerfile
+\`\`\`dockerfile
 # Multi-stage build for production optimization
 FROM node:18-alpine AS base
 FROM base AS deps
@@ -133,10 +133,10 @@ FROM base AS runner
 - Non-root user for security
 - Output file tracing for optimization
 - Health checks for container monitoring
-```
+\`\`\`
 
 #### **Docker Compose (docker-compose.yml)**
-```yaml
+\`\`\`yaml
 services:
   app: # Main application
   redis: # Caching layer
@@ -144,7 +144,7 @@ services:
   nginx: # Reverse proxy
   prometheus: # Monitoring
   grafana: # Visualization
-```
+\`\`\`
 
 ### **📁 Implementation Files:**
 
@@ -217,7 +217,7 @@ services:
 ### **🔧 Configuration Examples:**
 
 #### **Environment Variables**
-```bash
+\`\`\`bash
 # Production Environment
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
@@ -231,10 +231,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-staging-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-staging-service-role-key
 STRIPE_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-```
+\`\`\`
 
 #### **GitHub Secrets**
-```yaml
+\`\`\`yaml
 # Required Secrets
 VERCEL_TOKEN: your-vercel-token
 VERCEL_ORG_ID: your-vercel-org-id
@@ -245,7 +245,7 @@ SLACK_WEBHOOK_URL: your-slack-webhook-url
 PROD_SUPABASE_URL: production-supabase-url
 STAGING_SUPABASE_URL: staging-supabase-url
 TEST_SUPABASE_URL: test-supabase-url
-```
+\`\`\`
 
 ### **📋 Pipeline Checklist:**
 

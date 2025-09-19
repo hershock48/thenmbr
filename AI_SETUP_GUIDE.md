@@ -20,9 +20,9 @@
 
 #### 2. Add to Environment
 Create `.env.local` file in your project root:
-```bash
+\`\`\`bash
 OPENAI_API_KEY=sk-your-actual-api-key-here
-```
+\`\`\`
 
 #### 3. Test the Feature
 1. Go to `/dashboard/newsletters`

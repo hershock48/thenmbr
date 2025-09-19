@@ -74,7 +74,7 @@ This document outlines how V0 AI and Cursor AI can work in parallel on the NMBR 
 ## 🔧 **Git Commands for Parallel Development**
 
 ### **Starting Work:**
-```bash
+\`\`\`bash
 # Switch to your branch
 git checkout v0-multi-tenant-expansion  # For V0 AI
 git checkout cursor-ai-improvements     # For Cursor AI
@@ -83,10 +83,10 @@ git checkout cursor-ai-improvements     # For Cursor AI
 git pull origin v0-integration
 
 # Start working...
-```
+\`\`\`
 
 ### **During Development:**
-```bash
+\`\`\`bash
 # Check status
 git status
 
@@ -100,10 +100,10 @@ git commit -m "Cursor: Fixed mobile responsiveness issues"
 # Push to your branch
 git push origin v0-multi-tenant-expansion
 git push origin cursor-ai-improvements
-```
+\`\`\`
 
 ### **Syncing with Other AI's Work:**
-```bash
+\`\`\`bash
 # Pull latest from main branch
 git pull origin v0-integration
 
@@ -114,7 +114,7 @@ git add .
 git commit -m "Resolved merge conflicts"
 
 # Continue working...
-```
+\`\`\`
 
 ## 📊 **Conflict Resolution**
 

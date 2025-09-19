@@ -1,15 +1,22 @@
-import { supabase } from './supabase'
+import { supabase } from "./supabase"
 
 export interface AuthUser {
   id: string
   email: string
   org_id: string
-  role: 'admin' | 'editor'
+  role: "admin" | "editor"
 }
 
 export enum UserRole {
-  ADMIN = 'admin',
-  EDITOR = 'editor'
+  ADMIN = "admin",
+  EDITOR = "editor",
+}
+
+export enum Permission {
+  READ = "read",
+  WRITE = "write",
+  DELETE = "delete",
+  ADMIN = "admin",
 }
 
 export const authService = {
@@ -17,7 +24,7 @@ export const authService = {
   signUp,
   signOut,
   getCurrentUser,
-  getCurrentOrg
+  getCurrentOrg,
 }
 
 export async function signIn(email: string, password: string) {
@@ -33,10 +40,10 @@ export async function signIn(email: string, password: string) {
 export async function signUp(email: string, password: string, orgName: string) {
   // First create the organization
   const { data: org, error: orgError } = await supabase
-    .from('nonprofits')
+    .from("nonprofits")
     .insert({
       name: orgName,
-      brand_color: '#3B82F6'
+      brand_color: "#3B82F6",
     })
     .select()
     .single()
@@ -50,9 +57,9 @@ export async function signUp(email: string, password: string, orgName: string) {
     options: {
       data: {
         org_id: org.id,
-        role: 'admin'
-      }
-    }
+        role: "admin",
+      },
+    },
   })
 
   if (error) throw error
@@ -65,16 +72,14 @@ export async function signOut() {
 }
 
 export async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   return user
 }
 
 export async function getCurrentOrg(userId: string) {
-  const { data, error } = await supabase
-    .from('nonprofits')
-    .select('*')
-    .eq('id', userId)
-    .single()
+  const { data, error } = await supabase.from("nonprofits").select("*").eq("id", userId).single()
 
   if (error) throw error
   return data

@@ -509,4 +509,3 @@ export function MobileDashboard({ stories, stats, onStorySelect, onAddStory }: M
     </div>
   )
 }
-

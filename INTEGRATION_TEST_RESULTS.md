@@ -110,11 +110,11 @@
 - ✅ Process mocking
 
 ### **Test Scripts Available:**
-```bash
+\`\`\`bash
 npm run test:integration    # Run integration tests
 npm run test:unit          # Run unit tests
 npm run test:all           # Run all tests
-```
+\`\`\`
 
 ### **Configuration Issues:**
 - ⚠️ Jest module resolution needs adjustment

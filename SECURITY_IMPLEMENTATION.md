@@ -50,7 +50,7 @@
 ### **Security Configuration Files:**
 
 #### **1. Security Library (`lib/security.ts`)**
-```typescript
+\`\`\`typescript
 // Comprehensive security utilities
 - generateCSRFToken()
 - createCSRFToken()
@@ -61,10 +61,10 @@
 - escapeHTML()
 - validateFileUpload()
 - validatePasswordStrength()
-```
+\`\`\`
 
 #### **2. Middleware (`middleware.ts`)**
-```typescript
+\`\`\`typescript
 // Request-level security
 - Security headers injection
 - Rate limiting enforcement
@@ -72,25 +72,25 @@
 - Suspicious pattern detection
 - CORS configuration
 - Bot detection
-```
+\`\`\`
 
 #### **3. Next.js Security Config (`next.config.security.js`)**
-```javascript
+\`\`\`javascript
 // Application-level security
 - Security headers configuration
 - HTTPS redirects
 - Static asset security
 - Environment variable validation
 - Webpack security settings
-```
+\`\`\`
 
 #### **4. CSRF Components**
-```typescript
+\`\`\`typescript
 // Client-side CSRF protection
 - CSRFToken component
 - SecureForm component
 - CSRF API endpoint
-```
+\`\`\`
 
 ### **Security Headers Implemented:**
 
@@ -142,11 +142,11 @@
 
 ### **Security Scripts Available:**
 
-```bash
+\`\`\`bash
 npm run security:audit    # Run comprehensive security audit
 npm run security:check    # Run npm audit + security audit
 npm run security:fix      # Fix security vulnerabilities
-```
+\`\`\`
 
 ### **Security Audit Results:**
 

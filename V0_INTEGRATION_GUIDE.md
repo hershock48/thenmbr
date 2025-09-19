@@ -78,7 +78,7 @@ We've built a comprehensive storytelling and engagement platform called **The NM
 
 #### **Task 1: Dynamic Homepage with Audience Segmentation**
 
-```
+\`\`\`
 Create a dynamic homepage that adapts messaging for three audience types:
 
 COMPONENTS NEEDED:
@@ -102,11 +102,11 @@ TECHNICAL REQUIREMENTS:
 - Maintain SEO optimization
 - Mobile-first responsive design
 - A/B testing capabilities for messaging
-```
+\`\`\`
 
 #### **Task 2: Enhanced Organization Creation Flow**
 
-```
+\`\`\`
 Create an intelligent organization setup flow with type-specific onboarding:
 
 COMPONENTS NEEDED:
@@ -144,11 +144,11 @@ TECHNICAL REQUIREMENTS:
 - Error handling and recovery
 - Mobile-optimized interface
 - Accessibility compliance
-```
+\`\`\`
 
 #### **Task 3: Dynamic Dashboard with Contextual Language**
 
-```
+\`\`\`
 Create a context-aware dashboard that adapts language and features:
 
 COMPONENTS NEEDED:
@@ -177,11 +177,11 @@ TECHNICAL REQUIREMENTS:
 - Real-time language switching
 - Persistent user preferences
 - Mobile-responsive design
-```
+\`\`\`
 
 #### **Task 4: Audience-Specific Marketing Pages**
 
-```
+\`\`\`
 Create dedicated landing pages for each audience type:
 
 COMPONENTS NEEDED:
@@ -205,11 +205,11 @@ TECHNICAL REQUIREMENTS:
 - Analytics tracking per audience
 - A/B testing framework
 - Mobile optimization
-```
+\`\`\`
 
 #### **Task 5: Intelligent Widget System with Context Awareness**
 
-```
+\`\`\`
 Create context-aware widgets that adapt to organization type:
 
 COMPONENTS NEEDED:
@@ -232,7 +232,7 @@ TECHNICAL REQUIREMENTS:
 - Real-time preview updates
 - Mobile optimization
 - Accessibility compliance
-```
+\`\`\`
 
 ### **Implementation Strategy for Multi-Tenant Expansion:**
 
@@ -298,7 +298,7 @@ TECHNICAL REQUIREMENTS:
 **Current State:** Basic newsletter creation with template selection
 **V0 Opportunity:** Create a sophisticated drag-and-drop newsletter builder
 
-```
+\`\`\`
 Create a modern drag-and-drop newsletter builder with:
 
 COMPONENTS NEEDED:
@@ -331,7 +331,7 @@ TECHNICAL REQUIREMENTS:
 - Mobile-first responsive design
 - Dark/light theme support
 - Keyboard navigation support
-```
+\`\`\`
 
 ### **Priority 2: Advanced Analytics Dashboard**
 
@@ -346,7 +346,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Transform into a comprehensive business intelligence platform
 
-```
+\`\`\`
 Create an advanced analytics dashboard with:
 
 COMPONENTS NEEDED:
@@ -379,7 +379,7 @@ TECHNICAL REQUIREMENTS:
 - Performance optimization
 - Caching strategies
 - Error handling and loading states
-```
+\`\`\`
 
 ### **Priority 3: Mobile-First Story Creation**
 
@@ -394,7 +394,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Create a mobile-native story creation experience
 
-```
+\`\`\`
 Create a mobile-first story creation interface with:
 
 COMPONENTS NEEDED:
@@ -427,7 +427,7 @@ TECHNICAL REQUIREMENTS:
 - Local storage for offline use
 - Service worker implementation
 - Mobile performance optimization
-```
+\`\`\`
 
 ### **Priority 4: Widget Customization Studio**
 
@@ -455,7 +455,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Build a comprehensive CRM-like subscriber management system
 
-```
+\`\`\`
 Create an advanced subscriber management system with:
 
 COMPONENTS NEEDED:
@@ -491,7 +491,7 @@ TECHNICAL REQUIREMENTS:
 - Mobile-first responsive design
 - Accessibility compliance
 - Performance optimization for large lists
-```
+\`\`\`
 
 ## 🎯 **Priority 6: Enhanced Dashboard Experience**
 
@@ -506,7 +506,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Create a fully customizable, personalized dashboard
 
-```
+\`\`\`
 Create a customizable dashboard builder with:
 
 COMPONENTS NEEDED:
@@ -541,7 +541,7 @@ TECHNICAL REQUIREMENTS:
 - Performance optimization
 - Accessibility compliance
 - Cross-browser compatibility
-```
+\`\`\`
 
 ## 🎯 **Priority 7: Advanced Widget System**
 
@@ -556,7 +556,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Create a comprehensive widget platform
 
-```
+\`\`\`
 Create a visual widget customization studio with:
 
 COMPONENTS NEEDED:
@@ -590,7 +590,7 @@ TECHNICAL REQUIREMENTS:
 - Code generation utilities
 - Performance monitoring
 - Cross-browser compatibility
-```
+\`\`\`
 
 ## 🎨 **Design System & Brand Guidelines**
 
@@ -623,7 +623,7 @@ TECHNICAL REQUIREMENTS:
 - **Analytics:** Data collection and reporting
 
 ### **Data Models**
-```typescript
+\`\`\`typescript
 interface Story {
   id: string
   title: string
@@ -652,7 +652,7 @@ interface Widget {
   embedCode: string
   isActive: boolean
 }
-```
+\`\`\`
 
 ## 🚀 **Implementation Strategy**
 
@@ -683,7 +683,7 @@ interface Widget {
 
 **V0 Opportunity:** Integrate AI to enhance content creation
 
-```
+\`\`\`
 Create an AI-powered content generation system with:
 
 COMPONENTS NEEDED:
@@ -717,7 +717,7 @@ TECHNICAL REQUIREMENTS:
 - Privacy and security compliance
 - Mobile-friendly interface
 - Accessibility features
-```
+\`\`\`
 
 ## 🎯 **Priority 9: Advanced Integration Platform**
 
@@ -731,7 +731,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Create a comprehensive integration platform
 
-```
+\`\`\`
 Create an advanced integration platform with:
 
 COMPONENTS NEEDED:
@@ -765,7 +765,7 @@ TECHNICAL REQUIREMENTS:
 - Security and encryption
 - Scalable infrastructure
 - Mobile-responsive design
-```
+\`\`\`
 
 ## 🎯 **Priority 10: Mobile App Components**
 
@@ -779,7 +779,7 @@ TECHNICAL REQUIREMENTS:
 
 **V0 Opportunity:** Create mobile app components for React Native
 
-```
+\`\`\`
 Create mobile app components for React Native with:
 
 COMPONENTS NEEDED:
@@ -813,12 +813,12 @@ TECHNICAL REQUIREMENTS:
 - Performance optimization
 - Security and encryption
 - Cross-platform compatibility
-```
+\`\`\`
 
 ## 📋 **Specific V0 Prompts to Use**
 
 ### **Newsletter Builder Prompt**
-```
+\`\`\`
 Create a modern drag-and-drop newsletter builder for a nonprofit platform. Include:
 - Block-based editor with sidebar
 - Rich text editing capabilities
@@ -829,10 +829,10 @@ Create a modern drag-and-drop newsletter builder for a nonprofit platform. Inclu
 - Export functionality
 - Accessibility compliance
 - Use Next.js 14, TypeScript, Tailwind CSS, and Shadcn UI components
-```
+\`\`\`
 
 ### **Analytics Dashboard Prompt**
-```
+\`\`\`
 Build an advanced analytics dashboard for nonprofit fundraising data. Include:
 - Interactive charts and graphs
 - Real-time data updates
@@ -842,10 +842,10 @@ Build an advanced analytics dashboard for nonprofit fundraising data. Include:
 - Performance metrics
 - Geographic distribution
 - Use Recharts, Next.js 14, TypeScript, and Tailwind CSS
-```
+\`\`\`
 
 ### **Mobile Story Creation Prompt**
-```
+\`\`\`
 Create a mobile-first story creation interface for nonprofits. Include:
 - Touch-friendly form inputs
 - Image capture and editing
@@ -855,7 +855,7 @@ Create a mobile-first story creation interface for nonprofits. Include:
 - Progress tracking
 - Social sharing
 - Use Next.js 14, TypeScript, and PWA capabilities
-```
+\`\`\`
 
 ## 🎯 **Success Metrics**
 

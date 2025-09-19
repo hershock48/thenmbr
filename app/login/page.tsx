@@ -1,11 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Heart, Users, Target, Gift, CheckCircle, Sparkles, Eye, EyeOff } from "lucide-react"
+import { ArrowRight, Heart, Target, Gift, CheckCircle, Sparkles, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
@@ -16,33 +18,33 @@ export default function LoginPage() {
   const { signIn, user } = useAuth()
   const router = useRouter()
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (user) {
-      router.push('/select-org')
+      router.push("/select-org")
     }
   }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
+    setError("")
 
     try {
       await signIn(formData.email, formData.password)
       setShowSuccess(true)
       setTimeout(() => {
-        router.push('/select-org')
+        router.push("/select-org")
       }, 1500)
     } catch (err) {
-      setError('Invalid email or password. Please try again.')
+      setError("Invalid email or password. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -50,7 +52,7 @@ export default function LoginPage() {
 
   if (showSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center">
           <CardContent className="p-8">
             <Confetti />
@@ -69,38 +71,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-background to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">N</span>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xs">#</span>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-xs">#</span>
               </div>
             </div>
             <span className="text-2xl font-bold text-foreground">The NMBR</span>
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground">
-            Sign in to continue creating amazing impact stories
-          </p>
+          <p className="text-muted-foreground">Sign in to continue turning stories into revenue</p>
         </div>
 
         {/* Benefits */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="text-center p-4 bg-white/50 rounded-lg border border-cyan-100">
-            <Heart className="w-6 h-6 text-cyan-600 mx-auto mb-2" />
+          <div className="text-center p-4 bg-white/50 rounded-lg border border-primary/20">
+            <Heart className="w-6 h-6 text-primary mx-auto mb-2" />
             <p className="text-sm font-medium text-foreground">Your Stories</p>
           </div>
-          <div className="text-center p-4 bg-white/50 rounded-lg border border-purple-100">
-            <Target className="w-6 h-6 text-purple-600 mx-auto mb-2" />
+          <div className="text-center p-4 bg-white/50 rounded-lg border border-secondary/20">
+            <Target className="w-6 h-6 text-secondary mx-auto mb-2" />
             <p className="text-sm font-medium text-foreground">Analytics</p>
           </div>
-          <div className="text-center p-4 bg-white/50 rounded-lg border border-green-100">
+          <div className="text-center p-4 bg-white/50 rounded-lg border border-green-200">
             <Gift className="w-6 h-6 text-green-600 mx-auto mb-2" />
             <p className="text-sm font-medium text-foreground">Donors</p>
           </div>
@@ -126,7 +126,7 @@ export default function LoginPage() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1 h-12 text-base border-2 border-gray-200 focus:border-cyan-500 focus:ring-cyan-500"
+                    className="mt-1 h-12 text-base border-2 border-gray-200 focus:border-primary focus:ring-primary"
                     placeholder="your@organization.org"
                   />
                 </div>
@@ -142,7 +142,7 @@ export default function LoginPage() {
                       required
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="mt-1 h-12 text-base border-2 border-gray-200 focus:border-cyan-500 focus:ring-cyan-500 pr-12"
+                      className="mt-1 h-12 text-base border-2 border-gray-200 focus:border-primary focus:ring-primary pr-12"
                       placeholder="Enter your password"
                     />
                     <button
@@ -165,7 +165,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                className="w-full h-12 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
               >
                 {loading ? (
                   <LoadingSpinner />
@@ -182,7 +182,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/signup" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                <Link href="/signup" className="text-primary hover:text-primary/80 font-medium">
                   Create one here
                 </Link>
               </p>
@@ -194,8 +194,8 @@ export default function LoginPage() {
         <div className="mt-8 text-center">
           <p className="text-xs text-muted-foreground mb-4">Trusted by amazing organizations worldwide</p>
           <div className="flex justify-center items-center space-x-6 opacity-60">
-            <div className="text-sm font-semibold text-cyan-600">WaterAid</div>
-            <div className="text-sm font-semibold text-purple-600">UNICEF</div>
+            <div className="text-sm font-semibold text-primary">WaterAid</div>
+            <div className="text-sm font-semibold text-secondary">UNICEF</div>
             <div className="text-sm font-semibold text-blue-600">Red Cross</div>
           </div>
         </div>

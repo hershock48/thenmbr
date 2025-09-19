@@ -23,7 +23,7 @@
 ### **🔧 Accessibility Architecture:**
 
 #### **Core Accessibility Service (lib/accessibility-service.ts)**
-```typescript
+\`\`\`typescript
 // Comprehensive accessibility management
 export class AccessibilityService {
   // Configuration management
@@ -47,10 +47,10 @@ export class AccessibilityService {
   runAccessibilityAudit(): Promise<AccessibilityAudit>
   checkColorContrast(foreground: string, background: string)
 }
-```
+\`\`\`
 
 #### **Accessibility Configuration**
-```typescript
+\`\`\`typescript
 interface AccessibilityConfig {
   enableKeyboardNavigation: boolean
   enableScreenReader: boolean
@@ -63,7 +63,7 @@ interface AccessibilityConfig {
   enableVoiceOver: boolean
   enableBraille: boolean
 }
-```
+\`\`\`
 
 ### **📱 Accessibility Components:**
 
@@ -100,7 +100,7 @@ interface AccessibilityConfig {
 ### **🎨 Accessibility CSS Utilities:**
 
 #### **Focus Management (styles/accessibility.css)**
-```css
+\`\`\`css
 /* Focus indicators */
 .focus-visible {
   outline: 2px solid #3b82f6;
@@ -121,10 +121,10 @@ interface AccessibilityConfig {
 .skip-link:focus {
   top: 0;
 }
-```
+\`\`\`
 
 #### **High Contrast Mode**
-```css
+\`\`\`css
 @media (prefers-contrast: high) {
   .high-contrast * {
     background-color: white !important;
@@ -132,17 +132,17 @@ interface AccessibilityConfig {
     border-color: black !important;
   }
 }
-```
+\`\`\`
 
 #### **Reduced Motion**
-```css
+\`\`\`css
 @media (prefers-reduced-motion: reduce) {
   .reduced-motion * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
-```
+\`\`\`
 
 ### **🔍 Accessibility Testing:**
 
@@ -182,7 +182,7 @@ interface AccessibilityConfig {
 ### **🔌 API Endpoints:**
 
 #### **Accessibility Audit API**
-```typescript
+\`\`\`typescript
 // POST /api/accessibility/audit
 // Run accessibility audit
 // Returns: audit results, score, recommendations
@@ -190,15 +190,15 @@ interface AccessibilityConfig {
 // GET /api/accessibility/audit
 // Get accessibility configuration
 // Returns: current accessibility settings
-```
+\`\`\`
 
 #### **Screen Reader Announcements API**
-```typescript
+\`\`\`typescript
 // POST /api/accessibility/announce
 // Announce message to screen readers
 // Body: { message: string }
 // Returns: success status
-```
+\`\`\`
 
 ### **📋 WCAG 2.1 AA Compliance:**
 
