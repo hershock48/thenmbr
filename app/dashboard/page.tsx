@@ -49,11 +49,17 @@ interface Story {
 
 interface DashboardStats {
   totalStories: number
+  totalViews: number
   totalDonations: number
-  activeDonors: number
+  engagementRate: number
   avgDonation: number
   monthlyGrowth: number
   completionRate: number
+  topPerformingStory?: {
+    title: string
+    engagementRate: number
+    views: number
+  }
 }
 
 export default function DashboardPage() {
@@ -65,14 +71,16 @@ export default function DashboardPage() {
   const [stories, setStories] = useState<Story[]>([])
   const [stats, setStats] = useState<DashboardStats>({
     totalStories: 0,
+    totalViews: 0,
     totalDonations: 0,
-    activeDonors: 0,
+    engagementRate: 0,
     avgDonation: 0,
     monthlyGrowth: 0,
     completionRate: 0,
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedStoryFilter, setSelectedStoryFilter] = useState<string>("all")
 
   useEffect(() => {
     if (org?.id) {
@@ -92,11 +100,13 @@ export default function DashboardPage() {
 
       const mockStats: DashboardStats = {
         totalStories: 0,
+        totalViews: 0,
         totalDonations: 0,
-        activeDonors: 0,
+        engagementRate: 0,
         avgDonation: 0,
         monthlyGrowth: 0,
-        completionRate: 0
+        completionRate: 0,
+        topPerformingStory: undefined
       }
 
       setStories(mockStories)
@@ -208,26 +218,52 @@ export default function DashboardPage() {
 
       {/* Impact Metrics - The Heart of Your Mission */}
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <Target className="w-6 h-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-foreground">Your Impact Dashboard</h2>
-          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-            Live Impact
-          </Badge>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Target className="w-6 h-6 text-blue-600" />
+            <h2 className="text-2xl font-bold text-foreground">Your Impact Dashboard</h2>
+            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+              Live Impact
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="story-filter" className="text-sm font-medium text-muted-foreground">
+              Filter by NMBR:
+            </label>
+            <select
+              id="story-filter"
+              value={selectedStoryFilter}
+              onChange={(e) => setSelectedStoryFilter(e.target.value)}
+              className="px-3 py-1 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="all">All NMBRs</option>
+              {stories.map((story) => (
+                <option key={story.id} value={story.id}>
+                  {story.title || `NMBR ${story.id.slice(-6)}`}
+                </option>
+              ))}
+              {stories.length === 0 && (
+                <option value="none" disabled>No stories yet</option>
+              )}
+            </select>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Lives Impacted */}
-          <Card className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-emerald-50">
+          {/* Engagement Rate */}
+          <Card 
+            className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-emerald-50 cursor-pointer"
+            onClick={() => router.push('/dashboard/analytics')}
+          >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-green-700 mb-1">Lives Impacted</p>
+                  <p className="text-sm font-semibold text-green-700 mb-1">Engagement Rate</p>
                   <p className="text-3xl font-bold text-green-800 mt-1">
-                    {stats.totalDonations > 0 ? Math.floor(stats.totalDonations / 50) : 0}
+                    {stats.engagementRate.toFixed(1)}%
                   </p>
                   <p className="text-xs text-green-600 mt-1 font-medium">
-                    ${stats.totalDonations.toLocaleString()} raised
+                    {stats.totalViews.toLocaleString()} total views
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center group-hover:from-green-500 group-hover:to-emerald-600 transition-all duration-300 shadow-lg">
@@ -237,57 +273,66 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Community Champions */}
-          <Card className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
+          {/* Total Donations */}
+          <Card 
+            className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-indigo-50 cursor-pointer"
+            onClick={() => router.push('/dashboard/subscribers')}
+          >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-blue-700 mb-1">Community Champions</p>
+                  <p className="text-sm font-semibold text-blue-700 mb-1">Total Donations</p>
                   <p className="text-3xl font-bold text-blue-800 mt-1">
-                    {stats.activeDonors}
+                    ${stats.totalDonations.toLocaleString()}
                   </p>
                   <p className="text-xs text-blue-600 mt-1 font-medium">
-                    Dedicated supporters
+                    {stats.avgDonation > 0 ? `$${stats.avgDonation.toFixed(0)} avg` : 'No donations yet'}
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl flex items-center justify-center group-hover:from-blue-500 group-hover:to-indigo-600 transition-all duration-300 shadow-lg">
-                  <Users className="w-7 h-7 text-white" />
+                  <DollarSign className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Stories of Hope */}
-          <Card className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-pink-50">
+          {/* Active Stories */}
+          <Card 
+            className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-pink-50 cursor-pointer"
+            onClick={() => router.push('/dashboard/stories')}
+          >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-purple-700 mb-1">Stories of Hope</p>
+                  <p className="text-sm font-semibold text-purple-700 mb-1">Active Stories</p>
                   <p className="text-3xl font-bold text-purple-800 mt-1">
                     {stats.totalStories}
                   </p>
                   <p className="text-xs text-purple-600 mt-1 font-medium">
-                    {stats.completionRate}% completed
+                    {stats.topPerformingStory ? `Top: ${stats.topPerformingStory.title.slice(0, 20)}...` : 'Create your first story'}
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center group-hover:from-purple-500 group-hover:to-pink-600 transition-all duration-300 shadow-lg">
-                  <Eye className="w-7 h-7 text-white" />
+                  <Target className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Monthly Momentum */}
-          <Card className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-red-50">
+          {/* Top Performer */}
+          <Card 
+            className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-red-50 cursor-pointer"
+            onClick={() => stats.topPerformingStory && router.push(`/dashboard/stories/${stats.topPerformingStory.title}`)}
+          >
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-orange-700 mb-1">Monthly Momentum</p>
+                  <p className="text-sm font-semibold text-orange-700 mb-1">Top Performer</p>
                   <p className="text-3xl font-bold text-orange-800 mt-1">
-                    +{stats.monthlyGrowth}%
+                    {stats.topPerformingStory ? `${stats.topPerformingStory.engagementRate.toFixed(1)}%` : '0%'}
                   </p>
                   <p className="text-xs text-orange-600 mt-1 font-medium">
-                    Growth this month
+                    {stats.topPerformingStory ? `${stats.topPerformingStory.title.slice(0, 15)}...` : 'No data yet'}
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl flex items-center justify-center group-hover:from-orange-500 group-hover:to-red-600 transition-all duration-300 shadow-lg">
