@@ -156,16 +156,16 @@ export default function HomePage() {
             <div className="space-y-8">
               <div className="space-y-4">
                 <Badge variant="secondary" className="w-fit">
-                  <Zap className="w-4 h-4 mr-2" />
-                  The Complete Story-Driven Fundraising Platform
+                  <Heart className="w-4 h-4 mr-2" />
+                  The Complete Donor Connection Platform
                 </Badge>
                 <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
-                  Turn Any Product Into a
-                  <span className="text-primary"> Fundraising Tool</span>
+                  Connect Every Donor to Their
+                  <span className="text-primary"> Impact Story</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
-                  Add a NMBR code to anything you sell - t-shirts, mugs, stickers, or custom products. 
-                  When donors enter the code, they discover the real people behind your cause and become lifelong supporters.
+                  Each NMBR creates a lasting bridge between donor and beneficiary. When someone searches their number, 
+                  they connect to the ongoing story of the person they helped - creating relationships that last far beyond the initial donation.
                 </p>
                 
                 {/* Market Timing & Urgency */}
@@ -941,7 +941,7 @@ export default function HomePage() {
           <div className="text-center space-y-4 mb-16">
             <h3 className="text-4xl font-bold">How It Works</h3>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              From story creation to revenue generation in three simple steps
+              From story creation to lasting donor connections in three simple steps
             </p>
           </div>
 
@@ -952,8 +952,8 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold">1. Create Your Stories</h3>
               <p className="text-muted-foreground">
-                Build compelling stories with AI assistance, link them to products, 
-                and set up your white-label storefront or marketplace presence.
+                Build compelling stories with AI assistance and assign each one a unique NMBR. 
+                These numbers become the bridge between your donors and the people they help.
               </p>
             </div>
 
@@ -961,10 +961,10 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto">
                 <Mail className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold">2. Engage Your Audience</h3>
+              <h3 className="text-xl font-semibold">2. Distribute Your NMBRs</h3>
               <p className="text-muted-foreground">
-                Send targeted campaigns across email, SMS, and push notifications 
-                with dynamic product blocks and attribution tracking.
+                Give NMBRs to donors through products, events, or direct distribution. 
+                Each number connects them to their specific impact story and enables ongoing communication.
               </p>
             </div>
 
@@ -972,10 +972,10 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto">
                 <DollarSign className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold">3. Generate Revenue</h3>
+              <h3 className="text-xl font-semibold">3. Build Lasting Relationships</h3>
               <p className="text-muted-foreground">
-                Track every sale back to its source story and campaign. 
-                Optimize based on real data and scale your impact.
+                When donors search their NMBR, they connect to ongoing story updates and can subscribe to newsletters. 
+                Turn one-time donors into lifelong supporters through continuous story engagement.
               </p>
             </div>
           </div>
@@ -1142,10 +1142,10 @@ export default function HomePage() {
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
-            <h3 className="text-4xl font-bold">Ready to Turn Your Stories Into Impact?</h3>
+            <h3 className="text-4xl font-bold">Ready to Connect Donors to Their Impact Stories?</h3>
             <p className="text-xl opacity-90">
-              Join hundreds of nonprofits already using NMBR to create sustainable 
-              donor relationships from their impact stories.
+              Join hundreds of nonprofits already using NMBR to create lasting 
+              donor relationships through ongoing story connections.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" variant="secondary" className="text-lg px-8 py-6" asChild>

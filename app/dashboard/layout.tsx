@@ -5,6 +5,11 @@ import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { useAuth } from "@/contexts/AuthContext"
 import { OrganizationProvider } from "@/contexts/OrganizationContext"
+import { TrialProvider } from "@/contexts/TrialContext"
+import { UsagePrompt } from "@/components/conversion/UsagePrompt"
+import { TrialCountdown } from "@/components/conversion/TrialCountdown"
+import { FeatureTeaser } from "@/components/conversion/FeatureTeaser"
+import { UpgradeModal } from "@/components/conversion/UpgradeModal"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -36,13 +41,21 @@ export default function DashboardLayout({
 
   return (
     <OrganizationProvider>
-      <div className="min-h-screen bg-background">
-        <Sidebar />
-        <div className="lg:pl-64">
-          <Header />
-          <main className="p-3 sm:p-4 lg:p-6">{children}</main>
+      <TrialProvider>
+        <div className="min-h-screen bg-background">
+          <Sidebar />
+          <div className="lg:pl-64">
+            <Header />
+            <main className="p-3 sm:p-4 lg:p-6">{children}</main>
+          </div>
+          
+          {/* Conversion Components */}
+          <UsagePrompt />
+          <TrialCountdown />
+          <FeatureTeaser />
+          <UpgradeModal />
         </div>
-      </div>
+      </TrialProvider>
     </OrganizationProvider>
   )
 }

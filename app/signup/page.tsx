@@ -243,37 +243,52 @@ export default function SignupPage() {
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                   <Target className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium">Unlimited Stories</span>
+                <span className="text-sm font-medium">1-3 Active NMBRs</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                   <BarChart3 className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium">Real-time Analytics</span>
+                <span className="text-sm font-medium">Basic Analytics</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                   <Users className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium">Donor Tracking</span>
+                <span className="text-sm font-medium">Email Capture</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                   <Mail className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium">Email & SMS</span>
+                <span className="text-sm font-medium">Story Pages</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                   <Globe className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium">White-label Pages</span>
+                <span className="text-sm font-medium">Basic Branding</span>
               </div>
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                   <Clock className="w-6 h-6 text-primary" />
                 </div>
                 <span className="text-sm font-medium">14-day Free Trial</span>
+              </div>
+            </div>
+            
+            {/* Trial Limitations & Upgrade Path */}
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
+                <div className="text-sm">
+                  <p className="font-medium text-blue-900 dark:text-blue-100 mb-1">Trial Details:</p>
+                  <ul className="text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• 14-day free trial of Starter plan ($99/month after trial)</li>
+                    <li>• Upgrade anytime to Growth ($199/month) or Professional ($399/month)</li>
+                    <li>• Cancel anytime during trial with no charges</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -560,6 +575,44 @@ export default function SignupPage() {
                     <p className="text-xs text-muted-foreground">Get started in minutes</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Pricing Comparison */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Upgrade Options</CardTitle>
+                <CardDescription className="text-sm">Unlock more features as you grow</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">Starter</span>
+                    <span className="text-xs text-muted-foreground">Your trial</span>
+                  </div>
+                  <div className="text-lg font-bold">$99<span className="text-sm text-muted-foreground">/month</span></div>
+                  <p className="text-xs text-muted-foreground">1-3 NMBRs, Basic features</p>
+                </div>
+                <div className="border border-primary rounded-lg p-3 bg-primary/5">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">Growth</span>
+                    <Badge variant="secondary" className="text-xs">Popular</Badge>
+                  </div>
+                  <div className="text-lg font-bold">$199<span className="text-sm text-muted-foreground">/month</span></div>
+                  <p className="text-xs text-muted-foreground">5 NMBRs, Advanced features</p>
+                </div>
+                <div className="border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">Professional</span>
+                  </div>
+                  <div className="text-lg font-bold">$399<span className="text-sm text-muted-foreground">/month</span></div>
+                  <p className="text-xs text-muted-foreground">10 NMBRs, White-label</p>
+                </div>
+                <Link href="/pricing">
+                  <Button variant="outline" size="sm" className="w-full mt-3">
+                    View All Plans
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 

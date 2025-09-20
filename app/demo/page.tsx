@@ -252,11 +252,11 @@ export default function DemoPage() {
                 Interactive Demo
               </Badge>
               <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Experience Story-Driven Fundraising
+                Connect Every Donor to Their Impact Story
               </h1>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                See how NMBR transforms impact stories into sustainable donor relationships. 
-                Click on NMBR codes, explore donation opportunities, and watch real-time impact attribution.
+                Watch how NMBR creates lasting connections between donors and the people they help. 
+                Each number becomes a bridge that keeps the story alive long after the initial donation.
               </p>
             </div>
 
@@ -426,10 +426,10 @@ export default function DemoPage() {
                 </div>
 
                 <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                  <h4 className="font-bold mb-2">Try the NMBR Experience</h4>
+                  <h4 className="font-bold mb-2">Experience the Story Connection</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Click on any NMBR code above to see the story widget in action. 
-                    Watch how every interaction is tracked and attributed.
+                    Click on any NMBR code above to see how donors connect to their impact story. 
+                    Watch how each number creates a lasting relationship between donor and beneficiary.
                   </p>
                   <Button 
                     onClick={() => handleNMBRClick(currentStory.id)}
@@ -528,9 +528,9 @@ export default function DemoPage() {
       <section className="py-12 bg-gradient-to-r from-primary/5 to-secondary/5">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-2xl mx-auto space-y-4">
-            <h3 className="text-2xl font-bold">See How Easy It Is to Get Started</h3>
+            <h3 className="text-2xl font-bold">Start Connecting Donors to Their Impact</h3>
             <p className="text-muted-foreground">
-              Join hundreds of nonprofits already using NMBR to turn their stories into sustainable donations.
+              Join hundreds of nonprofits already using NMBR to create lasting donor relationships through ongoing story connections.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-primary to-secondary text-white" onClick={handleStartTrial}>
@@ -1150,9 +1150,9 @@ export default function DemoPage() {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl font-bold">Join 500+ Organizations Already Growing With NMBR</h2>
+              <h2 className="text-4xl font-bold">Join 500+ Organizations Already Connecting Donors to Impact</h2>
               <p className="text-xl opacity-90">
-                Don't let your stories go untold. Start turning them into sustainable donations today.
+                Don't let your stories go untold. Start creating lasting donor relationships through ongoing story connections today.
               </p>
             </div>
 
@@ -2517,7 +2517,7 @@ export default function DemoPage() {
 
                 <div className="pt-4 border-t border-green-200">
                   <p className="text-sm text-green-600">
-                    Join 500+ nonprofits already using NMBR to turn their stories into sustainable donations
+                    Join 500+ nonprofits already using NMBR to create lasting donor relationships through story connections
                   </p>
                 </div>
               </div>
