@@ -264,7 +264,7 @@ export async function sendTrialEmail(
     const resend = new Resend(process.env.RESEND_API_KEY)
     
     const { data, error } = await resend.emails.send({
-      from: 'onboarding@resend.dev', // Using Resend's default domain for testing
+      from: 'onboarding@thenmbr.com', // Using verified domain
       to: [email],
       subject: finalTemplate.subject,
       html: finalTemplate.html,
