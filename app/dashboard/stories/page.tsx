@@ -26,6 +26,9 @@ import {
   Calendar,
   Share2,
   BarChart3,
+  ArrowLeft,
+  FileText,
+  Zap,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -94,92 +97,130 @@ export default function StoriesPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Impact Stories</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your impact stories and track their performance
-          </p>
-        </div>
-        <Link href="/dashboard/stories/create">
-          <Button className="bg-primary hover:bg-primary/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Create New Story
-          </Button>
-        </Link>
-      </div>
-
-      {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search stories, beneficiaries, or descriptions..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map(category => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={viewMode === "grid" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewMode("grid")}
-          >
-            <Grid3X3 className="w-4 h-4" />
-          </Button>
-          <Button
-            variant={viewMode === "list" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewMode("list")}
-          >
-            <List className="w-4 h-4" />
-          </Button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Inspirational Header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5" />
+        <div className="relative border-b border-blue-100/50 bg-white/80 backdrop-blur-sm">
+          <div className="container mx-auto px-6 py-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Dashboard
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Your Impact Stories
+                    </h1>
+                    <p className="text-slate-600 text-lg">Every story is a bridge between hearts and hope</p>
+                  </div>
+                </div>
+              </div>
+              <Link href="/dashboard/stories/create">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Create New Story
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Stories List */}
-      {filteredStories.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Heart className="w-10 h-10 text-primary" />
-          </div>
-          <h3 className="text-2xl font-bold text-foreground mb-3">
-            No Impact Stories Yet
-          </h3>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
-            Create your first impact story to start connecting with donors and sharing your mission.
-            Stories help donors understand the real people behind your cause.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/dashboard/stories/create">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6">
-                <Plus className="w-5 h-5 mr-2" />
-                Create Your First Story
-              </Button>
-            </Link>
-            <Link href="/demo">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                <Eye className="w-5 h-5 mr-2" />
-                See Examples
-              </Button>
-            </Link>
-          </div>
-        </div>
+      <div className="container mx-auto px-6 py-8 space-y-8">
+
+        {/* Enhanced Filters and Search */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600 w-5 h-5" />
+                <Input
+                  placeholder="Search your impact stories, beneficiaries, or descriptions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-12 text-lg border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
+                />
+              </div>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-full sm:w-48 h-12 border-2 border-slate-200 focus:border-blue-500">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map(category => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="h-12 px-4"
+                >
+                  <Grid3X3 className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="h-12 px-4"
+                >
+                  <List className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Inspirational Empty State */}
+        {filteredStories.length === 0 ? (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-blue-50/30">
+            <CardContent className="p-16 text-center">
+              {/* Inspirational Hero */}
+              <div className="relative mb-8">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+                  <Heart className="w-12 h-12 text-white" />
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-yellow-800" />
+                </div>
+              </div>
+              
+              <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                Ready to Tell Your First Story?
+              </h3>
+              <p className="text-slate-600 mb-12 max-w-3xl mx-auto text-xl leading-relaxed">
+                Your first impact story is waiting to be told. When donors discover the real people behind your cause, 
+                they don't just give money—they give hope, they give love, they give their hearts.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <Link href="/dashboard/stories/create">
+                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xl px-12 py-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
+                    <Plus className="w-6 h-6 mr-3" />
+                    Create Your First Story
+                  </Button>
+                </Link>
+                <Link href="/demo">
+                  <Button size="lg" variant="outline" className="text-xl px-12 py-6 border-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-all duration-300">
+                    <Eye className="w-6 h-6 mr-3" />
+                    See Examples
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
       ) : (
         <div className="space-y-4">
           {/* Bulk Actions */}
@@ -316,6 +357,7 @@ export default function StoriesPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }

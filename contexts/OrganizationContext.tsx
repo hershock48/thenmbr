@@ -89,7 +89,7 @@ const organizationConfigs = {
       },
       {
         name: "Impact Stories",
-        href: "/dashboard/nmbrs",
+        href: "/dashboard/stories",
         icon: Heart,
         description: "Manage your impact stories and beneficiaries",
       },
@@ -368,7 +368,7 @@ const organizationConfigs = {
 export function OrganizationProvider({ children }: { children: ReactNode }) {
   const { org } = useAuth()
   const orgType: OrganizationType = org?.organization_type || "nonprofit"
-  const config = organizationConfigs[orgType]
+  const config = organizationConfigs[orgType] || organizationConfigs.nonprofit
 
   const getTerminology = (key: keyof OrganizationTerminology): string => {
     return config.terminology[key]

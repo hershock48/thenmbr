@@ -47,18 +47,12 @@ export async function POST(request: NextRequest) {
 
     // Get subscribers for this story
     const { data: subscribers, error: subscribersError } = await supabase
-      .from('nmbr_subscriptions')
+      .from('subscribers')
       .select(`
-        subscribers (
-          id,
-          email,
-          first_name,
-          last_name,
-          status
-        )
+        id,
+        email
       `)
-      .eq('nmbr_id', storyId)
-      .eq('subscribers.status', 'active')
+      .eq('story_id', storyId)
 
     if (subscribersError) {
       throw subscribersError

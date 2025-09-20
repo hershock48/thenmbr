@@ -20,14 +20,12 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (existingSubscriber) {
-      // Update existing subscriber with new NMBR
+      // Update existing subscriber with new story subscription
       const { data: updatedSubscriber, error: updateError } = await supabase
         .from('subscribers')
         .update({
-          first_name: firstName,
-          last_name: lastName,
-          updated_at: new Date().toISOString(),
-          source: source
+          story_id: storyId,
+          updated_at: new Date().toISOString()
         })
         .eq('id', existingSubscriber.id)
         .select()
@@ -35,19 +33,6 @@ export async function POST(request: NextRequest) {
 
       if (updateError) {
         throw updateError
-      }
-
-      // Add story subscription if not already subscribed
-      const { error: subscriptionError } = await supabase
-        .from('nmbr_subscriptions')
-        .upsert({
-          subscriber_id: existingSubscriber.id,
-          story_id: storyId,
-          subscribed_at: new Date().toISOString()
-        })
-
-      if (subscriptionError) {
-        throw subscriptionError
       }
 
       return NextResponse.json({ 
@@ -62,30 +47,15 @@ export async function POST(request: NextRequest) {
       .from('subscribers')
       .insert({
         email,
-        first_name: firstName,
-        last_name: lastName,
         org_id: orgId,
-        source: source,
-        subscribed_at: new Date().toISOString()
+        story_id: storyId,
+        created_at: new Date().toISOString()
       })
       .select()
       .single()
 
     if (subscriberError) {
       throw subscriberError
-    }
-
-    // Create story subscription
-    const { error: subscriptionError } = await supabase
-      .from('nmbr_subscriptions')
-      .insert({
-        subscriber_id: newSubscriber.id,
-        story_id: storyId,
-        subscribed_at: new Date().toISOString()
-      })
-
-    if (subscriptionError) {
-      throw subscriptionError
     }
 
     return NextResponse.json({ 
@@ -118,15 +88,16 @@ export async function GET(request: NextRequest) {
       .from('subscribers')
       .select(`
         *,
-        nmbr_subscriptions (
-          story_id,
-          subscribed_at
+        stories (
+          id,
+          title,
+          nmbr_code
         )
       `)
       .eq('org_id', orgId)
 
     if (storyId) {
-      query = query.eq('nmbr_subscriptions.story_id', storyId)
+      query = query.eq('story_id', storyId)
     }
 
     const { data: subscribers, error } = await query
@@ -155,32 +126,18 @@ export async function DELETE(request: NextRequest) {
 
     // Using the supabase client from lib/supabase.ts
 
-    // Remove specific story subscription
+    // Remove subscriber from story (set story_id to null)
     const { error: subscriptionError } = await supabase
-      .from('nmbr_subscriptions')
-      .delete()
-      .eq('subscriber_id', subscriberId)
+      .from('subscribers')
+      .update({ 
+        story_id: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', subscriberId)
       .eq('story_id', storyId)
 
     if (subscriptionError) {
       throw subscriptionError
-    }
-
-    // Check if subscriber has any remaining subscriptions
-    const { data: remainingSubscriptions } = await supabase
-      .from('nmbr_subscriptions')
-      .select('id')
-      .eq('subscriber_id', subscriberId)
-
-    // If no remaining subscriptions, mark subscriber as unsubscribed
-    if (!remainingSubscriptions || remainingSubscriptions.length === 0) {
-      await supabase
-        .from('subscribers')
-        .update({ 
-          unsubscribed_at: new Date().toISOString(),
-          status: 'unsubscribed'
-        })
-        .eq('id', subscriberId)
     }
 
     return NextResponse.json({ 

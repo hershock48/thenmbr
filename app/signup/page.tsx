@@ -39,6 +39,7 @@ interface SignupFormData {
   projectDescription: string
   expectedMonthlyDonations: string
   primaryCause: string
+  selectedPlan: string
   agreeToTerms: boolean
   subscribeToUpdates: boolean
 }
@@ -79,6 +80,7 @@ export default function SignupPage() {
     projectDescription: "",
     expectedMonthlyDonations: "",
     primaryCause: "",
+    selectedPlan: "starter",
     agreeToTerms: false,
     subscribeToUpdates: true
   })
@@ -136,7 +138,9 @@ export default function SignupPage() {
         project_description: formData.projectDescription,
         expected_monthly_donations: formData.expectedMonthlyDonations,
         primary_cause: formData.primaryCause,
-        organization_type: "nonprofit"
+        organization_type: "nonprofit",
+        selected_plan: formData.selectedPlan,
+        subscribe_to_updates: formData.subscribeToUpdates
       })
       
       setShowSuccess(true)
@@ -585,28 +589,49 @@ export default function SignupPage() {
                 <CardDescription className="text-sm">Unlock more features as you grow</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="border rounded-lg p-3">
+                <div className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                  formData.selectedPlan === "starter" 
+                    ? "border-primary bg-primary/10" 
+                    : "border-border hover:border-primary/50"
+                }`} onClick={() => handleInputChange("selectedPlan", "starter")}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">Starter</span>
                     <span className="text-xs text-muted-foreground">Your trial</span>
                   </div>
                   <div className="text-lg font-bold">$99<span className="text-sm text-muted-foreground">/month</span></div>
                   <p className="text-xs text-muted-foreground">1-3 NMBRs, Basic features</p>
+                  {formData.selectedPlan === "starter" && (
+                    <div className="mt-2 text-xs text-primary font-medium">✓ Selected</div>
+                  )}
                 </div>
-                <div className="border border-primary rounded-lg p-3 bg-primary/5">
+                <div className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                  formData.selectedPlan === "growth" 
+                    ? "border-primary bg-primary/10" 
+                    : "border-primary bg-primary/5 hover:border-primary/70"
+                }`} onClick={() => handleInputChange("selectedPlan", "growth")}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">Growth</span>
                     <Badge variant="secondary" className="text-xs">Popular</Badge>
                   </div>
                   <div className="text-lg font-bold">$199<span className="text-sm text-muted-foreground">/month</span></div>
                   <p className="text-xs text-muted-foreground">5 NMBRs, Advanced features</p>
+                  {formData.selectedPlan === "growth" && (
+                    <div className="mt-2 text-xs text-primary font-medium">✓ Selected</div>
+                  )}
                 </div>
-                <div className="border rounded-lg p-3">
+                <div className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                  formData.selectedPlan === "professional" 
+                    ? "border-primary bg-primary/10" 
+                    : "border-border hover:border-primary/50"
+                }`} onClick={() => handleInputChange("selectedPlan", "professional")}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">Professional</span>
                   </div>
                   <div className="text-lg font-bold">$399<span className="text-sm text-muted-foreground">/month</span></div>
                   <p className="text-xs text-muted-foreground">10 NMBRs, White-label</p>
+                  {formData.selectedPlan === "professional" && (
+                    <div className="mt-2 text-xs text-primary font-medium">✓ Selected</div>
+                  )}
                 </div>
                 <Link href="/pricing">
                   <Button variant="outline" size="sm" className="w-full mt-3">

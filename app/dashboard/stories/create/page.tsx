@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   ArrowLeft,
+  ArrowRight,
   Eye,
   Hash,
   ImageIcon,
@@ -160,41 +161,55 @@ export default function CreateStoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Create Impact Story</h1>
-                <p className="text-muted-foreground">Share your cause and connect with donors</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Inspirational Header */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5" />
+        <div className="relative border-b border-blue-100/50 bg-white/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-50">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Dashboard
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      Create Your Impact Story
+                    </h1>
+                    <p className="text-slate-600 text-lg">Share your mission and inspire hearts to give</p>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={() => setShowPreview(true)}>
-                <Eye className="h-4 w-4 mr-2" />
-                Preview
-              </Button>
-              <Button onClick={handlePublish} disabled={!canCreateNmbr || isPublishing}>
-                {isPublishing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Publishing...
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="h-4 w-4 mr-2" />
-                    Publish Story
-                  </>
-                )}
-              </Button>
+              <div className="flex items-center gap-3">
+                <Button variant="outline" onClick={() => setShowPreview(true)} className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Preview Story
+                </Button>
+                <Button 
+                  onClick={handlePublish} 
+                  disabled={!canCreateNmbr || isPublishing}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+                >
+                  {isPublishing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Publishing Your Story...
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Publish & Inspire
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -204,138 +219,284 @@ export default function CreateStoryPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Progress */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-4">
+            {/* Inspirational Progress Tracker */}
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-blue-50/30">
+              <CardContent className="p-8">
+                <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">Story Progress</h3>
-                    <span className="text-sm text-muted-foreground">
-                      {Math.round(getProgressPercentage())}% Complete
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <Target className="w-4 h-4 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-800">Your Story Journey</h3>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-blue-600">
+                        {Math.round(getProgressPercentage())}%
+                      </span>
+                      <p className="text-sm text-slate-600">Complete</p>
+                    </div>
                   </div>
-                  <Progress value={getProgressPercentage()} className="h-2" />
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className={`h-4 w-4 ${storyData.title ? 'text-green-600' : 'text-muted-foreground'}`} />
-                      <span>Title</span>
+                  
+                  <div className="relative">
+                    <Progress 
+                      value={getProgressPercentage()} 
+                      className="h-3 bg-blue-100" 
+                    />
+                    <div className="absolute inset-0 h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full" 
+                         style={{ width: `${getProgressPercentage()}%` }} />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                      storyData.title ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
+                    }`}>
+                      <CheckCircle className={`h-5 w-5 ${storyData.title ? 'text-green-600' : 'text-slate-400'}`} />
+                      <span className={`font-medium ${storyData.title ? 'text-green-800' : 'text-slate-600'}`}>
+                        Story Title
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className={`h-4 w-4 ${storyData.description ? 'text-green-600' : 'text-muted-foreground'}`} />
-                      <span>Description</span>
+                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                      storyData.description ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
+                    }`}>
+                      <CheckCircle className={`h-5 w-5 ${storyData.description ? 'text-green-600' : 'text-slate-400'}`} />
+                      <span className={`font-medium ${storyData.description ? 'text-green-800' : 'text-slate-600'}`}>
+                        Description
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className={`h-4 w-4 ${storyData.beneficiaryName ? 'text-green-600' : 'text-muted-foreground'}`} />
-                      <span>Beneficiary</span>
+                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                      storyData.beneficiaryName ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
+                    }`}>
+                      <CheckCircle className={`h-5 w-5 ${storyData.beneficiaryName ? 'text-green-600' : 'text-slate-400'}`} />
+                      <span className={`font-medium ${storyData.beneficiaryName ? 'text-green-800' : 'text-slate-600'}`}>
+                        Beneficiary
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className={`h-4 w-4 ${storyData.fundingGoal > 0 ? 'text-green-600' : 'text-muted-foreground'}`} />
-                      <span>Funding Goal</span>
+                    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
+                      storyData.fundingGoal > 0 ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
+                    }`}>
+                      <CheckCircle className={`h-5 w-5 ${storyData.fundingGoal > 0 ? 'text-green-600' : 'text-slate-400'}`} />
+                      <span className={`font-medium ${storyData.fundingGoal > 0 ? 'text-green-800' : 'text-slate-600'}`}>
+                        Funding Goal
+                      </span>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Step 1: Template Selection */}
+            {/* Step 1: Inspirational Template Selection */}
             {currentStep === 1 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Choose Impact Template</CardTitle>
-                  <CardDescription>
-                    Select a template to get started with your impact story
-                  </CardDescription>
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-purple-50/30">
+                <CardHeader className="text-center pb-8">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+                      <Heart className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Choose Your Impact Story
+                      </CardTitle>
+                      <CardDescription className="text-lg text-slate-600 mt-2">
+                        Every great story starts with inspiration. Pick the template that best represents your mission.
+                      </CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {impactTemplates.map((template) => (
-                      <Card
-                        key={template.id}
-                        className={`cursor-pointer transition-all hover:shadow-md ${
-                          selectedTemplate === template.id ? 'ring-2 ring-primary' : ''
-                        }`}
-                        onClick={() => handleTemplateSelect(template.id)}
-                      >
-                        <CardContent className="p-4">
-                          <div className="flex items-start gap-3">
-                            <div className="p-2 bg-primary/10 rounded-lg">
-                              <template.icon className="h-5 w-5 text-primary" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {impactTemplates.map((template, index) => {
+                      const gradients = [
+                        "from-blue-50 to-indigo-100",
+                        "from-green-50 to-emerald-100", 
+                        "from-purple-50 to-pink-100"
+                      ]
+                      const iconGradients = [
+                        "from-blue-500 to-indigo-600",
+                        "from-green-500 to-emerald-600",
+                        "from-purple-500 to-pink-600"
+                      ]
+                      
+                      return (
+                        <Card
+                          key={template.id}
+                          className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 bg-gradient-to-br ${gradients[index]} ${
+                            selectedTemplate === template.id 
+                              ? 'ring-2 ring-purple-500 shadow-xl scale-105' 
+                              : 'hover:shadow-lg'
+                          }`}
+                        >
+                          <div
+                            className="w-full h-full cursor-pointer hover:bg-white/20 transition-all duration-200 rounded-lg"
+                            onClick={() => handleTemplateSelect(template.id)}
+                          >
+                            <CardContent className="p-6">
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 bg-gradient-to-br ${iconGradients[index]} rounded-2xl flex items-center justify-center shadow-lg`}>
+                                  <template.icon className="h-6 w-6 text-white" />
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="text-lg font-bold text-slate-800">{template.name}</h3>
+                                  <p className="text-sm text-slate-600 mt-1">{template.description}</p>
+                                </div>
+                              </div>
+                              
+                              {selectedTemplate === template.id ? (
+                                <div className="bg-white/80 rounded-xl p-4 border border-purple-200">
+                                  <div className="flex items-center gap-2 text-purple-700">
+                                    <CheckCircle className="h-4 w-4" />
+                                    <span className="text-sm font-medium">Selected Template</span>
+                                  </div>
+                                  <p className="text-xs text-purple-600 mt-1">
+                                    This template will help you create an inspiring story
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="text-center py-2">
+                                  <span className="text-xs text-slate-500 bg-white/60 px-3 py-1 rounded-full border border-slate-200">
+                                    Click to select
+                                  </span>
+                                </div>
+                              )}
                             </div>
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-card-foreground">{template.name}</h3>
-                              <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
-                            </div>
+                            </CardContent>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                        </Card>
+                      )
+                    })}
                   </div>
                 </CardContent>
+                
+                {/* Continue Button */}
+                {selectedTemplate && (
+                  <div className="flex justify-center pt-6">
+                    <Button 
+                      onClick={() => setCurrentStep(2)}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Continue with {impactTemplates.find(t => t.id === selectedTemplate)?.name}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
+                  </div>
+                )}
               </Card>
             )}
 
-            {/* Step 2: Basic Information */}
+            {/* Step 2: Inspirational Story Builder */}
             {currentStep === 2 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Story Details</CardTitle>
-                  <CardDescription>
-                    Tell us about the person or cause you're supporting
-                  </CardDescription>
+              <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-green-50/30">
+                <CardHeader className="text-center pb-8">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-left">
+                      <CardTitle className="text-2xl bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                        Tell Your Story
+                      </CardTitle>
+                      <CardDescription className="text-lg text-slate-600 mt-2">
+                        Share the details that will touch hearts and inspire action. Every detail matters.
+                      </CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="title">Story Title *</Label>
+                <CardContent className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="title" className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                        <Hash className="w-4 h-4 text-blue-600" />
+                        Story Title *
+                      </Label>
                       <Input
                         id="title"
-                        placeholder="e.g., Supporting Maria's Education"
+                        placeholder="e.g., Supporting Maria's Educational Dreams"
                         value={storyData.title}
                         onChange={(e) => handleInputChange("title", e.target.value)}
+                        className="h-12 text-lg border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
                       />
+                      <p className="text-sm text-slate-500">Make it personal and inspiring</p>
                     </div>
-                    <div>
-                      <Label htmlFor="beneficiaryName">Beneficiary Name *</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="beneficiaryName" className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                        <Users className="w-4 h-4 text-green-600" />
+                        Beneficiary Name *
+                      </Label>
                       <Input
                         id="beneficiaryName"
                         placeholder="e.g., Maria Rodriguez"
                         value={storyData.beneficiaryName}
                         onChange={(e) => handleInputChange("beneficiaryName", e.target.value)}
+                        className="h-12 text-lg border-2 border-slate-200 focus:border-green-500 focus:ring-green-500/20"
                       />
+                      <p className="text-sm text-slate-500">The person who will benefit from donations</p>
                     </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="description">Story Description *</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-purple-600" />
+                      Story Description *
+                    </Label>
                     <Textarea
                       id="description"
-                      placeholder="Describe the situation and why help is needed..."
-                      className="min-h-32"
+                      placeholder="Tell their story... What challenges are they facing? How will your support change their life? Be specific and heartfelt."
+                      className="min-h-40 text-lg border-2 border-slate-200 focus:border-purple-500 focus:ring-purple-500/20"
                       value={storyData.description}
                       onChange={(e) => handleInputChange("description", e.target.value)}
                     />
+                    <p className="text-sm text-slate-500">Share the details that will touch donors' hearts</p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="location">Location</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="location" className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                        <Target className="w-4 h-4 text-orange-600" />
+                        Location
+                      </Label>
                       <Input
                         id="location"
                         placeholder="e.g., San Francisco, CA"
                         value={storyData.location}
                         onChange={(e) => handleInputChange("location", e.target.value)}
+                        className="h-12 text-lg border-2 border-slate-200 focus:border-orange-500 focus:ring-orange-500/20"
                       />
+                      <p className="text-sm text-slate-500">Where is this impact happening?</p>
                     </div>
-                    <div>
-                      <Label htmlFor="beneficiaryAge">Age (Optional)</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="beneficiaryAge" className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-pink-600" />
+                        Age (Optional)
+                      </Label>
                       <Input
                         id="beneficiaryAge"
                         type="number"
                         placeholder="e.g., 25"
                         value={storyData.beneficiaryAge || ""}
                         onChange={(e) => handleInputChange("beneficiaryAge", parseInt(e.target.value) || 0)}
+                        className="h-12 text-lg border-2 border-slate-200 focus:border-pink-500 focus:ring-pink-500/20"
                       />
+                      <p className="text-sm text-slate-500">Help donors connect with the person</p>
                     </div>
+                  </div>
+                  
+                  {/* Navigation Buttons */}
+                  <div className="flex justify-between pt-6">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setCurrentStep(1)}
+                      className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back to Templates
+                    </Button>
+                    <Button 
+                      onClick={() => setCurrentStep(3)}
+                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Continue to Funding
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

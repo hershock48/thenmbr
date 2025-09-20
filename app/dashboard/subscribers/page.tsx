@@ -44,10 +44,12 @@ interface Subscriber {
   last_engagement_at?: string
   total_donations: number
   total_donated_amount: number
-  nmbr_subscriptions: Array<{
-    nmbr_id: string
-    subscribed_at: string
-  }>
+  story_id: string
+  story?: {
+    id: string
+    title: string
+    nmbr_code: string
+  }
 }
 
 interface SubscriberStats {
@@ -115,7 +117,7 @@ export default function SubscribersPage() {
       setStats({
         total_subscribers: subscribers.length,
         active_subscribers: subscribers.filter(s => s.status === 'active').length,
-        total_story_subscriptions: subscribers.reduce((acc, s) => acc + s.nmbr_subscriptions.length, 0),
+        total_story_subscriptions: subscribers.filter(s => s.story_id).length,
         avg_engagement_score: subscribers.length > 0 ? 
           subscribers.reduce((acc, s) => acc + (s.total_donations > 0 ? 10 : 5), 0) / subscribers.length : 0,
         total_donations: subscribers.filter(s => s.total_donations > 0).length,
@@ -395,7 +397,7 @@ export default function SubscribersPage() {
                         <div className="flex items-center gap-1">
                           <Target className="w-4 h-4 text-muted-foreground" />
                           <span className="text-sm font-medium">
-                            {subscriber.nmbr_subscriptions.length}
+                            {subscriber.story_id ? '1' : '0'}
                           </span>
                         </div>
                       </TableCell>
