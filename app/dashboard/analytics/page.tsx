@@ -25,7 +25,8 @@ import {
   Cell,
 } from "recharts"
 import { 
-  TrendingUp, 
+  TrendingUp,
+  TrendingDown, 
   Users, 
   Eye, 
   Heart, 
@@ -42,7 +43,7 @@ import {
 const getNonprofitAnalyticsData = () => {
   return {
     performanceData: [
-      // Start with empty data - will populate as users create content
+      // Realistic data for a new nonprofit - showing gradual growth
       { month: "Jan", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
       { month: "Feb", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
       { month: "Mar", views: 0, engagement: 0, donations: 0, fundsRaised: 0 },
@@ -102,6 +103,26 @@ export default function AnalyticsPage() {
   const totalDonations = performanceData.reduce((sum, data) => sum + data.donations, 0)
   const totalFundsRaised = performanceData.reduce((sum, data) => sum + data.fundsRaised, 0)
   const conversionRate = totalViews > 0 ? (totalDonations / totalViews) * 100 : 0
+
+  // Calculate percentage changes from previous month
+  const getPreviousMonthTotal = (field: 'views' | 'engagement' | 'donations' | 'fundsRaised') => {
+    // For now, return 0 since we have no previous data
+    // In a real app, this would compare current month to previous month
+    return 0
+  }
+
+  const calculatePercentageChange = (current: number, previous: number) => {
+    if (previous === 0) {
+      // If no previous data, show 0% change or hide the percentage
+      return null
+    }
+    return ((current - previous) / previous) * 100
+  }
+
+  const viewsChange = calculatePercentageChange(totalViews, getPreviousMonthTotal('views'))
+  const donationsChange = calculatePercentageChange(totalDonations, getPreviousMonthTotal('donations'))
+  const fundsChange = calculatePercentageChange(totalFundsRaised, getPreviousMonthTotal('fundsRaised'))
+  const conversionChange = calculatePercentageChange(conversionRate, 0) // No previous conversion rate
 
   return (
     <div className="min-h-screen bg-background">
@@ -171,10 +192,17 @@ export default function AnalyticsPage() {
                   <div className="text-2xl font-bold text-foreground">
                     {totalViews.toLocaleString()}
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-green-600">
-                    <TrendingUp className="h-3 w-3" />
-                    +12.5% from last month
-                  </div>
+                  {viewsChange !== null ? (
+                    <div className={`flex items-center gap-1 text-sm ${viewsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {viewsChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {viewsChange >= 0 ? '+' : ''}{viewsChange.toFixed(1)}% from last month
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Activity className="h-3 w-3" />
+                      Start creating stories to see growth
+                    </div>
+                  )}
                 </div>
                 <Eye className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -191,10 +219,17 @@ export default function AnalyticsPage() {
                   <div className="text-2xl font-bold text-foreground">
                     {totalDonations.toLocaleString()}
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-green-600">
-                    <TrendingUp className="h-3 w-3" />
-                    +8.2% from last month
-                  </div>
+                  {donationsChange !== null ? (
+                    <div className={`flex items-center gap-1 text-sm ${donationsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {donationsChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {donationsChange >= 0 ? '+' : ''}{donationsChange.toFixed(1)}% from last month
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Heart className="h-3 w-3" />
+                      Share stories to receive donations
+                    </div>
+                  )}
                 </div>
                 <Heart className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -211,10 +246,17 @@ export default function AnalyticsPage() {
                   <div className="text-2xl font-bold text-foreground">
                     ${totalFundsRaised.toLocaleString()}
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-green-600">
-                    <TrendingUp className="h-3 w-3" />
-                    +15.3% from last month
-                  </div>
+                  {fundsChange !== null ? (
+                    <div className={`flex items-center gap-1 text-sm ${fundsChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {fundsChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {fundsChange >= 0 ? '+' : ''}{fundsChange.toFixed(1)}% from last month
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <DollarSign className="h-3 w-3" />
+                      Track your fundraising progress
+                    </div>
+                  )}
                 </div>
                 <DollarSign className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -231,10 +273,17 @@ export default function AnalyticsPage() {
                   <div className="text-2xl font-bold text-foreground">
                     {conversionRate.toFixed(1)}%
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-green-600">
-                    <TrendingUp className="h-3 w-3" />
-                    +2.1% from last month
-                  </div>
+                  {conversionChange !== null ? (
+                    <div className={`flex items-center gap-1 text-sm ${conversionChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {conversionChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                      {conversionChange >= 0 ? '+' : ''}{conversionChange.toFixed(1)}% from last month
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Target className="h-3 w-3" />
+                      Optimize stories for better conversion
+                    </div>
+                  )}
                 </div>
                 <Target className="h-8 w-8 text-muted-foreground" />
               </div>
