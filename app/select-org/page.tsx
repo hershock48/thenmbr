@@ -195,7 +195,12 @@ export default function SelectOrgPage() {
         created_at: org.created_at,
         updated_at: org.created_at
       }
+      
+      // Set organization in auth context
       setOrg(nonprofitOrg)
+      
+      // Add a small delay to ensure state is updated before navigation
+      await new Promise(resolve => setTimeout(resolve, 100))
       
       // Redirect to dashboard
       router.push('/dashboard')

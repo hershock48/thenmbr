@@ -11,7 +11,7 @@ import { TrialCountdown } from "@/components/conversion/TrialCountdown"
 import { FeatureTeaser } from "@/components/conversion/FeatureTeaser"
 import { UpgradeModal } from "@/components/conversion/UpgradeModal"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export default function DashboardLayout({
   children,
@@ -27,7 +27,18 @@ export default function DashboardLayout({
     }
   }, [user, loading, router])
 
-  if (loading) {
+  // Add a small delay to prevent premature redirects during state transitions
+  const [isTransitioning, setIsTransitioning] = useState(true)
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTransitioning(false)
+    }, 200)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (loading || isTransitioning) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent"></div>
