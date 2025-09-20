@@ -8,15 +8,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/contexts/AuthContext"
 import { useOrganization } from "@/contexts/OrganizationContext"
+import { useNotifications } from "@/contexts/NotificationContext"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export function Header() {
   const { user, org, signOut } = useAuth()
   const { terminology, orgType } = useOrganization()
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
   const router = useRouter()
   const [showNotifications, setShowNotifications] = useState(false)
-  const [notificationCount] = useState(3) // Mock notification count
 
   const handleSignOut = async () => {
     try {
@@ -57,6 +58,24 @@ export function Header() {
 
   const handleBilling = () => {
     router.push("/dashboard/billing")
+  }
+
+  const getTimeAgo = (date: Date) => {
+    const now = new Date()
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds} seconds ago`
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60)
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600)
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`
+    } else {
+      const days = Math.floor(diffInSeconds / 86400)
+      return `${days} day${days > 1 ? 's' : ''} ago`
+    }
   }
 
   const getSearchPlaceholder = () => {
@@ -118,9 +137,9 @@ export function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="relative hover:bg-muted" onClick={handleNotifications}>
               <Bell className="h-5 w-5" />
-              {notificationCount > 0 && (
+              {unreadCount > 0 && (
                 <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs bg-orange-500 hover:bg-orange-500 border-2 border-background">
-                  {notificationCount}
+                  {unreadCount}
                 </Badge>
               )}
             </Button>
@@ -128,29 +147,56 @@ export function Header() {
           <DropdownMenuContent className="w-80 shadow-lg border-border" align="end">
             <div className="flex items-center justify-between p-3 border-b border-border">
               <h3 className="font-semibold text-foreground">Notifications</h3>
-              <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 px-2 text-xs"
+                onClick={markAllAsRead}
+              >
                 Mark all read
               </Button>
             </div>
             <div className="max-h-64 overflow-y-auto">
-              <div className="p-3 hover:bg-muted cursor-pointer border-b border-border/50">
-                <p className="text-sm font-medium text-foreground">New donor signed up</p>
-                <p className="text-xs text-muted-foreground">Sarah Johnson just subscribed to your impact stories</p>
-                <p className="text-xs text-muted-foreground mt-1">2 minutes ago</p>
-              </div>
-              <div className="p-3 hover:bg-muted cursor-pointer border-b border-border/50">
-                <p className="text-sm font-medium text-foreground">Story published</p>
-                <p className="text-xs text-muted-foreground">Your "Education Impact" story is now live</p>
-                <p className="text-xs text-muted-foreground mt-1">1 hour ago</p>
-              </div>
-              <div className="p-3 hover:bg-muted cursor-pointer">
-                <p className="text-sm font-medium text-foreground">Weekly report ready</p>
-                <p className="text-xs text-muted-foreground">Your weekly impact analytics are available</p>
-                <p className="text-xs text-muted-foreground mt-1">3 hours ago</p>
-              </div>
+              {notifications.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No notifications yet</p>
+                </div>
+              ) : (
+                notifications.slice(0, 5).map((notification) => (
+                  <div 
+                    key={notification.id}
+                    className={`p-3 hover:bg-muted cursor-pointer border-b border-border/50 ${!notification.read ? 'bg-blue-50/50' : ''}`}
+                    onClick={() => {
+                      markAsRead(notification.id)
+                      if (notification.actionUrl) {
+                        router.push(notification.actionUrl)
+                      }
+                    }}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-foreground">{notification.title}</p>
+                        <p className="text-xs text-muted-foreground">{notification.message}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {getTimeAgo(notification.timestamp)}
+                        </p>
+                      </div>
+                      {!notification.read && (
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-1 ml-2"></div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
             <div className="p-2 border-t border-border">
-              <Button variant="ghost" size="sm" className="w-full text-xs">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full text-xs"
+                onClick={() => router.push('/dashboard/notifications')}
+              >
                 View all notifications
               </Button>
             </div>

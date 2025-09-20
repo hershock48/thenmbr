@@ -6,6 +6,7 @@ import { Header } from "@/components/dashboard/header"
 import { useAuth } from "@/contexts/AuthContext"
 import { OrganizationProvider } from "@/contexts/OrganizationContext"
 import { TrialProvider } from "@/contexts/TrialContext"
+import { NotificationProvider } from "@/contexts/NotificationContext"
 import { UsagePrompt } from "@/components/conversion/UsagePrompt"
 import { TrialCountdown } from "@/components/conversion/TrialCountdown"
 import { FeatureTeaser } from "@/components/conversion/FeatureTeaser"
@@ -53,7 +54,8 @@ export default function DashboardLayout({
   return (
     <OrganizationProvider>
       <TrialProvider>
-        <div className="min-h-screen bg-background">
+        <NotificationProvider>
+          <div className="min-h-screen bg-background">
           <Sidebar />
           <div className="lg:pl-64">
             <Header />
@@ -65,7 +67,8 @@ export default function DashboardLayout({
           <TrialCountdown />
           <FeatureTeaser />
           <UpgradeModal />
-        </div>
+          </div>
+        </NotificationProvider>
       </TrialProvider>
     </OrganizationProvider>
   )
