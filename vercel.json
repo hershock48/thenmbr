@@ -63,13 +63,7 @@
       ]
     }
   ],
-  "redirects": [
-    {
-      "source": "/dashboard",
-      "destination": "/dashboard/overview",
-      "permanent": false
-    }
-  ],
+  "redirects": [],
   "rewrites": [
     {
       "source": "/health",
