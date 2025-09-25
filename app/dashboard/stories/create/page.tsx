@@ -33,12 +33,13 @@ import { useSubscription } from "@/contexts/SubscriptionContext"
 interface StoryData {
   title: string
   description: string
-  beneficiaryName: string
+  beneficiaryName?: string
   beneficiaryAge?: number
   location: string
-  fundingGoal: number
+  fundingGoal?: number
   currentAmount: number
   impactDescription: string
+  hasFundingGoal: boolean
   media: Array<{
     type: "image" | "video" | "document"
     url: string
@@ -46,39 +47,38 @@ interface StoryData {
   }>
 }
 
-const impactTemplates = [
+const storyTypes = [
   {
-    id: "education",
-    name: "Education & Youth",
-    icon: Users,
-    description: "Supporting students and educational programs",
-    template: {
-      title: "Supporting [Name]'s Educational Journey",
-      description: "Help [Name] achieve their educational dreams and create a brighter future for themselves and their community.",
-      impactDescription: "Your donation will directly fund [Name]'s education, including tuition, books, supplies, and living expenses. This investment in education creates a ripple effect that benefits entire communities."
-    }
+    id: "personal",
+    name: "Personal Impact Story",
+    icon: Heart,
+    description: "Tell the story of a specific person whose life you've changed",
+    example: "Maria's journey from homelessness to homeownership",
+    color: "from-pink-500 to-rose-500"
   },
   {
-    id: "healthcare",
-    name: "Healthcare & Medical",
-    icon: Heart,
-    description: "Providing essential medical care and treatment",
-    template: {
-      title: "Medical Care for [Name]",
-      description: "Help [Name] receive the critical medical care they need to recover and thrive.",
-      impactDescription: "Your donation will cover medical expenses, treatments, medications, and follow-up care, giving [Name] the best chance at recovery and a healthy future."
-    }
+    id: "program",
+    name: "Program Impact Story", 
+    icon: Target,
+    description: "Share how your programs create lasting community change",
+    example: "How our after-school program transformed 50 families",
+    color: "from-blue-500 to-indigo-500"
   },
   {
     id: "community",
-    name: "Community Development",
-    icon: Target,
-    description: "Building stronger communities and infrastructure",
-    template: {
-      title: "Building Hope in [Location]",
-      description: "Support community development projects that create lasting positive change.",
-      impactDescription: "Your donation will fund community projects, infrastructure improvements, and programs that benefit hundreds of families in the area."
-    }
+    name: "Community Impact Story",
+    icon: Users,
+    description: "Highlight the broader community transformation you're creating",
+    example: "Building hope and opportunity in our neighborhood",
+    color: "from-green-500 to-emerald-500"
+  },
+  {
+    id: "custom",
+    name: "Custom Story",
+    icon: FileText,
+    description: "Create your own unique impact narrative",
+    example: "Tell your story your way",
+    color: "from-purple-500 to-violet-500"
   }
 ]
 
@@ -97,24 +97,20 @@ export default function CreateStoryPage() {
     beneficiaryName: "",
     beneficiaryAge: undefined,
     location: "",
-    fundingGoal: 0,
+    fundingGoal: undefined,
     currentAmount: 0,
     impactDescription: "",
+    hasFundingGoal: false,
     media: []
   })
 
   const totalSteps = 4
 
-  const handleTemplateSelect = (templateId: string) => {
-    const template = impactTemplates.find(t => t.id === templateId)
-    if (template) {
-      setSelectedTemplate(templateId)
-      setStoryData(prev => ({
-        ...prev,
-        title: template.template.title,
-        description: template.template.description,
-        impactDescription: template.template.impactDescription
-      }))
+  const handleStoryTypeSelect = (typeId: string) => {
+    const storyType = storyTypes.find(t => t.id === typeId)
+    if (storyType) {
+      setSelectedTemplate(typeId)
+      // Don't auto-fill content, just set the type for guidance
     }
   }
 
@@ -181,9 +177,9 @@ export default function CreateStoryPage() {
                   </div>
                   <div>
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      Create Your Impact Story
+                      Create Your NMBR
                     </h1>
-                    <p className="text-slate-600 text-lg">Share your mission and inspire hearts to give</p>
+                    <p className="text-slate-600 text-lg">Create your impact story and get your unique NMBR code</p>
                   </div>
                 </div>
               </div>
@@ -273,11 +269,11 @@ export default function CreateStoryPage() {
                       </span>
                     </div>
                     <div className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
-                      storyData.fundingGoal > 0 ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
+                      storyData.impactDescription ? 'bg-green-50 border border-green-200' : 'bg-slate-50'
                     }`}>
-                      <CheckCircle className={`h-5 w-5 ${storyData.fundingGoal > 0 ? 'text-green-600' : 'text-slate-400'}`} />
-                      <span className={`font-medium ${storyData.fundingGoal > 0 ? 'text-green-800' : 'text-slate-600'}`}>
-                        Funding Goal
+                      <CheckCircle className={`h-5 w-5 ${storyData.impactDescription ? 'text-green-600' : 'text-slate-400'}`} />
+                      <span className={`font-medium ${storyData.impactDescription ? 'text-green-800' : 'text-slate-600'}`}>
+                        Impact Description
                       </span>
                     </div>
                   </div>
@@ -291,21 +287,21 @@ export default function CreateStoryPage() {
                 <CardHeader className="text-center pb-8">
                   <div className="flex items-center justify-center gap-3 mb-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
-                      <Heart className="w-6 h-6 text-white" />
+                      <Hash className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-left">
                       <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        Choose Your Impact Story
+                        What's Your Story Type?
                       </CardTitle>
                       <CardDescription className="text-lg text-slate-600 mt-2">
-                        Every great story starts with inspiration. Pick the template that best represents your mission.
+                        Choose the type of impact story that best represents your mission. This will help us create your perfect NMBR.
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {impactTemplates.map((template, index) => {
+                    {storyTypes.map((storyType, index) => {
                       const gradients = [
                         "from-blue-50 to-indigo-100",
                         "from-green-50 to-emerald-100", 
@@ -319,37 +315,38 @@ export default function CreateStoryPage() {
                       
                       return (
                         <Card
-                          key={template.id}
+                          key={storyType.id}
                           className={`cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 border-0 bg-gradient-to-br ${gradients[index]} ${
-                            selectedTemplate === template.id 
+                            selectedTemplate === storyType.id 
                               ? 'ring-2 ring-purple-500 shadow-xl scale-105' 
                               : 'hover:shadow-lg'
                           }`}
                         >
                           <div
                             className="w-full h-full cursor-pointer hover:bg-white/20 transition-all duration-200 rounded-lg"
-                            onClick={() => handleTemplateSelect(template.id)}
+                            onClick={() => handleStoryTypeSelect(storyType.id)}
                           >
                             <CardContent className="p-6">
                             <div className="space-y-4">
                               <div className="flex items-center gap-4">
                                 <div className={`w-12 h-12 bg-gradient-to-br ${iconGradients[index]} rounded-2xl flex items-center justify-center shadow-lg`}>
-                                  <template.icon className="h-6 w-6 text-white" />
+                                  <storyType.icon className="h-6 w-6 text-white" />
                                 </div>
                                 <div className="flex-1">
-                                  <h3 className="text-lg font-bold text-slate-800">{template.name}</h3>
-                                  <p className="text-sm text-slate-600 mt-1">{template.description}</p>
+                                  <h3 className="text-lg font-bold text-slate-800">{storyType.name}</h3>
+                                  <p className="text-sm text-slate-600 mt-1">{storyType.description}</p>
+                                  <p className="text-xs text-slate-500 mt-2 italic">"{storyType.example}"</p>
                                 </div>
                               </div>
                               
-                              {selectedTemplate === template.id ? (
+                              {selectedTemplate === storyType.id ? (
                                 <div className="bg-white/80 rounded-xl p-4 border border-purple-200">
                                   <div className="flex items-center gap-2 text-purple-700">
                                     <CheckCircle className="h-4 w-4" />
-                                    <span className="text-sm font-medium">Selected Template</span>
+                                    <span className="text-sm font-medium">Selected Story Type</span>
                                   </div>
                                   <p className="text-xs text-purple-600 mt-1">
-                                    This template will help you create an inspiring story
+                                    This will help guide your NMBR creation
                                   </p>
                                 </div>
                               ) : (
@@ -375,7 +372,7 @@ export default function CreateStoryPage() {
                       onClick={() => setCurrentStep(2)}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      Continue with {impactTemplates.find(t => t.id === selectedTemplate)?.name}
+                      Continue with {storyTypes.find(t => t.id === selectedTemplate)?.name}
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                   </div>
@@ -506,40 +503,55 @@ export default function CreateStoryPage() {
             {currentStep === 3 && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Funding & Impact</CardTitle>
+                  <CardTitle>Impact & Funding (Optional)</CardTitle>
                   <CardDescription>
-                    Set your funding goal and explain the impact
+                    Explain your impact and optionally set a funding goal
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="fundingGoal">Funding Goal ($) *</Label>
-                      <Input
-                        id="fundingGoal"
-                        type="number"
-                        placeholder="e.g., 5000"
-                        value={storyData.fundingGoal || ""}
-                        onChange={(e) => handleInputChange("fundingGoal", parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="currentAmount">Current Amount ($)</Label>
-                      <Input
-                        id="currentAmount"
-                        type="number"
-                        placeholder="e.g., 0"
-                        value={storyData.currentAmount || ""}
-                        onChange={(e) => handleInputChange("currentAmount", parseInt(e.target.value) || 0)}
-                      />
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="hasFundingGoal"
+                      checked={storyData.hasFundingGoal}
+                      onChange={(e) => handleInputChange("hasFundingGoal", e.target.checked)}
+                      className="rounded border-gray-300"
+                    />
+                    <Label htmlFor="hasFundingGoal" className="text-base font-medium">
+                      Include a funding goal for this NMBR
+                    </Label>
                   </div>
+
+                  {storyData.hasFundingGoal && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div>
+                        <Label htmlFor="fundingGoal">Funding Goal ($)</Label>
+                        <Input
+                          id="fundingGoal"
+                          type="number"
+                          placeholder="e.g., 5000"
+                          value={storyData.fundingGoal || ""}
+                          onChange={(e) => handleInputChange("fundingGoal", parseInt(e.target.value) || 0)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="currentAmount">Current Amount ($)</Label>
+                        <Input
+                          id="currentAmount"
+                          type="number"
+                          placeholder="e.g., 0"
+                          value={storyData.currentAmount || ""}
+                          onChange={(e) => handleInputChange("currentAmount", parseInt(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   <div>
                     <Label htmlFor="impactDescription">Impact Description *</Label>
                     <Textarea
                       id="impactDescription"
-                      placeholder="Explain how donations will be used and what impact they'll create..."
+                      placeholder="Explain the impact your organization creates and how people can help..."
                       className="min-h-32"
                       value={storyData.impactDescription}
                       onChange={(e) => handleInputChange("impactDescription", e.target.value)}

@@ -208,7 +208,7 @@ export default function DashboardPage() {
               <Link href="/dashboard/stories/create">
                 <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Impact Story
+                  Create New NMBR
                 </Button>
               </Link>
             </div>
@@ -296,7 +296,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Active Stories */}
+          {/* Active NMBRs */}
           <Card 
             className="group hover:shadow-lg hover:scale-105 transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-pink-50 cursor-pointer"
             onClick={() => router.push('/dashboard/stories')}
@@ -304,16 +304,16 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-purple-700 mb-1">Active Stories</p>
+                  <p className="text-sm font-semibold text-purple-700 mb-1">Active NMBRs</p>
                   <p className="text-3xl font-bold text-purple-800 mt-1">
                     {stats.totalStories}
                   </p>
                   <p className="text-xs text-purple-600 mt-1 font-medium">
-                    {stats.topPerformingStory ? `Top: ${stats.topPerformingStory.title.slice(0, 20)}...` : 'Create your first story'}
+                    {stats.topPerformingStory ? `Top: ${stats.topPerformingStory.title.slice(0, 20)}...` : 'Create your first NMBR'}
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center group-hover:from-purple-500 group-hover:to-pink-600 transition-all duration-300 shadow-lg">
-                  <Target className="w-7 h-7 text-white" />
+                  <Hash className="w-7 h-7 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -355,15 +355,15 @@ export default function DashboardPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Create Impact Story */}
+          {/* Create NMBR */}
           <Card className="group hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer border-0 bg-gradient-to-br from-blue-50 to-indigo-100 hover:from-blue-100 hover:to-indigo-200">
             <Link href="/dashboard/stories/create">
               <CardHeader className="pb-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 group-hover:from-blue-600 group-hover:to-indigo-700 transition-all duration-300 shadow-lg">
-                  <Plus className="w-8 h-8 text-white" />
+                  <Hash className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-xl text-blue-800 group-hover:text-blue-900">Create Impact Story</CardTitle>
-                <CardDescription className="text-blue-600">Share your mission and inspire donors</CardDescription>
+                <CardTitle className="text-xl text-blue-800 group-hover:text-blue-900">Create New NMBR</CardTitle>
+                <CardDescription className="text-blue-600">Create your impact story and get your unique code</CardDescription>
               </CardHeader>
             </Link>
           </Card>
