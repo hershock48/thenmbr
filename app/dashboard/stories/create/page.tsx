@@ -291,10 +291,10 @@ export default function CreateStoryPage() {
                     </div>
                     <div className="text-left">
                       <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        What's Your Story Type?
+                        Create Your First NMBR
                       </CardTitle>
                       <CardDescription className="text-lg text-slate-600 mt-2">
-                        Choose the type of impact story that best represents your mission. This will help us create your perfect NMBR.
+                        A NMBR is a unique code (like #12345) that you'll add to products, merchandise, or digital content. When people see your NMBR, they can look it up to learn about your impact story and donate. Choose your story type to get started.
                       </CardDescription>
                     </div>
                   </div>
