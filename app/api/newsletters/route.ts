@@ -4,57 +4,116 @@ import { generateNewsletterHTML } from "@/lib/newsletter-templates"
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, type, storyId, organizationId, templateId, customContent, scheduledAt } = await request.json()
+    const { name, type, storyId, organizationId, templateId, customContent, scheduledAt, scope } = await request.json()
 
-    if (!name || !type || !storyId || !organizationId) {
+    if (!name || !type || !organizationId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    // For specific NMBR newsletters, storyId is required
+    if (scope === 'specific' && !storyId) {
+      return NextResponse.json({ error: "Story ID is required for specific NMBR newsletters" }, { status: 400 })
     }
 
     const supabase = createClient()
 
-    // Get story details
-    const { data: story, error: storyError } = await supabase
-      .from("stories")
-      .select(`
-        *,
-        organizations (
-          name,
-          website,
-          primary_color,
-          logo_url
-        )
-      `)
-      .eq("id", storyId)
-      .single()
+    let story = null
+    let subscribers = []
 
-    if (storyError || !story) {
-      return NextResponse.json({ error: "Story not found" }, { status: 404 })
-    }
+    if (scope === 'specific' && storyId) {
+      // Get story details for specific NMBR newsletters
+      const { data: storyData, error: storyError } = await supabase
+        .from("stories")
+        .select(`
+          *,
+          organizations (
+            name,
+            website,
+            primary_color,
+            logo_url
+          )
+        `)
+        .eq("id", storyId)
+        .single()
 
-    // Get subscribers for this specific story
-    const { data: subscribers, error: subscribersError } = await supabase
-      .from("subscribers")
-      .select(`
-        id,
-        email
-      `)
-      .eq("story_id", storyId)
+      if (storyError || !storyData) {
+        return NextResponse.json({ error: "Story not found" }, { status: 404 })
+      }
 
-    if (subscribersError) {
-      throw subscribersError
+      story = storyData
+
+      // Get subscribers for this specific story
+      const { data: storySubscribers, error: subscribersError } = await supabase
+        .from("subscribers")
+        .select(`
+          id,
+          email
+        `)
+        .eq("story_id", storyId)
+
+      if (subscribersError) {
+        throw subscribersError
+      }
+
+      subscribers = storySubscribers || []
+    } else if (scope === 'organizational') {
+      // Get organization details for organizational newsletters
+      const { data: org, error: orgError } = await supabase
+        .from("organizations")
+        .select("*")
+        .eq("id", organizationId)
+        .single()
+
+      if (orgError || !org) {
+        return NextResponse.json({ error: "Organization not found" }, { status: 404 })
+      }
+
+      story = { organizations: org }
+
+      // Get all subscribers across all stories for this organization
+      const { data: allSubscribers, error: subscribersError } = await supabase
+        .from("subscribers")
+        .select(`
+          id,
+          email,
+          story_id,
+          stories!inner(organization_id)
+        `)
+        .eq("stories.organization_id", organizationId)
+
+      if (subscribersError) {
+        throw subscribersError
+      }
+
+      // Remove duplicates (subscribers might be subscribed to multiple stories)
+      const uniqueSubscribers = allSubscribers?.reduce((acc, subscriber) => {
+        if (!acc.find(s => s.email === subscriber.email)) {
+          acc.push({ id: subscriber.id, email: subscriber.email })
+        }
+        return acc
+      }, []) || []
+
+      subscribers = uniqueSubscribers
     }
 
     if (!subscribers || subscribers.length === 0) {
-      return NextResponse.json({ error: "No active subscribers found for this story" }, { status: 404 })
+      const errorMessage = scope === 'specific' 
+        ? "No active subscribers found for this NMBR" 
+        : "No subscribers found for your organization"
+      return NextResponse.json({ error: errorMessage }, { status: 404 })
     }
 
     // Create newsletter campaign
+    const subject = scope === 'specific' 
+      ? `${type === "story_update" ? "NMBR Update" : type === "milestone" ? "Milestone Reached" : type === "completion" ? "NMBR Complete" : "Welcome"} - ${story.title}`
+      : `${type === "organizational_update" ? "Organizational Update" : type === "organizational_milestone" ? "Achievement Update" : "Newsletter"} - ${story.organizations.name}`
+
     const { data: campaign, error: campaignError } = await supabase
       .from("email_campaigns")
       .insert({
         organization_id: organizationId,
-        nmbr_id: storyId,
-        subject: `${type === "story_update" ? "Story Update" : type === "milestone" ? "Milestone Reached" : type === "completion" ? "Story Complete" : "Welcome"} - ${story.title}`,
+        nmbr_id: scope === 'specific' ? storyId : null,
+        subject: subject,
         content: customContent || "Newsletter content",
         campaign_type: type,
         status: scheduledAt ? "scheduled" : "sending",
@@ -69,19 +128,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate newsletter HTML using template
-    const newsletterData = {
+    const newsletterData = scope === 'specific' ? {
+      // Specific NMBR newsletter data
       STORY_TITLE: story.title,
       STORY_CODE: story.nmbr_code,
-      PROGRESS_PERCENTAGE: Math.round((story.current_amount / story.goal_amount) * 100),
-      RAISED_AMOUNT: `$${story.current_amount.toLocaleString()}`,
-      GOAL_AMOUNT: `$${story.goal_amount.toLocaleString()}`,
-      REMAINING_AMOUNT: `$${(story.goal_amount - story.current_amount).toLocaleString()}`,
+      PROGRESS_PERCENTAGE: story.goal_amount ? Math.round((story.current_amount / story.goal_amount) * 100) : 0,
+      RAISED_AMOUNT: `$${story.current_amount?.toLocaleString() || '0'}`,
+      GOAL_AMOUNT: `$${story.goal_amount?.toLocaleString() || '0'}`,
+      REMAINING_AMOUNT: `$${(story.goal_amount ? (story.goal_amount - story.current_amount) : 0).toLocaleString()}`,
       ORGANIZATION_NAME: story.organizations.name,
       ORGANIZATION_WEBSITE: story.organizations.website || process.env.NEXT_PUBLIC_APP_URL,
       STORY_IMAGE: story.photo_url,
       DONATION_URL: `${process.env.NEXT_PUBLIC_APP_URL}/widget/${story.organizations.slug}?nmbr=${story.nmbr_code}`,
       UNSUBSCRIBE_URL: `${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?subscriber_id={SUBSCRIBER_ID}&nmbr_id=${storyId}`,
       CUSTOM_MESSAGE: customContent || "Thank you for your support!",
+      SUBSCRIBER_NAME: "{SUBSCRIBER_NAME}",
+    } : {
+      // Organizational newsletter data
+      STORY_TITLE: story.organizations.name,
+      STORY_CODE: "ORG",
+      PROGRESS_PERCENTAGE: 0,
+      RAISED_AMOUNT: "$0",
+      GOAL_AMOUNT: "$0",
+      REMAINING_AMOUNT: "$0",
+      ORGANIZATION_NAME: story.organizations.name,
+      ORGANIZATION_WEBSITE: story.organizations.website || process.env.NEXT_PUBLIC_APP_URL,
+      STORY_IMAGE: story.organizations.logo_url,
+      DONATION_URL: `${process.env.NEXT_PUBLIC_APP_URL}/widget/${story.organizations.slug}`,
+      UNSUBSCRIBE_URL: `${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?subscriber_id={SUBSCRIBER_ID}&org_id=${organizationId}`,
+      CUSTOM_MESSAGE: customContent || "Thank you for supporting our mission!",
       SUBSCRIBER_NAME: "{SUBSCRIBER_NAME}",
     }
 

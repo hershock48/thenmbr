@@ -194,7 +194,8 @@ export default function NewslettersPage() {
   const [scheduleTime, setScheduleTime] = useState<string>('')
   const [sendMode, setSendMode] = useState<'now' | 'schedule'>('now')
   const [showStoryNewsletterCreator, setShowStoryNewsletterCreator] = useState(false)
-  const [selectedStoryForNewsletter, setSelectedStoryForNewsletter] = useState<string>('')
+  const [selectedStoryForNewsletter, setSelectedStoryForNewsletter] = useState<string | null>(null)
+  const [newsletterScope, setNewsletterScope] = useState<'specific' | 'organizational'>('specific')
   const [editingBlock, setEditingBlock] = useState<string | null>(null)
   const [editingText, setEditingText] = useState('')
   const [showAIReview, setShowAIReview] = useState(false)
@@ -1693,7 +1694,7 @@ export default function NewslettersPage() {
                 className="w-full sm:w-auto"
               >
                 <FileText className="w-4 h-4 mr-2" />
-                Story Newsletter
+                Quick Newsletter
               </Button>
             </div>
           </div>
@@ -2565,44 +2566,105 @@ export default function NewslettersPage() {
       <Dialog open={showStoryNewsletterCreator} onOpenChange={setShowStoryNewsletterCreator}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Create Story Newsletter</DialogTitle>
+            <DialogTitle>Create Newsletter</DialogTitle>
             <DialogDescription>
-              Quickly create a newsletter for a specific story
+              Choose whether to send about a specific NMBR or send an organizational update
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
-            {/* Story Selection */}
+          <div className="space-y-6">
+            {/* Newsletter Scope Selection */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Select Story</label>
-              <Select value={selectedStoryForNewsletter} onValueChange={setSelectedStoryForNewsletter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a story for your newsletter" />
-                </SelectTrigger>
-                <SelectContent>
-                  {stories.map((story) => (
-                    <SelectItem key={story.id} value={story.id}>
-                      <div className="flex items-center space-x-2">
-                        <span>{story.title}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {story.nmbr_code}
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label className="text-sm font-medium mb-3 block">What type of newsletter?</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div 
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ${
+                    newsletterScope === 'specific' 
+                      ? 'border-blue-500 bg-blue-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => setNewsletterScope('specific')}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      newsletterScope === 'specific' ? 'bg-blue-500' : 'bg-gray-200'
+                    }`}>
+                      <Hash className={`w-4 h-4 ${
+                        newsletterScope === 'specific' ? 'text-white' : 'text-gray-600'
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">Specific NMBR Update</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Send an update about one specific NMBR/story to its subscribers
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div 
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ${
+                    newsletterScope === 'organizational' 
+                      ? 'border-green-500 bg-green-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onClick={() => setNewsletterScope('organizational')}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      newsletterScope === 'organizational' ? 'bg-green-500' : 'bg-gray-200'
+                    }`}>
+                      <Users className={`w-4 h-4 ${
+                        newsletterScope === 'organizational' ? 'text-white' : 'text-gray-600'
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">Organizational Update</h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Send an update to all your supporters across all NMBRs
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {/* Story Selection (only show for specific NMBR) */}
+            {newsletterScope === 'specific' && (
+              <div>
+                <label className="text-sm font-medium mb-2 block">Select NMBR</label>
+                <Select value={selectedStoryForNewsletter || ''} onValueChange={setSelectedStoryForNewsletter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a NMBR for your newsletter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stories.map((story) => (
+                      <SelectItem key={story.id} value={story.id}>
+                        <div className="flex items-center space-x-2">
+                          <span>{story.title}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {story.nmbr_code}
+                          </Badge>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             {/* Newsletter Type */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Newsletter Type</label>
+              <label className="text-sm font-medium mb-2 block">
+                {newsletterScope === 'specific' ? 'Newsletter Type' : 'Organizational Update Type'}
+              </label>
               <div className="grid grid-cols-2 gap-3">
                 <div 
                   className="border rounded-lg p-3 cursor-pointer hover:bg-gray-50"
                   onClick={() => {
-                    if (selectedStoryForNewsletter) {
-                      applyTemplate('story_update')
+                    const canProceed = newsletterScope === 'organizational' || selectedStoryForNewsletter
+                    if (canProceed) {
+                      applyTemplate(newsletterScope === 'specific' ? 'story_update' : 'organizational_update')
                       setShowStoryNewsletterCreator(false)
                       setShowBuilder(true)
                     }
@@ -2610,16 +2672,21 @@ export default function NewslettersPage() {
                 >
                   <div className="flex items-center space-x-2">
                     <FileText className="w-4 h-4" />
-                    <span className="text-sm font-medium">Story Update</span>
+                    <span className="text-sm font-medium">
+                      {newsletterScope === 'specific' ? 'Story Update' : 'General Update'}
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">Update donors on progress</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {newsletterScope === 'specific' ? 'Update donors on progress' : 'Share general organizational news'}
+                  </p>
                 </div>
                 
                 <div 
                   className="border rounded-lg p-3 cursor-pointer hover:bg-gray-50"
                   onClick={() => {
-                    if (selectedStoryForNewsletter) {
-                      applyTemplate('milestone')
+                    const canProceed = newsletterScope === 'organizational' || selectedStoryForNewsletter
+                    if (canProceed) {
+                      applyTemplate(newsletterScope === 'specific' ? 'milestone' : 'organizational_milestone')
                       setShowStoryNewsletterCreator(false)
                       setShowBuilder(true)
                     }
@@ -2627,9 +2694,13 @@ export default function NewslettersPage() {
                 >
                   <div className="flex items-center space-x-2">
                     <Target className="w-4 h-4" />
-                    <span className="text-sm font-medium">Milestone</span>
+                    <span className="text-sm font-medium">
+                      {newsletterScope === 'specific' ? 'Milestone' : 'Achievement'}
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">Celebrate achievements</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {newsletterScope === 'specific' ? 'Celebrate story achievements' : 'Share organizational milestones'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -2638,21 +2709,29 @@ export default function NewslettersPage() {
             <div className="flex justify-end space-x-2 pt-4 border-t">
               <Button 
                 variant="outline" 
-                onClick={() => setShowStoryNewsletterCreator(false)}
+                onClick={() => {
+                  setShowStoryNewsletterCreator(false)
+                  setNewsletterScope('specific')
+                  setSelectedStoryForNewsletter(null)
+                }}
               >
                 Cancel
               </Button>
               <Button 
                 onClick={() => {
-                  if (selectedStoryForNewsletter) {
-                    applyTemplate('story_update')
+                  const canProceed = newsletterScope === 'organizational' || selectedStoryForNewsletter
+                  if (canProceed) {
+                    applyTemplate(newsletterScope === 'specific' ? 'story_update' : 'organizational_update')
                     setShowStoryNewsletterCreator(false)
                     setShowBuilder(true)
+                    // Reset state
+                    setNewsletterScope('specific')
+                    setSelectedStoryForNewsletter(null)
                   }
                 }}
-                disabled={!selectedStoryForNewsletter}
+                disabled={newsletterScope === 'specific' && !selectedStoryForNewsletter}
               >
-                Create Newsletter
+                {newsletterScope === 'specific' ? 'Create NMBR Newsletter' : 'Create Organizational Newsletter'}
               </Button>
             </div>
           </div>
