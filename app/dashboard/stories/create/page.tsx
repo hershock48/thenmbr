@@ -350,10 +350,14 @@ export default function CreateStoryPage() {
                                   </p>
                                 </div>
                               ) : (
-                                <div className="text-center py-2">
-                                  <span className="text-xs text-slate-500 bg-white/60 px-3 py-1 rounded-full border border-slate-200">
+                                <div className="text-center py-3">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    className="w-full bg-white/90 hover:bg-white border-slate-300 text-slate-700 hover:text-slate-900 shadow-sm"
+                                  >
                                     Click to select
-                                  </span>
+                                  </Button>
                                 </div>
                               )}
                             </div>
