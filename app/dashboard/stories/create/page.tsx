@@ -300,7 +300,7 @@ export default function CreateStoryPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-4 max-w-2xl mx-auto">
                     {storyTypes.map((storyType, index) => {
                       const gradients = [
                         "from-blue-50 to-indigo-100",
@@ -328,14 +328,16 @@ export default function CreateStoryPage() {
                           >
                             <CardContent className="p-6">
                             <div className="space-y-4">
-                              <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 bg-gradient-to-br ${iconGradients[index]} rounded-2xl flex items-center justify-center shadow-lg`}>
-                                  <storyType.icon className="h-6 w-6 text-white" />
+                              <div className="flex items-start gap-6">
+                                <div className={`w-16 h-16 bg-gradient-to-br ${iconGradients[index]} rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0`}>
+                                  <storyType.icon className="h-8 w-8 text-white" />
                                 </div>
-                                <div className="flex-1">
-                                  <h3 className="text-lg font-bold text-slate-800">{storyType.name}</h3>
-                                  <p className="text-sm text-slate-600 mt-1">{storyType.description}</p>
-                                  <p className="text-xs text-slate-500 mt-2 italic">"{storyType.example}"</p>
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="text-xl font-bold text-slate-800 mb-2">{storyType.name}</h3>
+                                  <p className="text-slate-600 mb-3 leading-relaxed">{storyType.description}</p>
+                                  <div className="bg-white/60 rounded-lg p-3 border border-white/40">
+                                    <p className="text-sm text-slate-500 italic">"{storyType.example}"</p>
+                                  </div>
                                 </div>
                               </div>
                               
