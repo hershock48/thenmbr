@@ -15,12 +15,14 @@ import {
 const ADMIN_EMAILS = [
   'admin@thenmbr.com',
   'kevin@thenmbr.com',
+  'kevin@beanumber.org',
   'support@thenmbr.com'
 ]
 
 const ADMIN_ROLES = {
   'admin@thenmbr.com': 'super_admin',
-  'kevin@thenmbr.com': 'super_admin', 
+  'kevin@thenmbr.com': 'super_admin',
+  'kevin@beanumber.org': 'super_admin',
   'support@thenmbr.com': 'admin'
 }
 
