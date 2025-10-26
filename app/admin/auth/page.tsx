@@ -26,6 +26,13 @@ const ADMIN_ROLES = {
   'support@thenmbr.com': 'admin'
 }
 
+const ADMIN_PASSWORDS = {
+  'admin@thenmbr.com': 'admin123',
+  'kevin@thenmbr.com': 'kevin123',
+  'kevin@beanumber.org': 'K84335225h!?!?',
+  'support@thenmbr.com': 'support123'
+}
+
 export default function AdminAuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,6 +51,13 @@ export default function AdminAuthPage() {
       
       if (!ADMIN_EMAILS.includes(email.toLowerCase())) {
         setError('Access denied. This email is not authorized for admin access.')
+        return
+      }
+
+      // Check password for specific admin emails
+      const expectedPassword = ADMIN_PASSWORDS[email.toLowerCase() as keyof typeof ADMIN_PASSWORDS]
+      if (expectedPassword && password !== expectedPassword) {
+        setError('Invalid password for this admin account.')
         return
       }
 
