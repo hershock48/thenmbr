@@ -73,6 +73,36 @@ export interface Donation {
   created_at: string
 }
 
+export interface Team {
+  id: string
+  org_id: string
+  name: string
+  slug: string
+  goal_cents: number
+  start_at?: string
+  end_at?: string
+  visibility: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Fundraiser {
+  id: string
+  team_id: string
+  user_id?: string
+  nmbr_code: string
+  handle: string
+  goal_cents: number
+  page_title: string
+  page_subtitle?: string
+  story?: string
+  hero_url?: string
+  status: "draft" | "approved" | "live" | "archived"
+  qr_url?: string
+  created_at: string
+  updated_at: string
+}
+
 export interface WidgetProps {
   org: string
   type: "story-search" | "donate" | "subscribe"

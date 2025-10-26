@@ -1,14 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useAuth } from "@/contexts/AuthContext"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import {
   ArrowRight, 
   CheckCircle, 
@@ -105,32 +100,6 @@ const pricingTiers = [
 
 
 export default function HomePage() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-
-  // Redirect to login if not authenticated (for development)
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
-    }
-  }, [user, loading, router])
-
-  // Show loading spinner while checking authentication
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <LoadingSpinner />
-          <p className="text-muted-foreground">Checking authentication...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Don't render anything if not authenticated (will redirect)
-  if (!user) {
-    return null
-  }
 
   return (
     <div className="min-h-screen bg-background">
